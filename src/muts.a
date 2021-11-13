@@ -63,6 +63,12 @@
 
 !addr regs = $400
 !addr reg_a = regs + ('A' - 'A') * 2
+!addr reg_i = regs + ('I' - 'A') * 2
+!addr reg_x = regs + ('X' - 'A') * 2
+!addr reg_y = regs + ('Y' - 'A') * 2
+!addr reg_p = regs + ('P' - 'A') * 2
+!addr reg_s = regs + ('S' - 'A') * 2
+
 
 !addr breakpoints_lo = $500
 !addr breakpoints_hi = $501
@@ -1310,7 +1316,7 @@ L8b01               lda empty, x
                     inx
                     stx $0604
                     lda #$f0
-                    sta $0424
+                    sta reg_s
                     lda #$5d
                     sta $0603
                     cli
@@ -1456,12 +1462,12 @@ L8c23               ldx #0
                     jmp repl
                     
 bp_handler          pla
-                    sta $042e
+                    sta reg_x
                     lda $fc
-                    sta $0400
-                    sty $0430
+                    sta reg_a
+                    sty reg_y
                     pla
-                    sta $041e
+                    sta reg_p
                     jsr prstr
                     !text "Break: PC = ", 0
 L8c4d               lda acc0_hi
@@ -2179,7 +2185,7 @@ L92a7               pla
                     !text 13, "P = ", 0
                     
 show_flags          ldy #0
-                    lda $041e
+                    lda reg_p
 L92c3               ldx #'.'
                     asl
                     bcc L92cb
@@ -2222,20 +2228,20 @@ L9305               php
                     
 go_acc              jmp (acc0_lo)
                     
-load_regs           lda $041e
+load_regs           lda reg_p
                     pha
-                    lda $0400
-                    ldx $042e
-                    ldy $0430
+                    lda reg_a
+                    ldx reg_x
+                    ldy reg_y
                     plp
                     rts
                     
 save_regs           php
-                    sta $0400
-                    stx $042e
-                    sty $0430
+                    sta reg_a
+                    stx reg_x
+                    sty reg_y
                     pla
-                    sta $041e
+                    sta reg_p
                     rts
                     
 c_where             jsr check_cmd_mode
@@ -2914,7 +2920,7 @@ c_step              jsr check_cmd_mode
                     jsr acc0_to_acc2
                     jsr hex_prefix
                     jsr print_or_page
-                    ldx $0424
+                    ldx reg_s
                     cpx #$80
                     bcs +
                     jsr throw
@@ -2926,26 +2932,26 @@ c_step              jsr check_cmd_mode
 
 L98de               sty ptr0_lo
                     sty ptr0_hi
-step_next           inc $0410
+step_next           inc reg_i
                     bne L98ea
-                    inc $0411
+                    inc reg_i + 1
 L98ea               lda acc2_hi
                     jsr hexbyte
                     lda acc2_lo
                     jsr hexbyte_space
                     tsx
-                    stx $0424
-                    lda $0400
+                    stx reg_s
+                    lda reg_a
                     jsr hexbyte_space
-                    lda $042e
+                    lda reg_x
                     jsr hexbyte_space
-                    lda $0430
+                    lda reg_y
                     jsr hexbyte_space
-                    lda $041e
+                    lda reg_p
 L990d               jsr show_flags
                     lda #' '
                     jsr oswrch
-                    lda $0424
+                    lda reg_s
                     jsr hexbyte_space
                     ldx #$07
 L991d               lda step_bootstrap, x
@@ -2964,6 +2970,7 @@ L991d               lda step_bootstrap, x
                     jsr decode_admode
                     jsr osrdch
                     jsr newline
+
                     ; JMP, Bxx, RTS etc are emulated
                     lda $010b
                     beq do_brk
@@ -2995,14 +3002,13 @@ step_execute        php
                     jmp $010b
                     
 do_brk              jsr throw
-                    ; "Halted"
                     !text $b0, "Halted", 0
                     
 do_jsr              jsr ex_or_step
                     bne step_execute
                     clc
                     lda acc0_lo
-                    adc #$02
+                    adc #2
                     tax
                     lda acc0_hi
                     adc #0
@@ -3028,7 +3034,7 @@ do_rts              pla
                     jmp step_next
                     
 do_rti              pla
-                    sta $041e
+                    sta reg_p
                     clc
                     bcc do_rts
                     
@@ -3039,20 +3045,18 @@ L99bb               sta $010c
                     jmp step_execute
                     
 ex_or_step          jsr prstr
-                    ; "Execute or step (E/S) ?"
                     !text "Execute", -1, "or", -1, "step", -1, "(E/S)", -1, "?", -1, 0
-                    ; why?
 L99dd               sty ptr0_lo
                     sty ptr0_hi
-L99e1               jsr osrdch
+-                   jsr osrdch
                     jsr check_escape
                     and #$df
-                    cmp #$53
-                    beq L99f1
-                    cmp #$45
-                    bne L99e1
-L99f1               jsr oswrch
-                    cmp #$53
+                    cmp #'S'
+                    beq +
+                    cmp #'E'
+                    bne -
++                   jsr oswrch
+                    cmp #'S'
                     php
                     jsr newline
                     plp
@@ -3068,7 +3072,7 @@ indirect            jsr read_rom
                     
 next_pc             lda acc0_lo
                     clc
-                    adc #$01
+                    adc #1
                     sta acc2_lo
                     lda acc0_hi
                     adc #0
@@ -3081,9 +3085,9 @@ branched            jsr save_regs
                     plp
                     ldx #0
                     lda acc1_hi
-                    bpl L9a25
+                    bpl +
                     dex
-L9a25               clc
++                   clc
                     adc acc2_lo
                     sta acc2_lo
                     txa
@@ -3119,9 +3123,10 @@ L9a54               lda $0600
                     sbc acc2_hi
 L9a69               stx ptr0_lo
                     sta ptr0_hi
+
                     ; cursor edit
-                    lda #$04
-                    ldx #$01
+                    lda #4
+                    ldx #1
                     jsr osbyte
 L9a74               sec
                     lda acc2_lo
@@ -3152,7 +3157,7 @@ L9a9d               lda acc2_lo
                     bcc L9b00
 L9aa7               jsr osrdch
                     bcc L9ab6
-                    lda #$04
+                    lda #4
                     ldx #0
                     jsr osbyte
                     jmp throw_escape
@@ -3209,7 +3214,6 @@ parse_tracks        jsr skip_space
                     cmp #$38
                     beq L9b28
 L9b14               jsr throw
-                    ; "40 or 80 tracks"
                     !text $b1, "40 or 80 tracks", 0
 L9b28               jsr getch
                     cmp #$30
@@ -3222,7 +3226,6 @@ L9b28               jsr getch
                     
 parse_drive         jsr skip_space
                     pha
-L9b3b = * + 1       
                     jsr unget
                     pla
                     cmp #$0d
@@ -3464,9 +3467,9 @@ disc_offsets        !hex 03 0c 19 24
 ; fix00+
 wrap_sector         ldx acc1_hi
                     dex
-                    bpl L9d32
-                    ldx #$09
-L9d32               txa
+                    bpl +
+                    ldx #9
++                   txa
                     stx acc1_hi
                     rts
                     
@@ -3491,26 +3494,24 @@ c_put               jsr parse_track_drive
 L9d5d               jsr get_put_parms
                     jsr osword
                     jsr prstr
-                    ; "I/O result = "
-L9d68 = * + 2       
                     !text "I/O", -1, "result", -1, "=", -1, 0
+
 L9d74               lda $010a
                     sta acc0_lo
                     sty acc0_hi
                     ldx #0
-                    lda #$0a
+                    lda #10
                     jsr radix_out
                     jmp newline
                     
 c_mode              jsr eval_byte
                     tax
                     jsr check_eol
-                    cpx #$08
-                    bcc L9d9d
+                    cpx #8
+                    bcc +
                     jsr throw
-                    ; "Bad MODE"
                     !text 25, "Bad MODE", 0
-L9d9d               lda #$16
++                   lda #22
                     jsr oswrch
                     txa
                     jmp oswrch
@@ -3520,13 +3521,13 @@ c_vdu               ldx #0
                     inx
                     stx ptr0_hi
                     jsr parse_bytes
-L9db0               dex
-                    bmi L9dbc
+-                   dex
+                    bmi +
                     lda $0100, y
                     jsr oswrch
                     iny
-                    bne L9db0
-L9dbc               rts
+                    bne -
++                   rts
                     
 c_same              jsr eval
                     jsr acc0_to_acc2
@@ -3565,7 +3566,7 @@ pr_membyte          lda #$28
                     pha
                     adc 0, x
                     sta ptr0_lo
-                    lda $01, x
+                    lda 1, x
                     adc #0
                     sta ptr0_hi
                     jsr hexbyte
@@ -3711,4 +3712,6 @@ symtab              !word oswrch
 
 credits             !text "(C) Andrew Armstrong 1984. Thanks to Nigel, Joe and all at HCCS."
                     !text "Version 1.60 12.2.1984"
-                    !text "                                                          "
+
+                    ; Pad with spaces to next 8k boundary
+                    !align $1fff, 0, ' '
