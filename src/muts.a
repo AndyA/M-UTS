@@ -2246,8 +2246,8 @@ c_where             jsr check_cmd_mode
                     jsr check_eol
                     jsr prstr
                     ; "Breakpoints:"
-                    !text "Breakpoints:", 13, 0, $a2, 0
-L934f = * + 2       
+                    !text "Breakpoints:", 13, 0
+                    ldx #0
 L934d               lda breakpoints_lo, x
                     ora breakpoints_hi, x
                     beq L9361
@@ -2928,7 +2928,7 @@ L98c5               txs
                     jsr prstr
                     ; "PC  A X Y P S Opcode"
 L98cc = * + 3       
-                    !text "PC", $fd, "A", $fe, "X", $fe, "Y", $fe, "P", $f8, "S", $fe, "Opcode", 13, 0
+                    !text "PC", -3, "A", -2, "X", -2, "Y", -2, "P", -8, "S", -2, "Opcode", 13, 0
 L98de               sty ptr0_lo
                     sty ptr0_hi
 step_next           inc $0410
@@ -3046,7 +3046,7 @@ L99bb               sta $010c
                     
 ex_or_step          jsr prstr
                     ; "Execute or step (E/S) ?"
-                    !text "Execute", $ff, "or", $ff, "step", $ff, "(E/S)", $ff, "?", $ff, 0
+                    !text "Execute", -1, "or", -1, "step", -1, "(E/S)", -1, "?", -1, 0
                     ; why?
 L99dd               sty ptr0_lo
                     sty ptr0_hi
@@ -3499,7 +3499,7 @@ L9d5d               jsr get_put_parms
                     jsr prstr
                     ; "I/O result = "
 L9d68 = * + 2       
-                    !text "I/O", $ff, "result", $ff, "=", $ff, 0
+                    !text "I/O", -1, "result", -1, "=", -1, 0
 L9d74               lda $010a
                     sta acc0_lo
                     sty acc0_hi
@@ -3714,6 +3714,6 @@ symtab              !word oswrch
                     !word L8003 
                     !text "serv", 'e' + $80
                     !word $0000 
-credits             !text "(C) Andrew Armstrong 1984. Thanks to Nigel, Joe and all at HCCS.Version 1.60 12.2.1984"
+credits             !text "(C) Andrew Armstrong 1984. Thanks to Nigel, Joe and all at HCCS."
+                    !text "Version 1.60 12.2.1984"
                     !text "                                                          "
-
