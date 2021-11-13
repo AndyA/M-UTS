@@ -1751,7 +1751,7 @@ op_decode           +mnem 'B', 'C', 'C', $90, $ff
                     !byte 0, 0, 0, 0
 op_decode_end
 
-                    !hex 00 00
+                    !byte 0, 0
 
 addr_decode         !hex 20 ff 02 10 1f 0b 
                     !hex 09 1f 0a 0a 9f 08 08 0d 09 00 9f 09 4c ff 02 80 
