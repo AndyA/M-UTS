@@ -90,6 +90,15 @@
 +
 }
 
+!macro adc16 dst, lhs, rhs {
+  lda lhs
+  adc rhs
+  sta dst
+  lda lhs + 1
+  adc rhs + 1
+  sta dst + 1
+}
+
 L8000               jmp language
                     
 L8003               jmp service
@@ -245,9 +254,9 @@ dispatch_cmd        lda cmdline_lo
                     jsr getch
                     and #$df
                     cmp #'A'
-                    bcc L8304
+                    bcc +
                     cmp #'Z' + 1
-                    bcs L8304
+                    bcs +
 L82fc               pla
                     sta cmdline_hi
                     pla
@@ -255,7 +264,7 @@ L82fc               pla
                     sec
                     rts
                     
-L8304               jsr unget
++                   jsr unget
                     lda cmdjmp_lo
                     ora cmdjmp_hi
                     beq L82fc
@@ -269,13 +278,13 @@ call_cmd            jmp (cmdjmp_lo)
                     
 pr_muts             jsr prstr
                     !text "M-UTS 1.60", 13, 0
-L8326               rts
+                    rts
                     
 pr_banner           jsr newline
                     jsr pr_muts
                     jsr prstr
                     !text -2, "MONITOR", 13, 0
-L833a               rts
+                    rts
                     
 oswrch_counted      inc acc2_lo
                     jmp oswrch
@@ -487,12 +496,7 @@ L84b1               ror
                     bcc L84c3
                     pha
                     clc
-                    lda acc0_lo
-                    adc ptr0_lo
-                    sta acc0_lo
-                    lda acc0_hi
-                    adc ptr0_hi
-                    sta acc0_hi
+                    +adc16 acc0_lo, acc0_lo, ptr0_lo
                     pla
 L84c3               asl ptr0_lo
                     rol ptr0_hi
@@ -697,12 +701,7 @@ L864d               lsr acc0_hi
                     ror acc0_lo
                     bcc L8660
                     clc
-                    lda acc2_lo
-                    adc ptr0_lo
-                    sta ptr0_lo
-                    lda acc2_hi
-                    adc ptr0_hi
-                    sta ptr0_hi
+                    +adc16 ptr0_lo, acc2_lo, ptr0_lo
 L8660               asl acc2_lo
                     rol acc2_hi
                     dey
@@ -1592,19 +1591,15 @@ L8d48               ldy #0
                     sbc acc2_hi
                     bcc L8d8e
                     clc
-                    lda acc2_lo
-                    adc acc0_lo
-                    sta acc2_lo
-                    lda acc2_hi
-                    adc acc0_hi
-                    sta acc2_hi
+                    +adc16 acc2_lo, acc2_lo, acc0_lo
+                    ; lda acc2_lo
+                    ; adc acc0_lo
+                    ; sta acc2_lo
+                    ; lda acc2_hi
+                    ; adc acc0_hi
+                    ; sta acc2_hi
                     clc
-                    lda ptr0_lo
-                    adc acc0_lo
-                    sta ptr0_lo
-                    lda ptr0_hi
-                    adc acc0_hi
-                    sta ptr0_hi
+                    +adc16 ptr0_lo, ptr0_lo, acc0_lo
                     +inc16 acc0_lo
 L8d74               lda (acc2_lo), y
                     sta (ptr0_lo), y
