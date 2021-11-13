@@ -188,7 +188,7 @@ cmd_table           !text "ASSEMBL", 'E' + $80
                     ; NOT
                     !text "NO", 'T' + $80
                     !word $0000, $0000 
-                    !hex 00 
+                    !text 0
 
 help_table                    
 h_assemble          !text "<fsp> <fsp", '>' + $80
@@ -199,8 +199,7 @@ h_clr               !text "(<addr>", ')' + $80
 h_dis               !text "<strt>(..<end>) (H<prefix>"
                     !text ") (P,L", ')' + $80
 h_edit              !text "<addr", '>' + $80
-h_flist             !hex 28 
-                    !text "<number>", ')' + $80
+h_flist             !text "(<number>", ')' + $80
 h_form              !text "<tracks> (<drv>", ')' + $80
 h_find              !text "<strt>(..<end>) <byte string", '>' + $80
 h_get               !text "<track> (<drv>", ')' + $80
@@ -208,20 +207,19 @@ h_go                !text "<addr> (<A>) (<X>) (<Y>", ')' + $80
 h_look              !text "<addr> (H<prefix>", ')' + $80
 h_mem               !text "<strt>(..<end>) (P,L", ')' + $80
 h_mode              !text "<mode", '>' + $80
-h_monitor           !hex a0 
+h_monitor           !text ' ' + $80
 h_move              !text "(>) <src> <dest> <len> (<addr>", ')' + $80
 h_onbrk             !text "<command line", '>' + $80
 h_put               !text "<track> (<drv>", ')' + $80
-h_regs              !hex a0 
+h_regs              !text ' ' + $80
 h_same              !text "<addr> <addr> <len", '>' + $80
 h_select            !text "<rom number", '>' + $80
 h_set               !text "<addr", '>' + $80
 h_step              !text "<addr> (H<prefix>) (P,L", ')' + $80
 h_vdu               !text "<byte string", '>' + $80
-h_verify            !hex 28 
-                    !text "<drv>", ')' + $80
-h_where             !hex a0 
-                    !hex 00 
+h_verify            !text "(<drv>", ')' + $80
+h_where             !text ' ' + $80
+                    !text 0
                     
 c_assemble          lda x_present
                     cmp #$ff
@@ -263,15 +261,13 @@ L8304               jsr unget
 call_cmd            jmp (cmdjmp_lo)
                     
 pr_muts             jsr prstr
-                    ; "M-UTS 1.60"
                     !text "M-UTS 1.60", 13, 0
 L8326               rts
                     
 pr_banner           jsr newline
                     jsr pr_muts
                     jsr prstr
-                    ; "MONITOR"
-                    !text $fe, "MONITOR", 13, 0
+                    !text -2, "MONITOR", 13, 0
 L833a               rts
                     
 oswrch_counted      inc acc2_lo
@@ -3701,11 +3697,11 @@ symtab              !word oswrch
                     !text "brkv+", '1' + $80
                     !word wrchv 
                     !text "wrch", 'v' + $80
-                    !word $020f 
+                    !word wrchv + 1
                     !text "wrchv+", '1' + $80
                     !word rdchv 
                     !text "rdch", 'v' + $80
-                    !word $0211 
+                    !word rdchv + 1
                     !text "rdchv+", '1' + $80
                     !word $0100 
                     !text "stac", 'k' + $80
@@ -3714,6 +3710,7 @@ symtab              !word oswrch
                     !word L8003 
                     !text "serv", 'e' + $80
                     !word $0000 
+
 credits             !text "(C) Andrew Armstrong 1984. Thanks to Nigel, Joe and all at HCCS."
                     !text "Version 1.60 12.2.1984"
                     !text "                                                          "
