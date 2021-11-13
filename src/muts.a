@@ -72,11 +72,11 @@
 !addr x_assemble = $a001
 !addr x_eval = $a004
 
-
 L8000               jmp language
                     
 L8003               jmp service
-                    
+
+
                     ; ROM type
                     !hex c2 
                     ; Copyright offset
@@ -229,7 +229,9 @@ c_assemble          lda x_present
 throw_noasm         jsr throw
                     ; "No Assembler"
                     !hex a0 4e 6f 20 61 73 73 65 6d 62 6c 65 72 00 
-                    
+
+                    ; +throw $a0, "No Assembler"
+
 dispatch_cmd        lda cmdline_lo
                     pha
                     lda cmdline_hi
