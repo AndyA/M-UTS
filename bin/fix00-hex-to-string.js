@@ -6,12 +6,17 @@ async function readSource(src) {
 }
 
 const isPrint = c => c >= 32 && c < 127;
-const isCtrl = c => c === 13 || c === 10 || c === 0;
 
 const isHiLastByte = bytes => {
   const b = [...bytes];
   const lb = b.pop();
   return lb >= 0x80 && b.every(isPrint) && isPrint(lb & 0x7f);
+};
+
+const isNegSpace = bytes => {
+  const b = [...bytes];
+  const lb = b.pop();
+  return lb === 0 && b.every(bb => isPrint(b) || b > 0xa0);
 };
 
 function acmeStringParts(bytes) {
@@ -46,7 +51,12 @@ function acmeString(bytes) {
   if (isHiLastByte(bytes)) {
     const lb = parts.pop();
     parts.push([`'${String.fromCharCode(lb & 0x7f)}' + $80`]);
+  } else if (isNegSpace(bytes)) {
+    return acmeStringFormat(
+      parts.map(p => (typeof p === "number" && p > 0 ? p - 256 : p))
+    );
   }
+
   return acmeStringFormat(parts);
 }
 
@@ -59,13 +69,24 @@ function fixHex(line) {
   return `${prefix}!text ${rep}`;
 }
 
+function fixDelta(line, key) {
+  const re = new RegExp(";\\s*" + key + "([-+])");
+  const m = line.match(re);
+  if (!m) return 0;
+  return m[1] == "+" ? 1 : -1;
+}
+
 async function main(args) {
   for (const src of args) {
     const lines = await readSource(src);
+    let fixing = 0;
     for (let l = 0; l < lines.length; l++) {
       const line = lines[l];
-      const nl = fixHex(line);
-      lines[l] = nl;
+      fixing += fixDelta(line, "fix00");
+      if (fixing >= 0) {
+        const nl = fixHex(line);
+        lines[l] = nl;
+      }
     }
     console.log(lines.join("\n"));
   }

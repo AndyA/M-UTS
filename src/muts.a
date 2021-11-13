@@ -83,9 +83,9 @@ rom_type            !byte %11000010
 copyright_offset    !byte copyright - L8000 - 1
                     ; Version
                     !byte 2 
-title               !hex 4d 2d 55 54 53 00 
-version             !hex 31 2e 36 30 00 
-copyright           !hex 28 43 29 20 41 49 41 41 20 31 39 38 34 00 
+title               !text "M-UTS", 0
+version             !text "1.60", 0
+copyright           !text "(C) AIAA 1984", 0
 j_prstr             jmp prstr
                     
 j_throw             jmp throw
@@ -122,104 +122,104 @@ j_x0                jmp $0000
                     
 j_x1                jmp $0000
                     
-cmd_table           !hex 41 53 53 45 4d 42 4c c5 
+cmd_table           !text "ASSEMBL", 'E' + $80
                     !word c_assemble, h_assemble 
-                    !hex 42 41 53 c5 
+                    !text "BAS", 'E' + $80
                     !word c_base, h_base 
-                    !hex 43 41 4c c3 
+                    !text "CAL", 'C' + $80
                     !word c_calc, h_calc 
-                    !hex 43 48 41 4e 47 c5 
+                    !text "CHANG", 'E' + $80
                     !word c_change, h_change 
-                    !hex 43 4c d2 
+                    !text "CL", 'R' + $80
                     !word c_clr, h_clr 
-                    !hex 44 49 d3 
+                    !text "DI", 'S' + $80
                     !word c_dis, h_dis 
-                    !hex 45 44 49 d4 
+                    !text "EDI", 'T' + $80
                     !word c_edit, h_edit 
-                    !hex 46 4c 49 53 d4 
+                    !text "FLIS", 'T' + $80
                     !word c_flist, h_flist 
-                    !hex 46 4f 52 cd 
+                    !text "FOR", 'M' + $80
                     !word c_form, h_form 
-                    !hex 46 49 4e c4 
+                    !text "FIN", 'D' + $80
                     !word c_find, h_find 
-                    !hex 47 45 d4 
+                    !text "GE", 'T' + $80
                     !word c_get, h_get 
-                    !hex 47 cf 
+                    !text "G", 'O' + $80
                     !word c_go, h_go 
-                    !hex 4c 4f 4f cb 
+                    !text "LOO", 'K' + $80
                     !word c_look, h_look 
-                    !hex 4d 45 cd 
+                    !text "ME", 'M' + $80
                     !word c_mem, h_mem 
-                    !hex 4d 4f 44 c5 
+                    !text "MOD", 'E' + $80
                     !word c_mode, h_mode 
-                    !hex 4d 4f 4e 49 54 4f d2 
+                    !text "MONITO", 'R' + $80
                     !word c_monitor, h_monitor 
-                    !hex 4d 4f 56 c5 
+                    !text "MOV", 'E' + $80
                     !word c_move, h_move 
-                    !hex 4f 4e 42 52 cb 
+                    !text "ONBR", 'K' + $80
                     !word c_onbrk, h_onbrk 
-                    !hex 50 55 d4 
+                    !text "PU", 'T' + $80
                     !word c_put, h_put 
-                    !hex 52 45 47 d3 
+                    !text "REG", 'S' + $80
                     !word c_regs, h_regs 
-                    !hex 53 41 4d c5 
+                    !text "SAM", 'E' + $80
                     !word c_same, h_same 
-                    !hex 53 45 4c 45 43 d4 
+                    !text "SELEC", 'T' + $80
                     !word c_select, h_select 
-                    !hex 53 45 d4 
+                    !text "SE", 'T' + $80
                     !word c_set, h_set 
-                    !hex 53 54 45 d0 
+                    !text "STE", 'P' + $80
                     !word c_step, h_step 
-                    !hex 56 44 d5 
+                    !text "VD", 'U' + $80
                     !word c_vdu, h_vdu 
-                    !hex 56 45 52 49 46 d9 
+                    !text "VERIF", 'Y' + $80
                     !word c_verify, h_verify 
-                    !hex 57 48 45 52 c5 
+                    !text "WHER", 'E' + $80
                     !word c_where, h_where 
                     ; AND
-                    !hex 41 4e c4 
+                    !text "AN", 'D' + $80
                     !word $0000, $0000 
                     ; OR
-                    !hex 4f d2 
+                    !text "O", 'R' + $80
                     !word $0000, $0000 
                     ; EOR
-                    !hex 45 4f d2 
+                    !text "EO", 'R' + $80
                     !word $0000, $0000 
                     ; NOT
-                    !hex 4e 4f d4 
+                    !text "NO", 'T' + $80
                     !word $0000, $0000 
                     !hex 00 
 
 help_table                    
-h_assemble          !hex 3c 66 73 70 3e 20 3c 66 73 70 be 
-h_base              !hex 3c 61 64 64 72 be 
-h_calc              !hex 3c 65 78 70 72 be 
-h_change            !hex 3c 61 64 64 72 3e 20 3c 62 79 74 65 20 73 74 72 69 6e 67 be 
-h_clr               !hex 28 3c 61 64 64 72 3e a9 
-h_dis               !hex 3c 73 74 72 74 3e 28 2e 2e 3c 65 6e 64 3e 29 20 28 48 3c 70 72 65 66 69 78 3e 
-                    !hex 29 20 28 50 2c 4c a9 
-h_edit              !hex 3c 61 64 64 72 be 
+h_assemble          !text "<fsp> <fsp", '>' + $80
+h_base              !text "<addr", '>' + $80
+h_calc              !text "<expr", '>' + $80
+h_change            !text "<addr> <byte string", '>' + $80
+h_clr               !text "(<addr>", ')' + $80
+h_dis               !text "<strt>(..<end>) (H<prefix>"
+                    !text ") (P,L", ')' + $80
+h_edit              !text "<addr", '>' + $80
 h_flist             !hex 28 
-                    !hex 3c 6e 75 6d 62 65 72 3e a9 
-h_form              !hex 3c 74 72 61 63 6b 73 3e 20 28 3c 64 72 76 3e a9 
-h_find              !hex 3c 73 74 72 74 3e 28 2e 2e 3c 65 6e 64 3e 29 20 3c 62 79 74 65 20 73 74 72 69 6e 67 be 
-h_get               !hex 3c 74 72 61 63 6b 3e 20 28 3c 64 72 76 3e a9 
-h_go                !hex 3c 61 64 64 72 3e 20 28 3c 41 3e 29 20 28 3c 58 3e 29 20 28 3c 59 3e a9 
-h_look              !hex 3c 61 64 64 72 3e 20 28 48 3c 70 72 65 66 69 78 3e a9 
-h_mem               !hex 3c 73 74 72 74 3e 28 2e 2e 3c 65 6e 64 3e 29 20 28 50 2c 4c a9 
-h_mode              !hex 3c 6d 6f 64 65 be 
+                    !text "<number>", ')' + $80
+h_form              !text "<tracks> (<drv>", ')' + $80
+h_find              !text "<strt>(..<end>) <byte string", '>' + $80
+h_get               !text "<track> (<drv>", ')' + $80
+h_go                !text "<addr> (<A>) (<X>) (<Y>", ')' + $80
+h_look              !text "<addr> (H<prefix>", ')' + $80
+h_mem               !text "<strt>(..<end>) (P,L", ')' + $80
+h_mode              !text "<mode", '>' + $80
 h_monitor           !hex a0 
-h_move              !hex 28 3e 29 20 3c 73 72 63 3e 20 3c 64 65 73 74 3e 20 3c 6c 65 6e 3e 20 28 3c 61 64 64 72 3e a9 
-h_onbrk             !hex 3c 63 6f 6d 6d 61 6e 64 20 6c 69 6e 65 be 
-h_put               !hex 3c 74 72 61 63 6b 3e 20 28 3c 64 72 76 3e a9 
+h_move              !text "(>) <src> <dest> <len> (<addr>", ')' + $80
+h_onbrk             !text "<command line", '>' + $80
+h_put               !text "<track> (<drv>", ')' + $80
 h_regs              !hex a0 
-h_same              !hex 3c 61 64 64 72 3e 20 3c 61 64 64 72 3e 20 3c 6c 65 6e be 
-h_select            !hex 3c 72 6f 6d 20 6e 75 6d 62 65 72 be 
-h_set               !hex 3c 61 64 64 72 be 
-h_step              !hex 3c 61 64 64 72 3e 20 28 48 3c 70 72 65 66 69 78 3e 29 20 28 50 2c 4c a9 
-h_vdu               !hex 3c 62 79 74 65 20 73 74 72 69 6e 67 be 
+h_same              !text "<addr> <addr> <len", '>' + $80
+h_select            !text "<rom number", '>' + $80
+h_set               !text "<addr", '>' + $80
+h_step              !text "<addr> (H<prefix>) (P,L", ')' + $80
+h_vdu               !text "<byte string", '>' + $80
 h_verify            !hex 28 
-                    !hex 3c 64 72 76 3e a9 
+                    !text "<drv>", ')' + $80
 h_where             !hex a0 
                     !hex 00 
                     
@@ -264,14 +264,14 @@ call_cmd            jmp (cmdjmp_lo)
                     
 pr_muts             jsr prstr
                     ; "M-UTS 1.60"
-                    !hex 4d 2d 55 54 53 20 31 2e 36 30 0d 00 
+                    !text "M-UTS 1.60", 13, 0
 L8326               rts
                     
 pr_banner           jsr newline
                     jsr pr_muts
                     jsr prstr
                     ; "MONITOR"
-                    !hex fe 4d 4f 4e 49 54 4f 52 0d 00 
+                    !text $fe, "MONITOR", 13, 0
 L833a               rts
                     
 oswrch_counted      inc acc2_lo
@@ -291,7 +291,7 @@ L8355               lda #$02
                     tya
                     pha
                     jsr prstr
-                    !hex fe 00 
+                    !text -2, 0
 L8360               pla
                     tay
 L8362               lda cmd_table, y
@@ -374,7 +374,7 @@ check_escape        bit esc_flag
                     
 throw_escape        jsr throw
                     ; "Escape"
-                    !hex 11 45 73 63 61 70 65 00 
+                    !text 17, "Escape", 0
                     
 hexbyte             pha
                     ror
@@ -529,7 +529,7 @@ eval_atom           tsx
                     bcs L850b
                     jsr throw
                     ; "Formula too complex"
-                    !hex a1 46 6f 72 6d 75 6c 61 20 74 6f 6f 20 63 6f 6d 70 6c 65 78 00 
+                    !text $a1, "Formula too complex", 0
                     
 L850b               jsr lookup_token
                     ; - = negate term
@@ -599,7 +599,7 @@ L8568               cmp #$9e
 L857b               rts
                     
 L857c               jsr throw
-                    !hex a2 42 61 64 20 62 61 73 65 00 
+                    !text $a2, "Bad base", 0
                     
                     ; ( = nested
 L8589               cmp #$28
@@ -620,7 +620,7 @@ L8595               cmp #$5a
                     cmp ptr0_lo
                     beq L857b
                     jsr throw
-                    !hex a3 4d 69 73 73 69 6e 67 20 62 72 61 63 6b 65 74 00 
+                    !text $a3, "Missing bracket", 0
                     ; ' = char const
 L85bb               cmp #$27
                     bne L85ce
@@ -641,7 +641,7 @@ L85ce               cmp #$3a
                     bcs L85ec
 throw_badvar        jsr throw
                     ; "Bad variable"
-                    !hex a4 42 61 64 20 76 61 72 69 61 62 6c 65 00 
+                    !text $a4, "Bad variable", 0
 L85ec               cmp #$5b
                     bcs throw_badvar
                     asl
@@ -904,7 +904,7 @@ eval_byte           lda acc0_lo
                     beq L87ac
                     jsr throw
                     ; "Byte out of range"
-                    !hex a5 42 79 74 65 20 6f 75 74 20 6f 66 20 72 61 6e 67 65 00 
+                    !text $a5, "Byte out of range", 0
 L87ac               pla
                     sta acc0_hi
                     pla
@@ -993,7 +993,7 @@ L881d               inx
                     jmp getch
                     
                     ; "Syntax: "
-syntax_prefix       !hex 53 79 6e 74 61 78 3a 20 
+syntax_prefix       !text "Syntax: "
 check_eol           jsr skip_space
                     bne syntax_error
                     rts
@@ -1007,7 +1007,7 @@ syntax_error        ldx #$00
                     bne L8867
                     jsr throw
                     ; "Bad expression"
-                    !hex a6 42 61 64 20 65 78 70 72 65 73 73 69 6f 6e 00 
+                    !text $a6, "Bad expression", 0
 L8867               lda syntax_prefix, x
                     sta $0102, x
                     inx
@@ -1088,7 +1088,7 @@ try_poke            ldy #$00
                     beq L891a
                     jsr throw
                     ; "Read only memory"
-                    !hex a7 52 65 61 64 20 6f 6e 6c 79 20 6d 65 6d 6f 72 79 00 
+                    !text $a7, "Read only memory", 0
 L891a               inc ptr0_lo
                     bne L8920
                     inc ptr0_hi
@@ -1188,7 +1188,7 @@ enable_printer      lda #$0f
                     
 throw_noprinter     jsr throw
                     ; "No printer"
-                    !hex a8 4e 6f 20 70 72 69 6e 74 65 72 00 
+                    !text $a8, "No printer", 0
                     
 parse_range         jsr eval
                     jsr acc0_to_acc2
@@ -1210,7 +1210,7 @@ L8a09               jmp eval
                     
 reset_terminal      jsr prstr
                     ; disable printer, page mode off
-                    !hex 03 0f 00 
+                    !text 3, 15, 0
 L8a12               rts
                     
 calc_columns        jsr osnewl
@@ -1231,14 +1231,14 @@ ram_warning         txa
                     pha
                     jsr prstr
                     ; "RAM from "
-                    !hex 52 41 4d 20 66 72 6f 6d 20 00 
+                    !text "RAM from ", 0
 L8a3c               pla
                     jsr hexbyte
                     tya
                     jsr hexbyte_space
                     jsr prstr
                     ; "to "
-                    !hex 74 6f 20 00 
+                    !text "to ", 0
 L8a4b               pla
                     jsr hexbyte
                     tya
@@ -1246,10 +1246,10 @@ L8a4b               pla
 L8a54 = * + 1       
 L8a53               jsr prstr
                     ; "will be corrupted"
-                    !hex 77 69 6c 6c 20 62 65 20 63 6f 72 72 75 70 74 65 64 0d 00 
+                    !text "will be corrupted", 13, 0
 ask_continue        jsr prstr
                     ; "continue (Y/N) ?"
-                    !hex 63 6f 6e 74 69 6e 75 65 20 28 59 2f 4e 29 20 3f 20 00 
+                    !text "continue (Y/N) ? ", 0
 L8a7e               jsr osrdch
                     bcc L8a86
                     jmp throw_escape
@@ -1298,7 +1298,7 @@ readline_parms      !word $0700
                     !hex 20 
                     ; max char
                     !hex ff 
-empty               !hex 0d 00 00 00 
+empty               !text 13, 0, 0, 0
                     
                     ; ROM service entry
 language            cmp #$01
@@ -1412,7 +1412,7 @@ L8ba0               cmp #$5b
                     beq L8bbf
 throw_missingeq     jsr throw
                     ; "Missing ="
-                    !hex a9 4d 69 73 73 69 6e 67 20 3d 00 
+                    !text $a9, "Missing =", 0
 L8bbf               jsr eval
                     jsr check_eol
                     lda acc0_lo
@@ -1478,7 +1478,7 @@ bp_handler          pla
                     sta $041e
                     jsr prstr
                     ; "Break: PC = "
-                    !hex 42 72 65 61 6b 3a 20 50 43 20 3d 20 00 
+                    !text "Break: PC = ", 0
 L8c4d               lda acc0_hi
                     jsr hexbyte
                     lda acc0_lo
@@ -1512,7 +1512,7 @@ do_calc             jsr eval
                     bpl L8cc6
                     pha
                     jsr prstr
-                    !hex 0d 42 61 73 65 20 00 
+                    !text 13, "Base ", 0
 L8ca0               pla
                     pha
                     tay
@@ -1530,7 +1530,7 @@ L8ca0               pla
                     pla
                     sta acc0_lo
                     jsr prstr
-                    !hex 3a 20 00 
+                    !text ": ", 0
 L8cc0               pla
                     tay
                     ldx #$00
@@ -1577,7 +1577,7 @@ L8cf2               jsr eval
                     tya
                     pha
                     jsr prstr
-                    !hex 44 65 73 74 69 6e 61 74 69 6f 6e 20 3c 3d 20 00 
+                    !text "Destination <= ", 0
 L8d24               pla
                     jsr hexbyte
                     pla
@@ -1670,24 +1670,24 @@ check_cmd_mode      jsr get_private
                     bmi L8dcb
                     jsr throw
                     ; "Command mode only"
-                    !hex aa 43 6f 6d 6d 61 6e 64 20 6d 6f 64 65 20 6f 6e 6c 79 00 
+                    !text $aa, "Command mode only", 0
 
 ; fix00-
 addr_modes          !hex 0c 0f 14 16 1a 1e 22 29 30 32 34 38 
 ; fix00+
-                    !hex 48 31 00 
-                    !hex 48 31 2c 49 00 
-                    !hex 32 00 
-                    !hex 32 2c 49 00 
-                    !hex 32 2c 59 00 
-                    !hex 28 32 29 00 
-                    !hex 28 48 31 29 2c 59 00 
-                    !hex 28 48 31 2c 58 29 00 
-                    !hex 41 00 
-                    !hex 20 00 
-                    !hex 23 48 31 00 
-                    !hex 48 2b 00 
-                    !hex 0d 0c 
+                    !text "H1", 0
+                    !text "H1,I", 0
+                    !text "2", 0
+                    !text "2,I", 0
+                    !text "2,Y", 0
+                    !text "(2)", 0
+                    !text "(H1),Y", 0
+                    !text "(H1,X)", 0
+                    !text "A", 0
+                    !text " ", 0
+                    !text "#H1", 0
+                    !text "H+", 0
+                    !text 13, 12
 
 ; fix00-
                     ; first two bytes are 5 bits-per-char encodings of mnemonic
@@ -2013,7 +2013,7 @@ c_base              jsr check_cmd_mode
                     sta $0601
                     rts
                     
-copyright_marker    !hex 00 28 43 29 
+copyright_marker    !text 0, "(C)"
                     
 c_select            jsr check_cmd_mode
                     jsr eval_byte
@@ -2024,7 +2024,7 @@ c_select            jsr check_cmd_mode
                     bcc L9190
 L9184               jsr throw
                     ; "Bad ROM"
-                    !hex ab 42 61 64 20 52 4f 4d 00 
+                    !text $ab, "Bad ROM", 0
 L9190               sta $0602
                     lda #< copyright_offset
                     sta acc2_lo
@@ -2048,7 +2048,7 @@ L91a2               txa
                     sta acc2_lo
                     jsr prstr
                     ; "Rom: "
-                    !hex 52 6f 6d 3a 20 00 
+                    !text "Rom: ", 0
 L91c1               jsr read_rom
                     jsr oswrch
                     bne L91c1
@@ -2158,8 +2158,8 @@ L9278               tsx
                     beq service_exit
 L9285               jmp service_done
                     
-regnames            !hex 41 58 59 53 
-flagnames           !hex 6e 76 2e 62 64 69 7a 63 
+regnames            !text "AXYS"
+flagnames           !text "nv.bdizc"
                     
 show_regs           jsr check_eol
                     ldx #$00
@@ -2168,7 +2168,7 @@ L9299               lda regnames, x
                     jsr oswrch
                     jsr prstr
                     ; " : "
-                    !hex 20 3d 20 00 
+                    !text " = ", 0
                     
 L92a7               pla
                     asl
@@ -2180,7 +2180,7 @@ L92a7               pla
                     bcc L9299
                     jsr prstr
                     ; "\rP = "
-                    !hex 0d 50 20 3d 20 00 
+                    !text 13, "P = ", 0
                     
 show_flags          ldy #$00
                     lda $041e
@@ -2246,7 +2246,7 @@ c_where             jsr check_cmd_mode
                     jsr check_eol
                     jsr prstr
                     ; "Breakpoints:"
-                    !hex 42 72 65 61 6b 70 6f 69 6e 74 73 3a 0d 00 a2 00 
+                    !text "Breakpoints:", 13, 0, $a2, 0
 L934f = * + 2       
 L934d               lda breakpoints_lo, x
                     ora breakpoints_hi, x
@@ -2282,7 +2282,7 @@ L937f               lda breakpoints_lo, x
                     bcc L937f
                     jsr throw
                     ; "No room"
-                    !hex ac 4e 6f 20 72 6f 6f 6d 00 
+                    !text $ac, "No room", 0
 L939b               txa
                     pha
                     lda (acc0_lo), y
@@ -2325,7 +2325,7 @@ L93e1               inx
                     bcc L93c6
                     jsr throw
                     ; "Breakpoint not found"
-                    !hex ad 42 72 65 61 6b 70 6f 69 6e 74 20 6e 6f 74 20 66 6f 75 6e 64 00 
+                    !text $ad, "Breakpoint not found", 0
 L9402               ldx #$00
                     ldy #$00
 L9406               lda breakpoints_lo, x
@@ -2416,7 +2416,7 @@ L94a8               jsr unget
                     bcc L94c5
 throw_baddrive      jsr throw
                     ; "Bad drive"
-                    !hex ae 42 61 64 20 64 72 69 76 65 00 
+                    !text $ae, "Bad drive", 0
 L94c5               jsr star_drive
                     sta ptr0_lo
                     lda #$00
@@ -2463,7 +2463,7 @@ disk_size           lda cmdhelp_hi
                     sta cmdhelp_hi
                     rts
                     
-drive_cmd           !hex 44 52 49 56 45 20 
+drive_cmd           !text "DRIVE "
 star_drive          pha
                     ldx #$00
 L9529               lda drive_cmd, x
@@ -2495,12 +2495,12 @@ c_flist             jsr skip_space
                     bcc L956c
                     jsr throw
                     ; "Bad key"
-                    !hex fb 42 61 64 20 6b 65 79 00 
+                    !text $fb, "Bad key", 0
 L956c               tay
 show_fkey           sty acc0_lo
                     jsr prstr
                     ; "*KEY"
-                    !hex 2a 4b 45 59 00 
+                    !text "*KEY", 0
 L9577               jsr check_escape
                     ldx #$00
 L957c               stx acc0_hi
@@ -2513,7 +2513,7 @@ L957c               stx acc0_hi
                     lda #$8a
                     jsr osbyte
                     jsr prstr
-                    !hex fe 00 
+                    !text -2, 0
 L9594               lda #$04
                     ldx #$02
                     jsr osbyte
@@ -2608,7 +2608,7 @@ c_edit              jsr eval
                     jsr check_eol
                     jsr prstr
                     ; restore default windows, clear screen
-                    !hex 1a 0c 00 
+                    !text 26, 12, 0
 L9650               lda acc2_lo
                     pha
                     lda acc2_hi
@@ -2646,7 +2646,7 @@ L9689               lda #$05
                     sta acc2_lo
                     jsr prstr
                     ; move cursor home
-                    !hex 1e 00 
+                    !text 30, 0
                     ; setup keyboard
 L9698               lda #$04
                     ldx #$02
@@ -2861,7 +2861,7 @@ cursor_off          lda ptr0_lo
                     pha
                     jsr prstr
                     ; cursor off
-                    !hex 17 01 00 
+                    !text 23, 1, 0
 L981c               jmp L982c
                     
 cursor_on           lda ptr0_lo
@@ -2870,7 +2870,7 @@ cursor_on           lda ptr0_lo
                     pha
                     jsr prstr
                     ; cursor on
-                    !hex 17 01 01 00 
+                    !text 23, 1, 1, 0
 L982c               tya
                     ldx #$0a
 L982f               jsr oswrch
@@ -2923,12 +2923,12 @@ c_step              jsr check_cmd_mode
                     bcs L98c5
                     jsr throw
                     ; "Stack overflow"
-                    !hex af 53 74 61 63 6b 20 6f 76 65 72 66 6c 6f 77 00 
+                    !text $af, "Stack overflow", 0
 L98c5               txs
                     jsr prstr
                     ; "PC  A X Y P S Opcode"
 L98cc = * + 3       
-                    !hex 50 43 fd 41 fe 58 fe 59 fe 50 f8 53 fe 4f 70 63 6f 64 65 0d 00 
+                    !text "PC", $fd, "A", $fe, "X", $fe, "Y", $fe, "P", $f8, "S", $fe, "Opcode", 13, 0
 L98de               sty ptr0_lo
                     sty ptr0_hi
 step_next           inc $0410
@@ -3002,7 +3002,7 @@ step_execute        php
                     
 do_brk              jsr throw
                     ; "Halted"
-                    !hex b0 48 61 6c 74 65 64 00 
+                    !text $b0, "Halted", 0
                     
 do_jsr              jsr ex_or_step
                     bne step_execute
@@ -3046,7 +3046,7 @@ L99bb               sta $010c
                     
 ex_or_step          jsr prstr
                     ; "Execute or step (E/S) ?"
-                    !hex 45 78 65 63 75 74 65 ff 6f 72 ff 73 74 65 70 ff 28 45 2f 53 29 ff 3f ff 00 
+                    !text "Execute", $ff, "or", $ff, "step", $ff, "(E/S)", $ff, "?", $ff, 0
                     ; why?
 L99dd               sty ptr0_lo
                     sty ptr0_hi
@@ -3216,7 +3216,7 @@ parse_tracks        jsr skip_space
                     beq L9b28
 L9b14               jsr throw
                     ; "40 or 80 tracks"
-                    !hex b1 34 30 20 6f 72 20 38 30 20 74 72 61 63 6b 73 00 
+                    !text $b1, "40 or 80 tracks", 0
 L9b28               jsr getch
                     cmp #$30
                     bne L9b14
@@ -3325,7 +3325,7 @@ L9c0e               jsr wrap_sector
                     lda acc1_lo
                     jsr hexbyte
                     jsr prstr
-                    !hex fe 00 
+                    !text -2, 0
 L9c1e               ldy #$59
                     ldx #$0a
 L9c22               lda #$01
@@ -3372,7 +3372,7 @@ L9c22               lda #$01
                     beq L9c7b
                     jsr throw
                     ; "Format error"
-                    !hex b2 46 6f 72 6d 61 74 20 65 72 72 6f 72 00 
+                    !text $b2, "Format error", 0
 L9c7b               ldy #$1d
                     lda acc1_lo
                     sta (acc0_lo), y
@@ -3390,7 +3390,7 @@ L9c7b               ldy #$1d
                     beq L9ca8
                     jsr throw
                     ; "Verify error"
-                    !hex b3 56 65 72 69 66 79 20 65 72 72 6f 72 00 
+                    !text $b3, "Verify error", 0
 L9ca8               inc acc1_lo
                     lda acc1_lo
                     cmp acc2_lo
@@ -3499,7 +3499,7 @@ L9d5d               jsr get_put_parms
                     jsr prstr
                     ; "I/O result = "
 L9d68 = * + 2       
-                    !hex 49 2f 4f ff 72 65 73 75 6c 74 ff 3d ff 00 
+                    !text "I/O", $ff, "result", $ff, "=", $ff, 0
 L9d74               lda $010a
                     sta acc0_lo
                     sty acc0_hi
@@ -3515,7 +3515,7 @@ c_mode              jsr eval_byte
                     bcc L9d9d
                     jsr throw
                     ; "Bad MODE"
-                    !hex 19 42 61 64 20 4d 4f 44 45 00 
+                    !text 25, "Bad MODE", 0
 L9d9d               lda #$16
                     jsr oswrch
                     txa
@@ -3662,57 +3662,58 @@ L9e94               pla
                     rts
                     
 symtab              !word oswrch 
-                    !hex 4f 53 57 52 43 c8 
+                    !text "OSWRC", 'H' + $80
                     !word osrdch 
-                    !hex 4f 53 52 44 43 c8 
+                    !text "OSRDC", 'H' + $80
                     !word osnewl 
-                    !hex 4f 53 4e 45 57 cc 
+                    !text "OSNEW", 'L' + $80
                     !word osasci 
-                    !hex 4f 53 41 53 43 c9 
+                    !text "OSASC", 'I' + $80
                     !word $ffc2 
-                    !hex 47 53 49 4e 49 d4 
+                    !text "GSINI", 'T' + $80
                     !word $ffc5 
-                    !hex 47 53 52 45 41 c4 
+                    !text "GSREA", 'D' + $80
                     !word $ffb9 
-                    !hex 4f 53 52 44 52 cd 
+                    !text "OSRDR", 'M' + $80
                     !word $ffbf 
-                    !hex 4f 53 45 56 45 ce 
+                    !text "OSEVE", 'N' + $80
                     !word oscli 
-                    !hex 4f 53 43 4c c9 
+                    !text "OSCL", 'I' + $80
                     !word osbyte 
-                    !hex 4f 53 42 59 54 c5 
+                    !text "OSBYT", 'E' + $80
                     !word osword 
-                    !hex 4f 53 57 4f 52 c4 
+                    !text "OSWOR", 'D' + $80
                     !word osfind 
-                    !hex 4f 53 46 49 4e c4 
+                    !text "OSFIN", 'D' + $80
                     !word osgbpb 
-                    !hex 4f 53 47 42 50 c2 
+                    !text "OSGBP", 'B' + $80
                     !word osbput 
-                    !hex 4f 53 42 50 55 d4 
+                    !text "OSBPU", 'T' + $80
                     !word osbget 
-                    !hex 4f 53 42 47 45 d4 
+                    !text "OSBGE", 'T' + $80
                     !word osargs 
-                    !hex 4f 53 41 52 47 d3 
+                    !text "OSARG", 'S' + $80
                     !word osfile 
-                    !hex 4f 53 46 49 4c c5 
+                    !text "OSFIL", 'E' + $80
                     !word brkv 
-                    !hex 62 72 6b f6 
+                    !text "brk", 'v' + $80
                     !word $0203 
-                    !hex 62 72 6b 76 2b b1 
+                    !text "brkv+", '1' + $80
                     !word wrchv 
-                    !hex 77 72 63 68 f6 
+                    !text "wrch", 'v' + $80
                     !word $020f 
-                    !hex 77 72 63 68 76 2b b1 
+                    !text "wrchv+", '1' + $80
                     !word rdchv 
-                    !hex 72 64 63 68 f6 
+                    !text "rdch", 'v' + $80
                     !word $0211 
-                    !hex 72 64 63 68 76 2b b1 
+                    !text "rdchv+", '1' + $80
                     !word $0100 
-                    !hex 73 74 61 63 eb 
+                    !text "stac", 'k' + $80
                     !word L8000 
-                    !hex 6c 61 6e e7 
+                    !text "lan", 'g' + $80
                     !word L8003 
-                    !hex 73 65 72 76 e5 
+                    !text "serv", 'e' + $80
                     !word $0000 
-credits             !hex 28 43 29 20 41 6e 64 72 65 77 20 41 72 6d 73 74 72 6f 6e 67 20 31 39 38 34 2e 20 54 68 61 6e 6b 73 20 74 6f 20 4e 69 67 65 6c 2c 20 4a 6f 65 20 61 6e 64 20 61 6c 6c 20 61 74 20 48 43 43 53 2e 56 65 72 73 69 6f 6e 20 31 2e 36 30 20 31 32 2e 32 2e 31 39 38 34 
-                    !hex 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 
+credits             !text "(C) Andrew Armstrong 1984. Thanks to Nigel, Joe and all at HCCS.Version 1.60 12.2.1984"
+                    !text "                                                          "
+
