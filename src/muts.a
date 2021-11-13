@@ -168,7 +168,7 @@ cmd_table           !text "ASSEMBL", 'E' + $80
                     ; Command table also used for operator names
 
                     ; AND
-                    !text "AN", 'D' + $80
+op_and              !text "AN", 'D' + $80
                     !word 0, 0 
                     ; OR
                     !text "O", 'R' + $80
@@ -650,8 +650,9 @@ L8607               jsr unget
                     jsr skip_space
                     jsr to_upper
                     ; k suffix?
-                    cmp #$4b
+                    cmp #'K'
                     bne L8626
+                    ; multiply by 1024
                     lda acc0_lo
                     asl
                     asl
@@ -667,7 +668,7 @@ L8629               jmp syntax_error
 eval_b              jsr eval_atom
                     jsr skip_space
                     ; * = multiply
-                    cmp #$2a
+                    cmp #'*'
                     bne L866a
                     lda acc0_lo
                     pha
@@ -699,7 +700,7 @@ L8660               asl acc2_lo
                     jmp L867f
                     
                     ; / = divide
-L866a               cmp #$2f
+L866a               cmp #'/'
                     bne L8678
                     jsr divmod
                     lda acc2_lo
@@ -707,7 +708,7 @@ L866a               cmp #$2f
                     jmp L8683
                     
                     ; % = mod
-L8678               cmp #$25
+L8678               cmp #'%'
                     bne L8688
                     jsr divmod
 L867f               lda ptr0_lo
@@ -721,7 +722,7 @@ L8688               jmp unget
 eval_c              jsr eval_b
                     jsr skip_space
                     ; + = add
-                    cmp #$2b
+                    cmp #'+'
                     bne L86aa
                     lda acc0_hi
                     pha
@@ -738,7 +739,7 @@ eval_c              jsr eval_b
                     rts
                     
                     ; - = subtract
-L86aa               cmp #$2d
+L86aa               cmp #'-'
                     bne L86c3
                     lda acc0_hi
                     pha
@@ -765,7 +766,7 @@ divmod              lda acc0_lo
                     sta acc2_hi
                     pla
                     sta acc2_lo
-                    ldy #$10
+                    ldy #16
                     lda #0
                     sta ptr0_lo
                     sta ptr0_hi
@@ -789,7 +790,7 @@ L86fd               dey
                     bne L86dd
                     rts
                     
-eval_hex            lda #$10
+eval_hex            lda #16
                     sta acc1_lo
 eval_d              jsr eval_c
                     jsr lookup_token
@@ -898,7 +899,7 @@ L87ac               pla
                     rts
                     
 skip_comma          jsr skip_space
-                    cmp #$2c
+                    cmp #','
                     beq L87be
                     jmp unget
                     
@@ -952,7 +953,7 @@ L8809               lda cmd_table, x
                     sta cmdjmp_lo, y
                     inx
                     iny
-                    cpy #$04
+                    cpy #4
                     bcc L8809
                     lda acc1_hi
                     rts
@@ -967,7 +968,7 @@ L881d               inx
                     bpl L881d
                     inx
                     lda (cmdline_lo), y
-                    cmp #$2e
+                    cmp #'.'
                     beq lc_match
                     inx
                     inx
@@ -1006,7 +1007,7 @@ L8872               lda cmd_table, y
                     inx
                     plp
                     bpl L8872
-                    lda #$20
+                    lda #' '
                     sta $0102, x
                     ldy #0
 L8887               lda (cmdhelp_lo), y
@@ -1032,7 +1033,7 @@ L88a8               jsr getch
                     jsr getch
                     cmp #$22
                     bne L88c0
-L88b6               cmp #$0d
+L88b6               cmp #13
                     beq L88e4
                     jsr try_poke
                     jmp L88a8
@@ -1040,11 +1041,11 @@ L88b6               cmp #$0d
 L88c0               jsr unget
                     jsr skip_space
                     ; $ = peek?
-                    cmp #$24
+                    cmp #'$'
                     beq L88e7
                     jsr unget
                     jsr skip_space
-                    cmp #$0d
+                    cmp #13
 L88d2               bne L88d5
                     rts
                     
@@ -1060,7 +1061,7 @@ L88e7               jsr eval
                     ldy #0
 L88ec               lda (acc0_lo), y
                     iny
-                    cmp #$0d
+                    cmp #13
                     beq parse_bytes_tail
                     sty acc1_lo
                     jsr try_poke
@@ -1126,20 +1127,20 @@ c_change            jsr eval
                     
 print_or_page       jsr skip_space
                     beq L89a0
-                    cmp #$2c
+                    cmp #','
                     beq print_or_page
                     and #$df
-                    cmp #$50
+                    cmp #'P'
                     bne L898f
-                    lda #$0e
+                    lda #14
                     jsr oswrch
                     bne print_or_page
-L898f               cmp #$4c
+L898f               cmp #'L'
                     bne L8999
                     jsr enable_printer
                     jmp print_or_page
                     
-L8999               cmp #$0d
+L8999               cmp #13
                     beq L89a0
                     jmp syntax_error
                     
@@ -1153,14 +1154,14 @@ enable_printer      lda #$0f
                     lda #$02
                     jsr oswrch
                     jsr skip_space
-                    cmp #$2a
+                    cmp #'*'
                     beq L89a0
                     jsr unget
-                    lda #$20
+                    lda #' '
                     jsr oswrch
-                    lda #$0d
+                    lda #13
                     jsr oswrch
-                    lda #$03
+                    lda #3
                     jsr oswrch
                     lda #$80
                     dey
@@ -1168,7 +1169,7 @@ enable_printer      lda #$0f
                     jsr osbyte
                     cpx #$3f
                     bne throw_noprinter
-                    lda #$02
+                    lda #2
                     jmp oswrch
                     
 throw_noprinter     jsr throw
@@ -1178,14 +1179,15 @@ throw_noprinter     jsr throw
 parse_range         jsr eval
                     jsr acc0_to_acc2
                     jsr skip_space
-                    cmp #$2e
+                    cmp #'.'
                     bne L89ff
                     jsr skip_space
-                    cmp #$2e
+                    cmp #'.'
                     beq L8a09
                     jmp syntax_error
                     
 L89ff               jsr unget
+                    ; $ffff = end of memory
                     lda #$ff
                     sta acc0_lo
                     sta acc0_hi
@@ -1199,13 +1201,13 @@ reset_terminal      jsr prstr
 L8a12               rts
                     
 calc_columns        jsr osnewl
-                    lda #$08
+                    lda #8
                     jsr oswrch
                     lda #$86
                     jsr osbyte
                     jsr newline
-                    lda #$10
-                    cpx #$4f
+                    lda #16
+                    cpx #80 - 1
                     beq L8a2a
                     lsr
 L8a2a               rts
@@ -1215,34 +1217,29 @@ ram_warning         txa
                     tya
                     pha
                     jsr prstr
-                    ; "RAM from "
                     !text "RAM from ", 0
 L8a3c               pla
                     jsr hexbyte
                     tya
                     jsr hexbyte_space
                     jsr prstr
-                    ; "to "
                     !text "to ", 0
 L8a4b               pla
                     jsr hexbyte
                     tya
                     jsr hexbyte_space
-L8a54 = * + 1       
 L8a53               jsr prstr
-                    ; "will be corrupted"
                     !text "will be corrupted", 13, 0
 ask_continue        jsr prstr
-                    ; "continue (Y/N) ?"
                     !text "continue (Y/N) ? ", 0
 L8a7e               jsr osrdch
                     bcc L8a86
                     jmp throw_escape
                     
 L8a86               and #$df
-                    cmp #$59
+                    cmp #'Y'
                     beq L8a8e
-                    lda #$4e
+                    lda #'N'
 L8a8e               jsr oswrch
                     pha
                     jsr newline
@@ -1251,7 +1248,7 @@ L8a8e               jsr oswrch
 L8a97               rts
                     
 c_monitor           jsr skip_space
-                    cmp #$0d
+                    cmp #13
                     beq L8ace
                     jsr unget
                     lda cmdline_lo
@@ -1278,20 +1275,21 @@ L8ace               ldx cur_rom
                     ; address
 readline_parms      !word $0700 
                     ; length
-                    !hex 9e 
+                    !byte 160 - 2
                     ; min char
-                    !hex 20 
+                    !byte ' '
                     ; max char
-                    !hex ff 
+                    !byte $ff
+
 empty               !text 13, 0, 0, 0
                     
                     ; ROM service entry
-language            cmp #$01
+language            cmp #1
                     bne L8a97
                     lda #< brk_handler
                     sta brkv
                     lda #> brk_handler
-                    sta $0203
+                    sta brkv + 1
                     lda #0
                     ldx #$3f
                     sta $0600
@@ -1320,7 +1318,7 @@ brk_handler         txa
                     ldx #0
                     lda err_lo
                     sec
-                    sbc #$01
+                    sbc #1
                     sta acc0_lo
                     lda err_hi
                     sbc #0
@@ -1346,7 +1344,7 @@ L8b3f               inx
 L8b51               lda (err_lo), y
                     beq L8b63
                     iny
-                    cmp #$20
+                    cmp #' '
                     bcc L8b51
                     cmp #$7f
                     beq L8b51
@@ -1378,15 +1376,15 @@ L8b87               ldx #$07
                     jsr skip_space
                     beq repl
                     ; :<var> =
-                    cmp #$3a
+                    cmp #':'
                     bne L8bd2
                     jsr skip_space
                     and #$df
-                    cmp #$41
+                    cmp #'A'
                     bcs L8ba0
 L8b9d               jmp throw_badvar
                     
-L8ba0               cmp #$5b
+L8ba0               cmp #'Z' + 1
                     bcs L8b9d
                     asl
                     tax
@@ -1396,7 +1394,6 @@ L8ba0               cmp #$5b
                     cmp #$3d
                     beq L8bbf
 throw_missingeq     jsr throw
-                    ; "Missing ="
                     !text $a9, "Missing =", 0
 L8bbf               jsr eval
                     jsr check_eol
@@ -1407,7 +1404,7 @@ L8bbf               jsr eval
                     jmp repl
                     
                     ; / = set prompt
-L8bd2               cmp #$2f
+L8bd2               cmp #'/'
                     bne L8bed
                     ldx #0
 L8bd8               jsr getch
@@ -1421,13 +1418,13 @@ L8be5               lda #0
                     jmp repl
                     
                     ; ? = show help
-L8bed               cmp #$3f
+L8bed               cmp #'?'
                     bne L8bf7
                     jsr show_help
                     jmp repl
                     
                     ; $<addr> = bytestring
-L8bf7               cmp #$24
+L8bf7               cmp #'$'
                     bne L8c18
                     jsr eval
                     lda acc0_lo
@@ -1462,7 +1459,6 @@ bp_handler          pla
                     pla
                     sta $041e
                     jsr prstr
-                    ; "Break: PC = "
                     !text "Break: PC = ", 0
 L8c4d               lda acc0_hi
                     jsr hexbyte
@@ -1475,17 +1471,17 @@ L8c4d               lda acc0_hi
                     
 do_calc             jsr eval
                     jsr check_eol
-                    ldy #$02
-                    ldx #$12
+                    ldy #2
+                    ldx #18
                     jsr radix_print
-                    ldy #$08
-                    ldx #$08
+                    ldy #8
+                    ldx #8
                     jsr radix_print
-                    ldy #$0a
-                    ldx #$07
+                    ldy #10
+                    ldx #7
                     jsr radix_print
-                    ldy #$10
-                    ldx #$06
+                    ldy #16
+                    ldx #6
                     jsr radix_print
                     lda $0402
                     cmp #$02
@@ -1508,7 +1504,7 @@ L8ca0               pla
                     ldx #0
                     stx acc0_hi
                     sty acc0_lo
-                    ldy #$0a
+                    ldy #10
                     jsr radix_print
                     pla
                     sta acc0_hi
@@ -1540,7 +1536,7 @@ c_calc              jsr do_calc
 c_move              lda #0
                     sta $0100
                     jsr skip_space
-                    cmp #$3e
+                    cmp #'>'
                     bne L8cef
                     sta $0100
                     beq L8cf2
@@ -1641,9 +1637,10 @@ L8db3               dec acc0_lo
                     rts
                     
 set_private         lda #$ff
-                    bne L8dc0
+                    bne +
+
 clr_private         lda #0
-L8dc0               ldx cur_rom
++                   ldx cur_rom
                     sta rom_private, x
                     rts
                     
@@ -1657,21 +1654,31 @@ check_cmd_mode      jsr get_private
                     ; "Command mode only"
                     !text $aa, "Command mode only", 0
 
-; fix00-
-addr_modes          !hex 0c 0f 14 16 1a 1e 22 29 30 32 34 38 
-; fix00+
-                    !text "H1", 0
-                    !text "H1,I", 0
-                    !text "2", 0
-                    !text "2,I", 0
-                    !text "2,Y", 0
-                    !text "(2)", 0
-                    !text "(H1),Y", 0
-                    !text "(H1,X)", 0
-                    !text "A", 0
-                    !text " ", 0
-                    !text "#H1", 0
-                    !text "H+", 0
+addr_modes          !byte a_zp    - addr_modes
+                    !byte a_zpi   - addr_modes
+                    !byte a_abs   - addr_modes
+                    !byte a_absix - addr_modes
+                    !byte a_absy  - addr_modes
+                    !byte a_absi  - addr_modes
+                    !byte a_zpiy  - addr_modes
+                    !byte a_zpix  - addr_modes
+                    !byte a_a     - addr_modes
+                    !byte a_impl  - addr_modes
+                    !byte a_imm   - addr_modes
+                    !byte a_rel   - addr_modes 
+
+a_zp                !text "H1", 0
+a_zpi               !text "H1,I", 0
+a_abs               !text "2", 0
+a_absix             !text "2,I", 0
+a_absy              !text "2,Y", 0
+a_absi              !text "(2)", 0
+a_zpiy              !text "(H1),Y", 0
+a_zpix              !text "(H1,X)", 0
+a_a                 !text "A", 0
+a_impl              !text " ", 0
+a_imm               !text "#H1", 0
+a_rel               !text "H+", 0
                     !text 13, 12
 
 ; fix00-
