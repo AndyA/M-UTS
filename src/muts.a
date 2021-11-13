@@ -83,6 +83,13 @@
 !addr x_assemble = $a001
 !addr x_eval = $a004
 
+!macro inc16 addr {
+  inc addr
+  bne +
+  inc addr + 1
++
+}
+
 L8000               jmp language
                     
 L8003               jmp service
@@ -304,10 +311,8 @@ L8362               lda cmd_table, y
                     lda #' '
                     jsr oswrch_counted
 L8378               lda (acc0_lo, x)
-                    inc acc0_lo
-                    bne L8380
-                    inc acc0_hi
-L8380               pha
+                    +inc16 acc0_lo
+                    pha
                     and #$7f
                     jsr oswrch_counted
                     pla
@@ -330,10 +335,8 @@ prstr               pla
                     pla
                     sta ptr0_hi
                     ldy #0
-L83a9               inc ptr0_lo
-                    bne L83af
-                    inc ptr0_hi
-L83af               lda (ptr0_lo), y
+L83a9               +inc16 ptr0_lo
+                    lda (ptr0_lo), y
                     beq L83c5
                     bpl L83c0
                     tax
@@ -429,10 +432,8 @@ L844a               pla
                     
 getch               ldy #0
                     lda (cmdline_lo), y
-                    inc cmdline_lo
-                    bne L845b
-                    inc cmdline_hi
-L845b               rts
+                    +inc16 cmdline_lo
+                    rts
                     
 skip_space          jsr getch
                     cmp #' '
@@ -1085,10 +1086,8 @@ try_poke            ldy #0
                     jsr throw
                     ; "Read only memory"
                     !text $a7, "Read only memory", 0
-L891a               inc ptr0_lo
-                    bne L8920
-                    inc ptr0_hi
-L8920               inx
+L891a               +inc16 ptr0_lo
+                    inx
                     rts
                     
 acc0_to_acc2        lda acc0_lo
@@ -1606,9 +1605,7 @@ L8d48               ldy #0
                     lda ptr0_hi
                     adc acc0_hi
                     sta ptr0_hi
-                    inc acc0_lo
-                    bne L8d74
-                    inc acc0_hi
+                    +inc16 acc0_lo
 L8d74               lda (acc2_lo), y
                     sta (ptr0_lo), y
                     lda acc2_lo
@@ -1625,10 +1622,8 @@ L8d86               dec ptr0_lo
                     
 L8d8e               lda (acc2_lo), y
                     jsr try_poke
-                    inc acc2_lo
-                    bne L8d99
-                    inc acc2_hi
-L8d99               jsr countdown
+                    +inc16 acc2_lo
+                    jsr countdown
                     bne L8d8e
                     lda $0100
                     beq L8dac
@@ -1745,10 +1740,8 @@ read_rom            php
 L8f8b               lda $0602
 L8f8e               tay
                     jsr $ffb9
-                    inc acc2_lo
-                    bne L8f98
-                    inc acc2_hi
-L8f98               pha
+                    +inc16 acc2_lo
+                    pha
                     inc $b6
                     lda $b6
                     and #$07
@@ -2932,10 +2925,8 @@ c_step              jsr check_cmd_mode
 
 L98de               sty ptr0_lo
                     sty ptr0_hi
-step_next           inc reg_i
-                    bne L98ea
-                    inc reg_i + 1
-L98ea               lda acc2_hi
+step_next           +inc16 reg_i
+                    lda acc2_hi
                     jsr hexbyte
                     lda acc2_lo
                     jsr hexbyte_space
