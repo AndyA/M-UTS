@@ -1672,7 +1672,9 @@ check_cmd_mode      jsr get_private
                     ; "Command mode only"
                     !hex aa 43 6f 6d 6d 61 6e 64 20 6d 6f 64 65 20 6f 6e 6c 79 00 
 
+; fix000-
 addr_modes          !hex 0c 0f 14 16 1a 1e 22 29 30 32 34 38 
+; fix000+
                     !hex 48 31 00 
                     !hex 48 31 2c 49 00 
                     !hex 32 00 
