@@ -78,11 +78,11 @@ L8003               jmp service
 
 
                     ; ROM type
-                    !hex c2 
-                    ; Copyright offset
-                    !hex 13 
+rom_type            !byte %11000010
+                    ; Copyright offset. Points to 0 before copyright
+copyright_offset    !byte copyright - L8000 - 1
                     ; Version
-                    !hex 02 
+                    !byte 2 
 title               !hex 4d 2d 55 54 53 00 
 version             !hex 31 2e 36 30 00 
 copyright           !hex 28 43 29 20 41 49 41 41 20 31 39 38 34 00 
@@ -189,7 +189,8 @@ cmd_table           !hex 41 53 53 45 4d 42 4c c5
                     !hex 4e 4f d4 
                     !word $0000, $0000 
                     !hex 00 
-                    
+
+help_table                    
 h_assemble          !hex 3c 66 73 70 3e 20 3c 66 73 70 be 
 h_base              !hex 3c 61 64 64 72 be 
 h_calc              !hex 3c 65 78 70 72 be 
@@ -281,10 +282,9 @@ show_help           jsr newline
                     jsr newline
                     ldx #$00
                     ldy #$00
-                    ; 8153 = help table
-                    lda #$53
+                    lda #< help_table
                     sta acc0_lo
-                    lda #$81
+                    lda #> help_table
                     sta acc0_hi
 L8355               lda #$02
                     sta acc2_lo
@@ -1303,9 +1303,9 @@ empty               !hex 0d 00 00 00
                     ; ROM service entry
 language            cmp #$01
                     bne L8a97
-                    lda #$1d
+                    lda #< brk_handler
                     sta brkv
-                    lda #$8b
+                    lda #> brk_handler
                     sta $0203
                     lda #$00
                     ldx #$3f
@@ -1382,8 +1382,8 @@ L8b70               lda $0603, x
                     bne L8b70
                     sta cmdline_lo
                     ; readline_parms
-                    ldx #$d5
-                    ldy #$8a
+                    ldx #< readline_parms
+                    ldy #> readline_parms
                     jsr osword
                     bcc L8b87
                     jmp throw_escape
@@ -1671,13 +1671,14 @@ check_cmd_mode      jsr get_private
                     jsr throw
                     ; "Command mode only"
                     !hex aa 43 6f 6d 6d 61 6e 64 20 6d 6f 64 65 20 6f 6e 6c 79 00 
-                                         !hex 0c 0f 14 16 1a 1e 22 29 30 
+
+                    !hex 0c 0f 14 16 1a 1e 22 29 30 
                     !hex 32 34 38 48 31 00 48 31 2c 49 00 32 00 32 2c 49 
                     !hex 00 32 2c 59 00 28 32 29 00 28 48 31 29 2c 59 00 
                     !hex 28 48 31 2c 58 29 00 41 00 20 00 23 48 31 00 48 
                     !hex 2b 00 0d 0c 
-op_decode_huh       !hex 08 19 
-op_decode           !hex 90 ff 28 19 b0 ff a4 19 f0 ff 
+
+op_decode           !hex 08 19 90 ff 28 19 b0 ff a4 19 f0 ff 
                     !hex 94 1b 30 ff cc 1b d0 ff 5a 1c 10 ff d8 1c 00 ff 
                     !hex c8 1d 50 ff e8 1d 70 ff 48 23 18 ff 4a 23 d8 ff 
                     !hex 54 23 58 ff 6e 23 b8 ff b2 29 ca ff b4 29 88 ff 
@@ -1691,12 +1692,19 @@ op_decode           !hex 90 ff 28 19 b0 ff a4 19 f0 ff
                     !hex 26 6d 42 e3 1a 9c 22 e3 26 9c 62 e3 72 69 a2 e3 
                     !hex 74 69 a0 e3 44 a5 81 e3 48 11 61 e3 ca 13 21 e3 
                     !hex a2 23 c1 e3 26 34 41 e3 44 69 a1 e3 c4 84 01 e3 
-                    !hex c8 a0 e1 e3 00 00 00 00 00 00 20 ff 02 10 1f 0b 
+                    !hex c8 a0 e1 e3 00 00 00 00 
+op_decode_end
+
+                    !hex 00 00
+                    !hex 20 ff 02 10 1f 0b 
                     !hex 09 1f 0a 0a 9f 08 08 0d 09 00 9f 09 4c ff 02 80 
                     !hex 9d 0a 84 9d 00 8c 9d 02 94 9d 01 9c 9d 03 6c ff 
                     !hex 05 00 1c 07 04 1c 00 0c 1c 02 10 1c 06 14 1c 01 
                     !hex 18 1c 04 1c 1c 03 
-optab               !hex 04 0c 12 14 1a 1c 22 32 34 3a 3c 42 44 52 54 5a 5c 62 64 72 74 7a 7c 80 82 89 92 9c 9e b2 c2 d2 d4 da dc e2 f2 f4 fa fc 
+
+bad_op              !hex 04 0c 12 14 1a 1c 22 32 34 3a 3c 42 44 52 54 5a 
+                    !hex 5c 62 64 72 74 7a 7c 80 82 89 92 9c 9e b2 c2 d2 
+                    !hex d4 da dc e2 f2 f4 fa fc 
                     
 L8f6e               jsr S8894
                     lda #$0d
@@ -1884,8 +1892,10 @@ decode_instr        lda acc2_lo
                     lda #$58
                     sta $b7
                     jsr read_rom
+
+                    ; illegal op?
                     ldx #$00
-L90b4               cmp optab, x
+L90b4               cmp bad_op, x
                     beq L90c5
                     inx
                     cpx #$28
@@ -1894,27 +1904,28 @@ L90b4               cmp optab, x
                     and #$03
                     cmp #$03
                     bne L90cb
-L90c5               ldx #$0b
+L90c5               ldx #$0b ; indicate bad op?
                     lda #$00
                     sta $b7
+                    ; lookup
 L90cb               txa
                     ldx #$00
 L90ce               pha
-                    and op_decode + 1, x
-                    cmp op_decode, x
+                    and op_decode + 3, x
+                    cmp op_decode + 2, x
                     beq L90e1
                     pla
                     inx
                     inx
                     inx
                     inx
-                    cpx #$e4
+                    cpx #op_decode_end - op_decode
                     bcc L90ce
                     pha
-L90e1               pla
-                    lda op_decode_huh, x
+L90e1               pla     ; found match
+                    lda op_decode, x
                     sta $0100
-                    lda op_decode_huh + 1, x
+                    lda op_decode + 1, x
                     sta $0101
                     ldy #$03
 L90f0               ldx #$05
@@ -1993,9 +2004,9 @@ L9184               jsr throw
                     ; "Bad ROM"
                     !hex ab 42 61 64 20 52 4f 4d 00 
 L9190               sta $0602
-                    lda #$07
+                    lda #< copyright_offset
                     sta acc2_lo
-                    lda #$80
+                    lda #> copyright_offset
                     sta acc2_hi
                     jsr read_rom
                     sta acc2_lo
@@ -3559,9 +3570,9 @@ pr_sym16            tya
                     pha
                     lda $03
                     pha
-                    lda #$a5
+                    lda #< symtab
                     sta $00
-                    lda #$9e
+                    lda #> symtab
                     sta $01
                     jsr read_rom
                     sta $02
