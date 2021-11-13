@@ -1,0 +1,27 @@
+{
+  "name": "m-uts",
+  "version": "1.6.1",
+  "description": "HCCS M-UTS ROM",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/AndyA/M-UTS.git"
+  },
+  "keywords": [
+    "BBC",
+    "Micro",
+    "6502",
+    "ROM",
+    "History",
+    "Utility"
+  ],
+  "author": "Andy Armstrong <andy@hexten.net>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/AndyA/M-UTS/issues"
+  },
+  "homepage": "https://github.com/AndyA/M-UTS#readme"
+}

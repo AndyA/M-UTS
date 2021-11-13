@@ -1,0 +1,3 @@
+[submodule "acme"]
+	path = acme
+	url = git@github.com:meonwax/acme.git

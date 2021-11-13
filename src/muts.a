@@ -1,16 +1,90 @@
+!to "m-uts.rom", plain
+
+* = $8000
+
+!addr osfind = $ffce
+!addr osgbpb = $ffd1
+!addr osbput = $ffd4
+!addr osbget = $ffd7
+!addr osargs = $ffda
+!addr osfile = $ffdd
+!addr osrdch = $ffe0
+!addr osasci = $ffe3
+!addr osnewl = $ffe7
+!addr oswrch = $ffee
+!addr osword = $fff1
+!addr osbyte = $fff4
+!addr oscli = $fff7
+!addr irq2v = $206
+!addr irq1v = $204
+!addr brkv = $202
+!addr userv = $200
+!addr uptv = $222
+!addr evntv = $220
+!addr fscv = $21e
+!addr findv = $21c
+!addr gbpbv = $21a
+!addr bputv = $218
+!addr bgetv = $216
+!addr argsv = $214
+!addr filev = $212
+!addr rdchv = $210
+!addr wrchv = $20e
+!addr wordv = $20c
+!addr bytev = $20a
+!addr cliv = $208
+
+!addr ptr0_lo = $a8
+!addr ptr0_hi = $a9
+
+!addr acc0_lo = $aa
+!addr acc0_hi = $ab
+!addr acc1_lo = $ac
+!addr acc1_hi = $ad
+
+!addr cmd_offset = $ae
+
+!addr cmdjmp_lo = $b0
+!addr cmdjmp_hi = $b1
+!addr cmdhelp_lo = $b2
+!addr cmdhelp_hi = $b3
+
+!addr acc2_lo = $b4
+!addr acc2_hi = $b5
+
+!addr cmdline_lo = $f2
+!addr cmdline_hi = $f3
+!addr cur_rom = $f4
+!addr err_lo = $fd
+!addr err_hi = $fe
+!addr esc_flag = $ff
+
+!addr breakpoints_lo = $500
+!addr breakpoints_hi = $501
+!addr breakpoints_save = $502
+!addr breakpoints_huh = $503
+
+!addr brk_cmd = $7a0
+
+!addr rom_private = $df0
+
+!addr x_present = $a000
+!addr x_assemble = $a001
+!addr x_eval = $a004
+
+
 L8000               jmp language
                     
 L8003               jmp service
                     
                     ; ROM type
-                    c2 
+                    !hex c2 
                     ; Copyright offset
-                    13 
+                    !hex 13 
                     ; Version
-                    02 
-copyright = * + 10  
-title               4d 2d 55 54 53 00 31 2e 36 30 00 
-copyright           28 43 29 20 41 49 41 41 20 31 39 38 34 00 
+                    !hex 02 
+title               !hex 4d 2d 55 54 53 00 31 2e 36 30 00 
+copyright           !hex 28 43 29 20 41 49 41 41 20 31 39 38 34 00 
 j_prstr             jmp prstr
                     
 j_throw             jmp throw
@@ -47,105 +121,105 @@ j_x0                jmp $0000
                     
 j_x1                jmp $0000
                     
-cmd_table           41 53 53 45 4d 42 4c c5 
-                    c_assemble h_assemble 
-                    42 41 53 c5 
-                    c_base h_base 
-                    43 41 4c c3 
-                    c_calc h_calc 
-                    43 48 41 4e 47 c5 
-                    c_change h_change 
-                    43 4c d2 
-                    c_clr h_clr 
-                    44 49 d3 
-                    c_dis h_dis 
-                    45 44 49 d4 
-                    c_edit h_edit 
-                    46 4c 49 53 d4 
-                    c_flist h_flist 
-                    46 4f 52 cd 
-                    c_form h_form 
-                    46 49 4e c4 
-                    c_find h_find 
-                    47 45 d4 
-                    c_get h_get 
-                    47 cf 
-                    c_go h_go 
-                    4c 4f 4f cb 
-                    c_look h_look 
-                    4d 45 cd 
-                    c_mem h_mem 
-                    4d 4f 44 c5 
-                    c_mode h_mode 
-                    4d 4f 4e 49 54 4f d2 
-                    c_monitor h_monitor 
-                    4d 4f 56 c5 
-                    c_move h_move 
-                    4f 4e 42 52 cb 
-                    c_onbrk h_onbrk 
-                    50 55 d4 
-                    c_put h_put 
-                    52 45 47 d3 
-                    c_regs h_regs 
-                    53 41 4d c5 
-                    c_same h_same 
-                    53 45 4c 45 43 d4 
-                    c_select h_select 
-                    53 45 d4 
-                    c_set h_set 
-                    53 54 45 d0 
-                    c_step h_step 
-                    56 44 d5 
-                    c_vdu h_vdu 
-                    56 45 52 49 46 d9 
-                    c_verify h_verify 
-                    57 48 45 52 c5 
-                    c_where h_where 
+cmd_table           !hex 41 53 53 45 4d 42 4c c5 
+                    !word c_assemble, h_assemble 
+                    !hex 42 41 53 c5 
+                    !word c_base, h_base 
+                    !hex 43 41 4c c3 
+                    !word c_calc, h_calc 
+                    !hex 43 48 41 4e 47 c5 
+                    !word c_change, h_change 
+                    !hex 43 4c d2 
+                    !word c_clr, h_clr 
+                    !hex 44 49 d3 
+                    !word c_dis, h_dis 
+                    !hex 45 44 49 d4 
+                    !word c_edit, h_edit 
+                    !hex 46 4c 49 53 d4 
+                    !word c_flist, h_flist 
+                    !hex 46 4f 52 cd 
+                    !word c_form, h_form 
+                    !hex 46 49 4e c4 
+                    !word c_find, h_find 
+                    !hex 47 45 d4 
+                    !word c_get, h_get 
+                    !hex 47 cf 
+                    !word c_go, h_go 
+                    !hex 4c 4f 4f cb 
+                    !word c_look, h_look 
+                    !hex 4d 45 cd 
+                    !word c_mem, h_mem 
+                    !hex 4d 4f 44 c5 
+                    !word c_mode, h_mode 
+                    !hex 4d 4f 4e 49 54 4f d2 
+                    !word c_monitor, h_monitor 
+                    !hex 4d 4f 56 c5 
+                    !word c_move, h_move 
+                    !hex 4f 4e 42 52 cb 
+                    !word c_onbrk, h_onbrk 
+                    !hex 50 55 d4 
+                    !word c_put, h_put 
+                    !hex 52 45 47 d3 
+                    !word c_regs, h_regs 
+                    !hex 53 41 4d c5 
+                    !word c_same, h_same 
+                    !hex 53 45 4c 45 43 d4 
+                    !word c_select, h_select 
+                    !hex 53 45 d4 
+                    !word c_set, h_set 
+                    !hex 53 54 45 d0 
+                    !word c_step, h_step 
+                    !hex 56 44 d5 
+                    !word c_vdu, h_vdu 
+                    !hex 56 45 52 49 46 d9 
+                    !word c_verify, h_verify 
+                    !hex 57 48 45 52 c5 
+                    !word c_where, h_where 
                     ; AND
-                    41 4e c4 
-                    $0000 $0000 
+                    !hex 41 4e c4 
+                    !word $0000, $0000 
                     ; OR
-                    4f d2 
-                    $0000 $0000 
+                    !hex 4f d2 
+                    !word $0000, $0000 
                     ; EOR
-                    45 4f d2 
-                    $0000 $0000 
+                    !hex 45 4f d2 
+                    !word $0000, $0000 
                     ; NOT
-                    4e 4f d4 
-                    $0000 $0000 
-                    00 
+                    !hex 4e 4f d4 
+                    !word $0000, $0000 
+                    !hex 00 
                     
-h_assemble          3c 66 73 70 3e 20 3c 66 73 70 be 
-h_base              3c 61 64 64 72 be 
-h_calc              3c 65 78 70 72 be 
-h_change            3c 61 64 64 72 3e 20 3c 62 79 74 65 20 73 74 72 69 6e 67 be 
-h_clr               28 3c 61 64 64 72 3e a9 
-h_dis               3c 73 74 72 74 3e 28 2e 2e 3c 65 6e 64 3e 29 20 28 48 3c 70 72 65 66 69 78 3e 
-                    29 20 28 50 2c 4c a9 
-h_edit              3c 61 64 64 72 be 
-h_flist             28 
-                    3c 6e 75 6d 62 65 72 3e a9 
-h_form              3c 74 72 61 63 6b 73 3e 20 28 3c 64 72 76 3e a9 
-h_find              3c 73 74 72 74 3e 28 2e 2e 3c 65 6e 64 3e 29 20 3c 62 79 74 65 20 73 74 72 69 6e 67 be 
-h_get               3c 74 72 61 63 6b 3e 20 28 3c 64 72 76 3e a9 
-h_go                3c 61 64 64 72 3e 20 28 3c 41 3e 29 20 28 3c 58 3e 29 20 28 3c 59 3e a9 
-h_look              3c 61 64 64 72 3e 20 28 48 3c 70 72 65 66 69 78 3e a9 
-h_mem               3c 73 74 72 74 3e 28 2e 2e 3c 65 6e 64 3e 29 20 28 50 2c 4c a9 
-h_mode              3c 6d 6f 64 65 be 
-h_monitor           a0 
-h_move              28 3e 29 20 3c 73 72 63 3e 20 3c 64 65 73 74 3e 20 3c 6c 65 6e 3e 20 28 3c 61 64 64 72 3e a9 
-h_onbrk             3c 63 6f 6d 6d 61 6e 64 20 6c 69 6e 65 be 
-h_put               3c 74 72 61 63 6b 3e 20 28 3c 64 72 76 3e a9 
-h_regs              a0 
-h_same              3c 61 64 64 72 3e 20 3c 61 64 64 72 3e 20 3c 6c 65 6e be 
-h_select            3c 72 6f 6d 20 6e 75 6d 62 65 72 be 
-h_set               3c 61 64 64 72 be 
-h_step              3c 61 64 64 72 3e 20 28 48 3c 70 72 65 66 69 78 3e 29 20 28 50 2c 4c a9 
-h_vdu               3c 62 79 74 65 20 73 74 72 69 6e 67 be 
-h_verify            28 
-                    3c 64 72 76 3e a9 
-h_where             a0 
-                    00 
+h_assemble          !hex 3c 66 73 70 3e 20 3c 66 73 70 be 
+h_base              !hex 3c 61 64 64 72 be 
+h_calc              !hex 3c 65 78 70 72 be 
+h_change            !hex 3c 61 64 64 72 3e 20 3c 62 79 74 65 20 73 74 72 69 6e 67 be 
+h_clr               !hex 28 3c 61 64 64 72 3e a9 
+h_dis               !hex 3c 73 74 72 74 3e 28 2e 2e 3c 65 6e 64 3e 29 20 28 48 3c 70 72 65 66 69 78 3e 
+                    !hex 29 20 28 50 2c 4c a9 
+h_edit              !hex 3c 61 64 64 72 be 
+h_flist             !hex 28 
+                    !hex 3c 6e 75 6d 62 65 72 3e a9 
+h_form              !hex 3c 74 72 61 63 6b 73 3e 20 28 3c 64 72 76 3e a9 
+h_find              !hex 3c 73 74 72 74 3e 28 2e 2e 3c 65 6e 64 3e 29 20 3c 62 79 74 65 20 73 74 72 69 6e 67 be 
+h_get               !hex 3c 74 72 61 63 6b 3e 20 28 3c 64 72 76 3e a9 
+h_go                !hex 3c 61 64 64 72 3e 20 28 3c 41 3e 29 20 28 3c 58 3e 29 20 28 3c 59 3e a9 
+h_look              !hex 3c 61 64 64 72 3e 20 28 48 3c 70 72 65 66 69 78 3e a9 
+h_mem               !hex 3c 73 74 72 74 3e 28 2e 2e 3c 65 6e 64 3e 29 20 28 50 2c 4c a9 
+h_mode              !hex 3c 6d 6f 64 65 be 
+h_monitor           !hex a0 
+h_move              !hex 28 3e 29 20 3c 73 72 63 3e 20 3c 64 65 73 74 3e 20 3c 6c 65 6e 3e 20 28 3c 61 64 64 72 3e a9 
+h_onbrk             !hex 3c 63 6f 6d 6d 61 6e 64 20 6c 69 6e 65 be 
+h_put               !hex 3c 74 72 61 63 6b 3e 20 28 3c 64 72 76 3e a9 
+h_regs              !hex a0 
+h_same              !hex 3c 61 64 64 72 3e 20 3c 61 64 64 72 3e 20 3c 6c 65 6e be 
+h_select            !hex 3c 72 6f 6d 20 6e 75 6d 62 65 72 be 
+h_set               !hex 3c 61 64 64 72 be 
+h_step              !hex 3c 61 64 64 72 3e 20 28 48 3c 70 72 65 66 69 78 3e 29 20 28 50 2c 4c a9 
+h_vdu               !hex 3c 62 79 74 65 20 73 74 72 69 6e 67 be 
+h_verify            !hex 28 
+                    !hex 3c 64 72 76 3e a9 
+h_where             !hex a0 
+                    !hex 00 
                     
 c_assemble          lda x_present
                     cmp #$ff
@@ -154,7 +228,7 @@ c_assemble          lda x_present
                     
 throw_noasm         jsr throw
                     ; "No Assembler"
-                    a0 4e 6f 20 61 73 73 65 6d 62 6c 65 72 00 
+                    !hex a0 4e 6f 20 61 73 73 65 6d 62 6c 65 72 00 
                     
 dispatch_cmd        lda cmdline_lo
                     pha
@@ -189,14 +263,14 @@ call_cmd            jmp (cmdjmp_lo)
                     
 pr_muts             jsr prstr
                     ; "M-UTS 1.60"
-                    4d 2d 55 54 53 20 31 2e 36 30 0d 00 
+                    !hex 4d 2d 55 54 53 20 31 2e 36 30 0d 00 
 L8326               rts
                     
 pr_banner           jsr newline
                     jsr pr_muts
                     jsr prstr
                     ; "MONITOR"
-                    fe 4d 4f 4e 49 54 4f 52 0d 00 
+                    !hex fe 4d 4f 4e 49 54 4f 52 0d 00 
 L833a               rts
                     
 oswrch_counted      inc acc2_lo
@@ -217,7 +291,7 @@ L8355               lda #$02
                     tya
                     pha
                     jsr prstr
-                    fe 00 
+                    !hex fe 00 
 L8360               pla
                     tay
 L8362               lda cmd_table,y
@@ -300,13 +374,13 @@ check_escape        bit esc_flag
                     
 throw_escape        jsr throw
                     ; "Escape"
-                    11 45 73 63 61 70 65 00 
+                    !hex 11 45 73 63 61 70 65 00 
                     
 hexbyte             pha
-                    ror a
-                    ror a
-                    ror a
-                    ror a
+                    ror
+                    ror
+                    ror
+                    ror
                     jsr hexnybble
                     pla
 hexnybble           pha
@@ -331,7 +405,7 @@ L841c               lda #$00
                     ldy #$10
 L8420               asl acc0_lo
                     rol acc0_hi
-                    rol a
+                    rol
                     cmp acc1_lo
                     bcc L842d
                     sbc acc1_lo
@@ -412,7 +486,7 @@ L849a               cmp acc1_lo
                     sta acc0_hi
                     ldx #$05
                     lda acc1_lo
-L84b1               ror a
+L84b1               ror
                     bcc L84c3
                     pha
                     clc
@@ -455,7 +529,7 @@ eval_atom           tsx
                     bcs L850b
                     jsr throw
                     ; "Formula too complex"
-                    a1 46 6f 72 6d 75 6c 61 20 74 6f 6f 20 63 6f 6d 70 6c 65 78 00 
+                    !hex a1 46 6f 72 6d 75 6c 61 20 74 6f 6f 20 63 6f 6d 70 6c 65 78 00 
                     
 L850b               jsr lookup_token
                     ; - = negate term
@@ -525,7 +599,7 @@ L8568               cmp #$9e
 L857b               rts
                     
 L857c               jsr throw
-                    a2 42 61 64 20 62 61 73 65 00 
+                    !hex a2 42 61 64 20 62 61 73 65 00 
                     
                     ; ( = nested
 L8589               cmp #$28
@@ -546,7 +620,7 @@ L8595               cmp #$5a
                     cmp ptr0_lo
                     beq L857b
                     jsr throw
-                    a3 4d 69 73 73 69 6e 67 20 62 72 61 63 6b 65 74 00 
+                    !hex a3 4d 69 73 73 69 6e 67 20 62 72 61 63 6b 65 74 00 
                     ; ' = char const
 L85bb               cmp #$27
                     bne L85ce
@@ -567,10 +641,10 @@ L85ce               cmp #$3a
                     bcs L85ec
 throw_badvar        jsr throw
                     ; "Bad variable"
-                    a4 42 61 64 20 76 61 72 69 61 62 6c 65 00 
+                    !hex a4 42 61 64 20 76 61 72 69 61 62 6c 65 00 
 L85ec               cmp #$5b
                     bcs throw_badvar
-                    asl a
+                    asl
                     tax
                     lda $037e,x
                     sta acc0_lo
@@ -594,8 +668,8 @@ L8607               jsr unget
                     cmp #$4b
                     bne L8626
                     lda acc0_lo
-                    asl a
-                    asl a
+                    asl
+                    asl
                     sta acc0_hi
                     lda #$00
                     sta acc0_lo
@@ -830,7 +904,7 @@ eval_byte           lda acc0_lo
                     beq L87ac
                     jsr throw
                     ; "Byte out of range"
-                    a5 42 79 74 65 20 6f 75 74 20 6f 66 20 72 61 6e 67 65 00 
+                    !hex a5 42 79 74 65 20 6f 75 74 20 6f 66 20 72 61 6e 67 65 00 
 L87ac               pla
                     sta acc0_hi
                     pla
@@ -919,7 +993,7 @@ L881d               inx
                     jmp getch
                     
                     ; "Syntax: "
-syntax_prefix       53 79 6e 74 61 78 3a 20 
+syntax_prefix       !hex 53 79 6e 74 61 78 3a 20 
 check_eol           jsr skip_space
                     bne syntax_error
                     rts
@@ -933,7 +1007,7 @@ syntax_error        ldx #$00
                     bne L8867
                     jsr throw
                     ; "Bad expression"
-                    a6 42 61 64 20 65 78 70 72 65 73 73 69 6f 6e 00 
+                    !hex a6 42 61 64 20 65 78 70 72 65 73 73 69 6f 6e 00 
 L8867               lda syntax_prefix,x
                     sta $0102,x
                     inx
@@ -1014,7 +1088,7 @@ try_poke            ldy #$00
                     beq L891a
                     jsr throw
                     ; "Read only memory"
-                    a7 52 65 61 64 20 6f 6e 6c 79 20 6d 65 6d 6f 72 79 00 
+                    !hex a7 52 65 61 64 20 6f 6e 6c 79 20 6d 65 6d 6f 72 79 00 
 L891a               inc ptr0_lo
                     bne L8920
                     inc ptr0_hi
@@ -1114,7 +1188,7 @@ enable_printer      lda #$0f
                     
 throw_noprinter     jsr throw
                     ; "No printer"
-                    a8 4e 6f 20 70 72 69 6e 74 65 72 00 
+                    !hex a8 4e 6f 20 70 72 69 6e 74 65 72 00 
                     
 parse_range         jsr eval
                     jsr acc0_to_acc2
@@ -1136,7 +1210,7 @@ L8a09               jmp eval
                     
 reset_terminal      jsr prstr
                     ; disable printer, page mode off
-                    03 0f 00 
+                    !hex 03 0f 00 
 L8a12               rts
                     
 calc_columns        jsr osnewl
@@ -1148,7 +1222,7 @@ calc_columns        jsr osnewl
                     lda #$10
                     cpx #$4f
                     beq L8a2a
-                    lsr a
+                    lsr
 L8a2a               rts
                     
 ram_warning         txa
@@ -1157,14 +1231,14 @@ ram_warning         txa
                     pha
                     jsr prstr
                     ; "RAM from "
-                    52 41 4d 20 66 72 6f 6d 20 00 
+                    !hex 52 41 4d 20 66 72 6f 6d 20 00 
 L8a3c               pla
                     jsr hexbyte
                     tya
                     jsr hexbyte_space
                     jsr prstr
                     ; "to "
-                    74 6f 20 00 
+                    !hex 74 6f 20 00 
 L8a4b               pla
                     jsr hexbyte
                     tya
@@ -1172,10 +1246,10 @@ L8a4b               pla
 L8a54 = * + 1       
 L8a53               jsr prstr
                     ; "will be corrupted"
-                    77 69 6c 6c 20 62 65 20 63 6f 72 72 75 70 74 65 64 0d 00 
+                    !hex 77 69 6c 6c 20 62 65 20 63 6f 72 72 75 70 74 65 64 0d 00 
 ask_continue        jsr prstr
                     ; "continue (Y/N) ?"
-                    63 6f 6e 74 69 6e 75 65 20 28 59 2f 4e 29 20 3f 20 00 
+                    !hex 63 6f 6e 74 69 6e 75 65 20 28 59 2f 4e 29 20 3f 20 00 
 L8a7e               jsr osrdch
                     bcc L8a86
                     jmp throw_escape
@@ -1188,7 +1262,7 @@ L8a8e               jsr oswrch
                     pha
                     jsr newline
                     pla
-                    lsr a
+                    lsr
 L8a97               rts
                     
 c_monitor           jsr skip_space
@@ -1217,14 +1291,14 @@ L8ace               ldx cur_rom
                     jmp osbyte
                     
                     ; address
-readline_parms      $0700 
+readline_parms      !word $0700 
                     ; length
-                    9e 
+                    !hex 9e 
                     ; min char
-                    20 
+                    !hex 20 
                     ; max char
-                    ff 
-                    0d 00 00 00 
+                    !hex ff 
+                    !hex 0d 00 00 00 
                     
                     ; ROM service entry
 language            cmp #$01
@@ -1329,7 +1403,7 @@ L8b9d               jmp throw_badvar
                     
 L8ba0               cmp #$5b
                     bcs L8b9d
-                    asl a
+                    asl
                     tax
                     ldy #$ff
                     sty cmd_offset
@@ -1338,7 +1412,7 @@ L8ba0               cmp #$5b
                     beq L8bbf
 throw_missingeq     jsr throw
                     ; "Missing ="
-                    a9 4d 69 73 73 69 6e 67 20 3d 00 
+                    !hex a9 4d 69 73 73 69 6e 67 20 3d 00 
 L8bbf               jsr eval
                     jsr check_eol
                     lda acc0_lo
@@ -1404,7 +1478,7 @@ bp_handler          pla
                     sta $041e
                     jsr prstr
                     ; "Break: PC = "
-                    42 72 65 61 6b 3a 20 50 43 20 3d 20 00 
+                    !hex 42 72 65 61 6b 3a 20 50 43 20 3d 20 00 
 L8c4d               lda acc0_hi
                     jsr hexbyte
                     lda acc0_lo
@@ -1438,7 +1512,7 @@ do_calc             jsr eval
                     bpl L8cc6
                     pha
                     jsr prstr
-                    0d 42 61 73 65 20 00 
+                    !hex 0d 42 61 73 65 20 00 
 L8ca0               pla
                     pha
                     tay
@@ -1456,7 +1530,7 @@ L8ca0               pla
                     pla
                     sta acc0_lo
                     jsr prstr
-                    3a 20 00 
+                    !hex 3a 20 00 
 L8cc0               pla
                     tay
                     ldx #$00
@@ -1503,7 +1577,7 @@ L8cf2               jsr eval
                     tya
                     pha
                     jsr prstr
-                    44 65 73 74 69 6e 61 74 69 6f 6e 20 3c 3d 20 00 
+                    !hex 44 65 73 74 69 6e 61 74 69 6f 6e 20 3c 3d 20 00 
 L8d24               pla
                     jsr hexbyte
                     pla
@@ -1596,33 +1670,33 @@ check_cmd_mode      jsr get_private
                     bmi L8dcb
                     jsr throw
                     ; "Command mode only"
-                    aa 43 6f 6d 6d 61 6e 64 20 6d 6f 64 65 20 6f 6e 6c 79 00 
-                                         0c 0f 14 16 1a 1e 22 29 30 
-                    32 34 38 48 31 00 48 31 2c 49 00 32 00 32 2c 49 
-                    00 32 2c 59 00 28 32 29 00 28 48 31 29 2c 59 00 
-                    28 48 31 2c 58 29 00 41 00 20 00 23 48 31 00 48 
-                    2b 00 0d 0c 
-op_decode_huh       08 19 
-op_decode           90 ff 28 19 b0 ff a4 19 f0 ff 
-                    94 1b 30 ff cc 1b d0 ff 5a 1c 10 ff d8 1c 00 ff 
-                    c8 1d 50 ff e8 1d 70 ff 48 23 18 ff 4a 23 d8 ff 
-                    54 23 58 ff 6e 23 b8 ff b2 29 ca ff b4 29 88 ff 
-                    f2 53 e8 ff f4 53 c8 ff 26 5d 20 ff 22 7c ea ff 
-                    44 8a 48 ff 62 8a 08 ff 44 8b 68 ff 62 8b 28 ff 
-                    54 9d 40 ff 68 9d 60 ff 88 a1 38 ff 8a a1 f8 ff 
-                    94 a1 78 ff b2 a8 aa ff b4 a8 a8 ff 32 ad ba ff 
-                    44 ae 8a ff 68 ae 9a ff 84 ae 98 ff aa 1a 24 f7 
-                    a2 5b 4c df 72 24 e0 f3 74 24 c0 f3 72 a5 86 e7 
-                    74 a5 84 e7 88 29 c6 e7 c8 53 e6 e7 1a 15 02 e3 
-                    26 6d 42 e3 1a 9c 22 e3 26 9c 62 e3 72 69 a2 e3 
-                    74 69 a0 e3 44 a5 81 e3 48 11 61 e3 ca 13 21 e3 
-                    a2 23 c1 e3 26 34 41 e3 44 69 a1 e3 c4 84 01 e3 
-                    c8 a0 e1 e3 00 00 00 00 00 00 20 ff 02 10 1f 0b 
-                    09 1f 0a 0a 9f 08 08 0d 09 00 9f 09 4c ff 02 80 
-                    9d 0a 84 9d 00 8c 9d 02 94 9d 01 9c 9d 03 6c ff 
-                    05 00 1c 07 04 1c 00 0c 1c 02 10 1c 06 14 1c 01 
-                    18 1c 04 1c 1c 03 
-optab               04 0c 12 14 1a 1c 22 32 34 3a 3c 42 44 52 54 5a 5c 62 64 72 74 7a 7c 80 82 89 92 9c 9e b2 c2 d2 d4 da dc e2 f2 f4 fa fc 
+                    !hex aa 43 6f 6d 6d 61 6e 64 20 6d 6f 64 65 20 6f 6e 6c 79 00 
+                                         !hex 0c 0f 14 16 1a 1e 22 29 30 
+                    !hex 32 34 38 48 31 00 48 31 2c 49 00 32 00 32 2c 49 
+                    !hex 00 32 2c 59 00 28 32 29 00 28 48 31 29 2c 59 00 
+                    !hex 28 48 31 2c 58 29 00 41 00 20 00 23 48 31 00 48 
+                    !hex 2b 00 0d 0c 
+op_decode_huh       !hex 08 19 
+op_decode           !hex 90 ff 28 19 b0 ff a4 19 f0 ff 
+                    !hex 94 1b 30 ff cc 1b d0 ff 5a 1c 10 ff d8 1c 00 ff 
+                    !hex c8 1d 50 ff e8 1d 70 ff 48 23 18 ff 4a 23 d8 ff 
+                    !hex 54 23 58 ff 6e 23 b8 ff b2 29 ca ff b4 29 88 ff 
+                    !hex f2 53 e8 ff f4 53 c8 ff 26 5d 20 ff 22 7c ea ff 
+                    !hex 44 8a 48 ff 62 8a 08 ff 44 8b 68 ff 62 8b 28 ff 
+                    !hex 54 9d 40 ff 68 9d 60 ff 88 a1 38 ff 8a a1 f8 ff 
+                    !hex 94 a1 78 ff b2 a8 aa ff b4 a8 a8 ff 32 ad ba ff 
+                    !hex 44 ae 8a ff 68 ae 9a ff 84 ae 98 ff aa 1a 24 f7 
+                    !hex a2 5b 4c df 72 24 e0 f3 74 24 c0 f3 72 a5 86 e7 
+                    !hex 74 a5 84 e7 88 29 c6 e7 c8 53 e6 e7 1a 15 02 e3 
+                    !hex 26 6d 42 e3 1a 9c 22 e3 26 9c 62 e3 72 69 a2 e3 
+                    !hex 74 69 a0 e3 44 a5 81 e3 48 11 61 e3 ca 13 21 e3 
+                    !hex a2 23 c1 e3 26 34 41 e3 44 69 a1 e3 c4 84 01 e3 
+                    !hex c8 a0 e1 e3 00 00 00 00 00 00 20 ff 02 10 1f 0b 
+                    !hex 09 1f 0a 0a 9f 08 08 0d 09 00 9f 09 4c ff 02 80 
+                    !hex 9d 0a 84 9d 00 8c 9d 02 94 9d 01 9c 9d 03 6c ff 
+                    !hex 05 00 1c 07 04 1c 00 0c 1c 02 10 1c 06 14 1c 01 
+                    !hex 18 1c 04 1c 1c 03 
+optab               !hex 04 0c 12 14 1a 1c 22 32 34 3a 3c 42 44 52 54 5a 5c 62 64 72 74 7a 7c 80 82 89 92 9c 9e b2 c2 d2 d4 da dc e2 f2 f4 fa fc 
                     
 L8f6e               jsr S8894
                     lda #$0d
@@ -1847,7 +1921,7 @@ L90f0               ldx #$05
                     lda #$00
 L90f4               asl $0100
                     rol $0101
-                    rol a
+                    rol
                     dex
                     bne L90f4
                     clc
@@ -1906,7 +1980,7 @@ c_base              jsr check_cmd_mode
                     sta $0601
                     rts
                     
-copyright_marker    00 28 43 29 
+copyright_marker    !hex 00 28 43 29 
                     
 c_select            jsr check_cmd_mode
                     jsr eval_byte
@@ -1917,7 +1991,7 @@ c_select            jsr check_cmd_mode
                     bcc L9190
 L9184               jsr throw
                     ; "Bad ROM"
-                    ab 42 61 64 20 52 4f 4d 00 
+                    !hex ab 42 61 64 20 52 4f 4d 00 
 L9190               sta $0602
                     lda #$07
                     sta acc2_lo
@@ -1941,7 +2015,7 @@ L91a2               txa
                     sta acc2_lo
                     jsr prstr
                     ; "Rom: "
-                    52 6f 6d 3a 20 00 
+                    !hex 52 6f 6d 3a 20 00 
 L91c1               jsr read_rom
                     jsr oswrch
                     bne L91c1
@@ -2051,8 +2125,8 @@ L9278               tsx
                     beq service_exit
 L9285               jmp service_done
                     
-regnames            41 58 59 53 
-flagnames           6e 76 2e 62 64 69 7a 63 
+regnames            !hex 41 58 59 53 
+flagnames           !hex 6e 76 2e 62 64 69 7a 63 
                     
 show_regs           jsr check_eol
                     ldx #$00
@@ -2061,10 +2135,10 @@ L9299               lda regnames,x
                     jsr oswrch
                     jsr prstr
                     ; " : "
-                    20 3d 20 00 
+                    !hex 20 3d 20 00 
                     
 L92a7               pla
-                    asl a
+                    asl
                     tay
                     lda $037e,y
                     jsr hexbyte_space
@@ -2073,12 +2147,12 @@ L92a7               pla
                     bcc L9299
                     jsr prstr
                     ; "\rP = "
-                    0d 50 20 3d 20 00 
+                    !hex 0d 50 20 3d 20 00 
                     
 show_flags          ldy #$00
                     lda $041e
 L92c3               ldx #$2e
-                    asl a
+                    asl
                     bcc L92cb
                     ldx flagnames,y
 L92cb               pha
@@ -2100,7 +2174,7 @@ L92e5               jsr skip_space
                     beq L9305
                     jsr unget
                     lda regnames,x
-                    asl a
+                    asl
                     sta $0100
                     jsr eval_byte
                     ldy $0100
@@ -2139,7 +2213,7 @@ c_where             jsr check_cmd_mode
                     jsr check_eol
                     jsr prstr
                     ; "Breakpoints:"
-                    42 72 65 61 6b 70 6f 69 6e 74 73 3a 0d 00 a2 00 
+                    !hex 42 72 65 61 6b 70 6f 69 6e 74 73 3a 0d 00 a2 00 
 L934f = * + 2       
 L934d               lda breakpoints_lo,x
                     ora breakpoints_hi,x
@@ -2175,7 +2249,7 @@ L937f               lda breakpoints_lo,x
                     bcc L937f
                     jsr throw
                     ; "No room"
-                    ac 4e 6f 20 72 6f 6f 6d 00 
+                    !hex ac 4e 6f 20 72 6f 6f 6d 00 
 L939b               txa
                     pha
                     lda (acc0_lo),y
@@ -2218,7 +2292,7 @@ L93e1               inx
                     bcc L93c6
                     jsr throw
                     ; "Breakpoint not found"
-                    ad 42 72 65 61 6b 70 6f 69 6e 74 20 6e 6f 74 20 66 6f 75 6e 64 00 
+                    !hex ad 42 72 65 61 6b 70 6f 69 6e 74 20 6e 6f 74 20 66 6f 75 6e 64 00 
 L9402               ldx #$00
                     ldy #$00
 L9406               lda breakpoints_lo,x
@@ -2309,7 +2383,7 @@ L94a8               jsr unget
                     bcc L94c5
 throw_baddrive      jsr throw
                     ; "Bad drive"
-                    ae 42 61 64 20 64 72 69 76 65 00 
+                    !hex ae 42 61 64 20 64 72 69 76 65 00 
 L94c5               jsr star_drive
                     sta ptr0_lo
                     lda #$00
@@ -2356,7 +2430,7 @@ disk_size           lda cmdhelp_hi
                     sta cmdhelp_hi
                     rts
                     
-drive_cmd           44 52 49 56 45 20 
+drive_cmd           !hex 44 52 49 56 45 20 
 star_drive          pha
                     ldx #$00
 L9529               lda drive_cmd,x
@@ -2388,12 +2462,12 @@ c_flist             jsr skip_space
                     bcc L956c
                     jsr throw
                     ; "Bad key"
-                    fb 42 61 64 20 6b 65 79 00 
+                    !hex fb 42 61 64 20 6b 65 79 00 
 L956c               tay
 show_fkey           sty acc0_lo
                     jsr prstr
                     ; "*KEY"
-                    2a 4b 45 59 00 
+                    !hex 2a 4b 45 59 00 
 L9577               jsr check_escape
                     ldx #$00
 L957c               stx acc0_hi
@@ -2406,7 +2480,7 @@ L957c               stx acc0_hi
                     lda #$8a
                     jsr osbyte
                     jsr prstr
-                    fe 00 
+                    !hex fe 00 
 L9594               lda #$04
                     ldx #$02
                     jsr osbyte
@@ -2454,7 +2528,7 @@ L95e1               cmp #$7f
 L95eb               jmp oswrch
                     
 times3              sta $0100
-                    asl a
+                    asl
                     clc
                     adc $0100
                     rts
@@ -2463,7 +2537,7 @@ div3                sta $0100
                     ldx #$08
                     lda #$00
 L95fe               asl $0100
-                    rol a
+                    rol
                     cmp #$03
                     bcc L960b
                     sbc #$03
@@ -2501,7 +2575,7 @@ c_edit              jsr eval
                     jsr check_eol
                     jsr prstr
                     ; restore default windows, clear screen
-                    1a 0c 00 
+                    !hex 1a 0c 00 
 L9650               lda acc2_lo
                     pha
                     lda acc2_hi
@@ -2539,7 +2613,7 @@ L9689               lda #$05
                     sta acc2_lo
                     jsr prstr
                     ; move cursor home
-                    1e 00 
+                    !hex 1e 00 
                     ; setup keyboard
 L9698               lda #$04
                     ldx #$02
@@ -2724,10 +2798,10 @@ L97da               cmp #$10
                     ldy $0101
                     bne L97eb
                     ldx #$0f
-                    asl a
-                    asl a
-                    asl a
-                    asl a
+                    asl
+                    asl
+                    asl
+                    asl
 L97eb               stx $0101
                     ldy $0100
                     sta $0100
@@ -2743,8 +2817,8 @@ L97eb               stx $0101
                     
 L9807               jmp edit_getch
                     
-layout_40           1b 1d 24 
-layout_80           33 35 44 
+layout_40           !hex 1b 1d 24 
+layout_80           !hex 33 35 44 
                     
 cursor_off          lda ptr0_lo
                     pha
@@ -2752,7 +2826,7 @@ cursor_off          lda ptr0_lo
                     pha
                     jsr prstr
                     ; cursor off
-                    17 01 00 
+                    !hex 17 01 00 
 L981c               jmp L982c
                     
 cursor_on           lda ptr0_lo
@@ -2761,7 +2835,7 @@ cursor_on           lda ptr0_lo
                     pha
                     jsr prstr
                     ; cursor on
-                    17 01 01 00 
+                    !hex 17 01 01 00 
 L982c               tya
                     ldx #$0a
 L982f               jsr oswrch
@@ -2773,14 +2847,14 @@ L982f               jsr oswrch
                     sta ptr0_lo
                     rts
                     
-inst_len_table      69 69 65 7d a5 69 75 7d e5 a9 65 fd a5 69 75 7d 
-                    65 69 65 fd a5 69 75 7d 65 69 65 fd a5 69 75 7d 
-                    65 a9 55 fd a5 a9 75 75 a9 a9 65 fd a5 a9 75 fd 
-                    a5 a9 65 fd a5 69 75 7d a5 a9 65 fd a5 69 75 7d 
+inst_len_table      !hex 69 69 65 7d a5 69 75 7d e5 a9 65 fd a5 69 75 7d 
+                    !hex 65 69 65 fd a5 69 75 7d 65 69 65 fd a5 69 75 7d 
+                    !hex 65 a9 55 fd a5 a9 75 75 a9 a9 65 fd a5 a9 75 fd 
+                    !hex a5 a9 65 fd a5 69 75 7d a5 a9 65 fd a5 69 75 7d 
                     
 inst_len            pha
-                    lsr a
-                    lsr a
+                    lsr
+                    lsr
                     tax
                     pla
                     and #$03
@@ -2789,8 +2863,8 @@ inst_len            pha
 L9887               iny
                     cpy #$04
                     beq L9891
-                    lsr a
-                    lsr a
+                    lsr
+                    lsr
                     jmp L9887
                     
 L9891               and #$03
@@ -2812,12 +2886,12 @@ c_step              jsr check_cmd_mode
                     bcs L98c5
                     jsr throw
                     ; "Stack overflow"
-                    af 53 74 61 63 6b 20 6f 76 65 72 66 6c 6f 77 00 
+                    !hex af 53 74 61 63 6b 20 6f 76 65 72 66 6c 6f 77 00 
 L98c5               txs
                     jsr prstr
                     ; "PC  A X Y P S Opcode"
 L98cc = * + 3       
-                    50 43 fd 41 fe 58 fe 59 fe 50 f8 53 fe 4f 70 63 6f 64 65 0d 00 
+                    !hex 50 43 fd 41 fe 58 fe 59 fe 50 f8 53 fe 4f 70 63 6f 64 65 0d 00 
 L98de               sty ptr0_lo
                     sty ptr0_hi
 step_next           inc $0410
@@ -2891,7 +2965,7 @@ step_execute        php
                     
 do_brk              jsr throw
                     ; "Halted"
-                    b0 48 61 6c 74 65 64 00 
+                    !hex b0 48 61 6c 74 65 64 00 
                     
 do_jsr              jsr ex_or_step
                     bne step_execute
@@ -2935,7 +3009,7 @@ L99bb               sta $010c
                     
 ex_or_step          jsr prstr
                     ; "Execute or step (E/S) ?"
-                    45 78 65 63 75 74 65 ff 6f 72 ff 73 74 65 70 ff 28 45 2f 53 29 ff 3f ff 00 
+                    !hex 45 78 65 63 75 74 65 ff 6f 72 ff 73 74 65 70 ff 28 45 2f 53 29 ff 3f ff 00 
                     ; why?
 L99dd               sty ptr0_lo
                     sty ptr0_hi
@@ -3105,7 +3179,7 @@ parse_tracks        jsr skip_space
                     beq L9b28
 L9b14               jsr throw
                     ; "40 or 80 tracks"
-                    b1 34 30 20 6f 72 20 38 30 20 74 72 61 63 6b 73 00 
+                    !hex b1 34 30 20 6f 72 20 38 30 20 74 72 61 63 6b 73 00 
 L9b28               jsr getch
                     cmp #$30
                     bne L9b14
@@ -3160,9 +3234,9 @@ L9b4d               lda #$01
                     and #$03
                     rts
                     
-empty_disc          00 ff ff ff ff 01 69 00 00 00 ff ff ff ff 05 63 
-                    00 10 2a 00 10 00 00 00 19 ff ff 03 5f 00 00 2a 
-                    00 00 ff ff ff ff 04 4b 00 00 22 00 
+empty_disc          !hex 00 ff ff ff ff 01 69 00 00 00 ff ff ff ff 05 63 
+                    !hex 00 10 2a 00 10 00 00 00 19 ff ff 03 5f 00 00 2a 
+                    !hex 00 00 ff ff ff ff 04 4b 00 00 22 00 
 L9bbc               pla
                     rts
                     
@@ -3185,7 +3259,10 @@ c_form              jsr parse_tracks
                     bcc L9bbc
                     ldy #$2b
 L9be1               lda empty_disc,y
-                    
+L9be4               sta (acc0_lo),y
+                    dey
+                    bpl L9be1
+                    jsr disc_block                    
                     pla
                     ldy #$00
                     sta (acc0_lo),y
@@ -3209,7 +3286,7 @@ L9c0e               jsr wrap_sector
                     lda acc1_lo
                     jsr hexbyte
                     jsr prstr
-                    fe 00 
+                    !hex fe 00 
 L9c1e               ldy #$59
                     ldx #$0a
 L9c22               lda #$01
@@ -3256,7 +3333,7 @@ L9c22               lda #$01
                     beq L9c7b
                     jsr throw
                     ; "Format error"
-                    b2 46 6f 72 6d 61 74 20 65 72 72 6f 72 00 
+                    !hex b2 46 6f 72 6d 61 74 20 65 72 72 6f 72 00 
 L9c7b               ldy #$1d
                     lda acc1_lo
                     sta (acc0_lo),y
@@ -3274,7 +3351,7 @@ L9c7b               ldy #$1d
                     beq L9ca8
                     jsr throw
                     ; "Verify error"
-                    b3 56 65 72 69 66 79 20 65 72 72 6f 72 00 
+                    !hex b3 56 65 72 69 66 79 20 65 72 72 6f 72 00 
 L9ca8               inc acc1_lo
                     lda acc1_lo
                     cmp acc2_lo
@@ -3297,11 +3374,11 @@ L9cc6               sta (ptr0_lo),y
                     bne L9cc6
                     sty acc2_hi
                     lda acc2_lo
-                    asl a
+                    asl
                     pha
-                    asl a
+                    asl
                     rol acc2_hi
-                    asl a
+                    asl
                     rol acc2_hi
                     sta acc2_lo
                     pla
@@ -3349,7 +3426,7 @@ L9d15               ldy disc_offsets,x
                     bcc L9d15
                     rts
                     
-disc_offsets        03 0c 19 24 
+disc_offsets        !hex 03 0c 19 24 
 wrap_sector         ldx acc1_hi
                     dex
                     bpl L9d32
@@ -3381,7 +3458,7 @@ L9d5d               jsr get_put_parms
                     jsr prstr
                     ; "I/O result = "
 L9d68 = * + 2       
-                    49 2f 4f ff 72 65 73 75 6c 74 ff 3d ff 00 
+                    !hex 49 2f 4f ff 72 65 73 75 6c 74 ff 3d ff 00 
 L9d74               lda $010a
                     sta acc0_lo
                     sty acc0_hi
@@ -3397,7 +3474,7 @@ c_mode              jsr eval_byte
                     bcc L9d9d
                     jsr throw
                     ; "Bad MODE"
-                    19 42 61 64 20 4d 4f 44 45 00 
+                    !hex 19 42 61 64 20 4d 4f 44 45 00 
 L9d9d               lda #$16
                     jsr oswrch
                     txa
@@ -3543,65 +3620,65 @@ L9e94               pla
                     tay
                     rts
                     
-symtab              oswrch 
-                    4f 53 57 52 43 c8 
-                    osrdch 
-                    4f 53 52 44 43 c8 
-                    osnewl 
-                    4f 53 4e 45 57 cc 
-                    osasci 
-                    4f 53 41 53 43 c9 
-                    $ffc2 
-                    47 53 49 4e 49 d4 
-                    $ffc5 
-                    47 53 52 45 41 c4 
-                    $ffb9 
-                    4f 53 52 44 52 cd 
-                    $ffbf 
-                    4f 53 45 56 45 ce 
-                    oscli 
-                    4f 53 43 4c c9 
-                    osbyte 
-                    4f 53 42 59 54 c5 
-                    osword 
-                    4f 53 57 4f 52 c4 
-                    osfind 
-                    4f 53 46 49 4e c4 
-                    osgbpb 
-                    4f 53 47 42 50 c2 
-                    osbput 
-                    4f 53 42 50 55 d4 
-                    osbget 
-                    4f 53 42 47 45 d4 
-                    osargs 
-                    4f 53 41 52 47 d3 
-                    osfile 
-                    4f 53 46 49 4c c5 
-                    brkv 
-                    62 72 6b f6 
-                    $0203 
-                    62 72 6b 76 2b b1 
-                    wrchv 
-                    77 72 63 68 f6 
-                    $020f 
-                    77 72 63 68 76 2b b1 
-                    rdchv 
-                    72 64 63 68 f6 
-                    $0211 
-                    72 64 63 68 76 2b b1 
-                    $0100 
-                    73 74 61 63 eb 
-                    L8000 
-                    6c 61 6e e7 
-                    L8003 
-                    73 65 72 76 e5 
-                    $0000 
-credits             28 43 29 20 41 6e 64 72 65 77 20 41 72 6d 73 74 
-                    72 6f 6e 67 20 31 39 38 34 2e 20 54 68 61 6e 6b 
-                    73 20 74 6f 20 4e 69 67 65 6c 2c 20 4a 6f 65 20 
-                    61 6e 64 20 61 6c 6c 20 61 74 20 48 43 43 53 2e 
-                    56 65 72 73 69 6f 6e 20 31 2e 36 30 20 31 32 2e 
-                    32 2e 31 39 38 34 20 20 20 20 20 20 20 20 20 20 
-                    20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 
-                    20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 
-                    20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 
+symtab              !word oswrch 
+                    !hex 4f 53 57 52 43 c8 
+                    !word osrdch 
+                    !hex 4f 53 52 44 43 c8 
+                    !word osnewl 
+                    !hex 4f 53 4e 45 57 cc 
+                    !word osasci 
+                    !hex 4f 53 41 53 43 c9 
+                    !word $ffc2 
+                    !hex 47 53 49 4e 49 d4 
+                    !word $ffc5 
+                    !hex 47 53 52 45 41 c4 
+                    !word $ffb9 
+                    !hex 4f 53 52 44 52 cd 
+                    !word $ffbf 
+                    !hex 4f 53 45 56 45 ce 
+                    !word oscli 
+                    !hex 4f 53 43 4c c9 
+                    !word osbyte 
+                    !hex 4f 53 42 59 54 c5 
+                    !word osword 
+                    !hex 4f 53 57 4f 52 c4 
+                    !word osfind 
+                    !hex 4f 53 46 49 4e c4 
+                    !word osgbpb 
+                    !hex 4f 53 47 42 50 c2 
+                    !word osbput 
+                    !hex 4f 53 42 50 55 d4 
+                    !word osbget 
+                    !hex 4f 53 42 47 45 d4 
+                    !word osargs 
+                    !hex 4f 53 41 52 47 d3 
+                    !word osfile 
+                    !hex 4f 53 46 49 4c c5 
+                    !word brkv 
+                    !hex 62 72 6b f6 
+                    !word $0203 
+                    !hex 62 72 6b 76 2b b1 
+                    !word wrchv 
+                    !hex 77 72 63 68 f6 
+                    !word $020f 
+                    !hex 77 72 63 68 76 2b b1 
+                    !word rdchv 
+                    !hex 72 64 63 68 f6 
+                    !word $0211 
+                    !hex 72 64 63 68 76 2b b1 
+                    !word $0100 
+                    !hex 73 74 61 63 eb 
+                    !word L8000 
+                    !hex 6c 61 6e e7 
+                    !word L8003 
+                    !hex 73 65 72 76 e5 
+                    !word $0000 
+credits             !hex 28 43 29 20 41 6e 64 72 65 77 20 41 72 6d 73 74 
+                    !hex 72 6f 6e 67 20 31 39 38 34 2e 20 54 68 61 6e 6b 
+                    !hex 73 20 74 6f 20 4e 69 67 65 6c 2c 20 4a 6f 65 20 
+                    !hex 61 6e 64 20 61 6c 6c 20 61 74 20 48 43 43 53 2e 
+                    !hex 56 65 72 73 69 6f 6e 20 31 2e 36 30 20 31 32 2e 
+                    !hex 32 2e 31 39 38 34 20 20 20 20 20 20 20 20 20 20 
+                    !hex 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 
+                    !hex 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 
+                    !hex 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 
