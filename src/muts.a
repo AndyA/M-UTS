@@ -1672,12 +1672,23 @@ check_cmd_mode      jsr get_private
                     ; "Command mode only"
                     !hex aa 43 6f 6d 6d 61 6e 64 20 6d 6f 64 65 20 6f 6e 6c 79 00 
 
-                    !hex 0c 0f 14 16 1a 1e 22 29 30 
-                    !hex 32 34 38 48 31 00 48 31 2c 49 00 32 00 32 2c 49 
-                    !hex 00 32 2c 59 00 28 32 29 00 28 48 31 29 2c 59 00 
-                    !hex 28 48 31 2c 58 29 00 41 00 20 00 23 48 31 00 48 
-                    !hex 2b 00 0d 0c 
+addr_modes          !hex 0c 0f 14 16 1a 1e 22 29 30 32 34 38 
+                    !hex 48 31 00 
+                    !hex 48 31 2c 49 00 
+                    !hex 32 00 
+                    !hex 32 2c 49 00 
+                    !hex 32 2c 59 00 
+                    !hex 28 32 29 00 
+                    !hex 28 48 31 29 2c 59 00 
+                    !hex 28 48 31 2c 58 29 00 
+                    !hex 41 00 
+                    !hex 20 00 
+                    !hex 23 48 31 00 
+                    !hex 48 2b 00 
+                    !hex 0d 0c 
 
+                    ; first two bytes are 5 bits-per-char encodings of mnemonic
+                    ; second two bytes are mask and bit pattern
 op_decode           !hex 08 19 90 ff 28 19 b0 ff a4 19 f0 ff 
                     !hex 94 1b 30 ff cc 1b d0 ff 5a 1c 10 ff d8 1c 00 ff 
                     !hex c8 1d 50 ff e8 1d 70 ff 48 23 18 ff 4a 23 d8 ff 
@@ -1696,15 +1707,17 @@ op_decode           !hex 08 19 90 ff 28 19 b0 ff a4 19 f0 ff
 op_decode_end
 
                     !hex 00 00
-                    !hex 20 ff 02 10 1f 0b 
+addr_decode         !hex 20 ff 02 10 1f 0b 
                     !hex 09 1f 0a 0a 9f 08 08 0d 09 00 9f 09 4c ff 02 80 
                     !hex 9d 0a 84 9d 00 8c 9d 02 94 9d 01 9c 9d 03 6c ff 
                     !hex 05 00 1c 07 04 1c 00 0c 1c 02 10 1c 06 14 1c 01 
                     !hex 18 1c 04 1c 1c 03 
+addr_decode_end
 
 bad_op              !hex 04 0c 12 14 1a 1c 22 32 34 3a 3c 42 44 52 54 5a 
                     !hex 5c 62 64 72 74 7a 7c 80 82 89 92 9c 9e b2 c2 d2 
                     !hex d4 da dc e2 f2 f4 fa fc 
+bad_op_end
                     
 L8f6e               jsr S8894
                     lda #$0d
@@ -1802,18 +1815,18 @@ decode_admode       ldy #$00
                     sty $b6
                     jsr read_rom
 L9010               pha
-                    and $8f0b, y ; FIXME
-                    cmp $8f0a, y ; FIXME
+                    and addr_decode + 1, y
+                    cmp addr_decode, y
                     beq L9022
                     pla
                     iny
                     iny
                     iny
-                    cpy #$3e
+                    cpy #addr_decode_end - addr_decode + 2 ; why?
                     bcc L9010
                     pha
 L9022               pla
-                    lda $8f0c, y ; FIXME
+                    lda addr_decode + 2, y
                     cmp #$0c
                     bcs L9093
                     ldx $b7
@@ -1821,23 +1834,23 @@ L9022               pla
                     tay
                     lda #$20
                     jsr oswrch
-                    lda $8de7, y ; FIXME
+                    lda addr_modes, y 
                     tay
-L9038               lda $8de7, y ; FIXME
+L9038               lda addr_modes, y 
                     beq L9093
                     iny
-                    cmp #$31
+                    cmp #'1'
                     bne L904b
                     jsr read_rom
                     jsr hexbyte
                     jmp L9038
                     
-L904b               cmp #$32
+L904b               cmp #'2'
                     bne L9055
                     jsr pr_sym16
                     jmp L9038
                     
-L9055               cmp #$2b
+L9055               cmp #'+'
                     bne L9081
                     jsr read_rom
                     tax
@@ -1864,10 +1877,10 @@ L906b               clc
                     sta acc2_lo
                     jmp L9038
                     
-L9081               cmp #$49
+L9081               cmp #'I'
                     bne L9087
                     lda $b7
-L9087               cmp #$48
+L9087               cmp #'H'
                     bne L908d
                     lda $b8
 L908d               jsr oswrch
@@ -1898,16 +1911,17 @@ decode_instr        lda acc2_lo
 L90b4               cmp bad_op, x
                     beq L90c5
                     inx
-                    cpx #$28
+                    cpx #bad_op_end - bad_op
                     bcc L90b4
                     tax
                     and #$03
                     cmp #$03
                     bne L90cb
-L90c5               ldx #$0b ; indicate bad op?
+L90c5               ldx #$0b ; indicate bad op
                     lda #$00
                     sta $b7
-                    ; lookup
+
+                    ; lookup op
 L90cb               txa
                     ldx #$00
 L90ce               pha
@@ -1923,10 +1937,14 @@ L90ce               pha
                     bcc L90ce
                     pha
 L90e1               pla     ; found match
+
+                    ; stash packed mnemonic
                     lda op_decode, x
                     sta $0100
                     lda op_decode + 1, x
                     sta $0101
+
+                    ; decode 2 bytes -> 3 chars
                     ldy #$03
 L90f0               ldx #$05
                     lda #$00
