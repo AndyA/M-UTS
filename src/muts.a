@@ -1672,9 +1672,9 @@ check_cmd_mode      jsr get_private
                     ; "Command mode only"
                     !hex aa 43 6f 6d 6d 61 6e 64 20 6d 6f 64 65 20 6f 6e 6c 79 00 
 
-; fix000-
+; fix00-
 addr_modes          !hex 0c 0f 14 16 1a 1e 22 29 30 32 34 38 
-; fix000+
+; fix00+
                     !hex 48 31 00 
                     !hex 48 31 2c 49 00 
                     !hex 32 00 
@@ -1689,6 +1689,7 @@ addr_modes          !hex 0c 0f 14 16 1a 1e 22 29 30 32 34 38
                     !hex 48 2b 00 
                     !hex 0d 0c 
 
+; fix00-
                     ; first two bytes are 5 bits-per-char encodings of mnemonic
                     ; second two bytes are mask and bit pattern
 op_decode           !hex 08 19 90 ff 28 19 b0 ff a4 19 f0 ff 
@@ -1720,7 +1721,8 @@ bad_op              !hex 04 0c 12 14 1a 1c 22 32 34 3a 3c 42 44 52 54 5a
                     !hex 5c 62 64 72 74 7a 7c 80 82 89 92 9c 9e b2 c2 d2 
                     !hex d4 da dc e2 f2 f4 fa fc 
 bad_op_end
-                    
+; fix00+
+
 L8f6e               jsr S8894
                     lda #$0d
 peek                ldx #$00
@@ -2848,8 +2850,10 @@ L97eb               stx $0101
                     
 L9807               jmp edit_getch
                     
+; fix00-                    
 layout_40           !hex 1b 1d 24 
 layout_80           !hex 33 35 44 
+; fix00+
                     
 cursor_off          lda ptr0_lo
                     pha
@@ -2877,12 +2881,14 @@ L982f               jsr oswrch
                     pla
                     sta ptr0_lo
                     rts
-                    
+
+; fix00-                    
 inst_len_table      !hex 69 69 65 7d a5 69 75 7d e5 a9 65 fd a5 69 75 7d 
                     !hex 65 69 65 fd a5 69 75 7d 65 69 65 fd a5 69 75 7d 
                     !hex 65 a9 55 fd a5 a9 75 75 a9 a9 65 fd a5 a9 75 fd 
                     !hex a5 a9 65 fd a5 69 75 7d a5 a9 65 fd a5 69 75 7d 
-                    
+; fix00+
+
 inst_len            pha
                     lsr
                     lsr
@@ -3264,10 +3270,12 @@ L9b4d               lda #$01
                     lda $0111
                     and #$03
                     rts
-                    
+
+; fix00-                    
 empty_disc          !hex 00 ff ff ff ff 01 69 00 00 00 ff ff ff ff 05 63 
                     !hex 00 10 2a 00 10 00 00 00 19 ff ff 03 5f 00 00 2a 
                     !hex 00 00 ff ff ff ff 04 4b 00 00 22 00 
+; fix00+
 L9bbc               pla
                     rts
                     
@@ -3456,8 +3464,10 @@ L9d15               ldy disc_offsets, x
                     cpx #$04
                     bcc L9d15
                     rts
-                    
+
+; fix00-                    
 disc_offsets        !hex 03 0c 19 24 
+; fix00+
 wrap_sector         ldx acc1_hi
                     dex
                     bpl L9d32
