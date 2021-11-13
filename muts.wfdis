@@ -1,0 +1,3607 @@
+L8000               jmp language
+                    
+L8003               jmp service
+                    
+                    ; ROM type
+                    c2 
+                    ; Copyright offset
+                    13 
+                    ; Version
+                    02 
+copyright = * + 10  
+title               4d 2d 55 54 53 00 31 2e 36 30 00 
+copyright           28 43 29 20 41 49 41 41 20 31 39 38 34 00 
+j_prstr             jmp prstr
+                    
+j_throw             jmp throw
+                    
+j_newline           jmp newline
+                    
+j_check_escape      jmp check_escape
+                    
+j_hexbyte           jmp hexbyte
+                    
+j_hexbyte_space     jmp hexbyte_space
+                    
+j_radix_out         jmp radix_out
+                    
+j_getch             jmp getch
+                    
+j_skip_space        jmp skip_space
+                    
+j_eval              jmp eval
+                    
+j_eval_byte         jmp eval_byte
+                    
+j_check_eol         jmp check_eol
+                    
+j_parse_bytestring  jmp parse_bytes
+                    
+j_try_poke          jmp try_poke
+                    
+j_acc0_to_tmp0      jmp acc0_to_acc2
+                    
+j_unget             jmp unget
+                    
+j_x0                jmp $0000
+                    
+j_x1                jmp $0000
+                    
+cmd_table           41 53 53 45 4d 42 4c c5 
+                    c_assemble h_assemble 
+                    42 41 53 c5 
+                    c_base h_base 
+                    43 41 4c c3 
+                    c_calc h_calc 
+                    43 48 41 4e 47 c5 
+                    c_change h_change 
+                    43 4c d2 
+                    c_clr h_clr 
+                    44 49 d3 
+                    c_dis h_dis 
+                    45 44 49 d4 
+                    c_edit h_edit 
+                    46 4c 49 53 d4 
+                    c_flist h_flist 
+                    46 4f 52 cd 
+                    c_form h_form 
+                    46 49 4e c4 
+                    c_find h_find 
+                    47 45 d4 
+                    c_get h_get 
+                    47 cf 
+                    c_go h_go 
+                    4c 4f 4f cb 
+                    c_look h_look 
+                    4d 45 cd 
+                    c_mem h_mem 
+                    4d 4f 44 c5 
+                    c_mode h_mode 
+                    4d 4f 4e 49 54 4f d2 
+                    c_monitor h_monitor 
+                    4d 4f 56 c5 
+                    c_move h_move 
+                    4f 4e 42 52 cb 
+                    c_onbrk h_onbrk 
+                    50 55 d4 
+                    c_put h_put 
+                    52 45 47 d3 
+                    c_regs h_regs 
+                    53 41 4d c5 
+                    c_same h_same 
+                    53 45 4c 45 43 d4 
+                    c_select h_select 
+                    53 45 d4 
+                    c_set h_set 
+                    53 54 45 d0 
+                    c_step h_step 
+                    56 44 d5 
+                    c_vdu h_vdu 
+                    56 45 52 49 46 d9 
+                    c_verify h_verify 
+                    57 48 45 52 c5 
+                    c_where h_where 
+                    ; AND
+                    41 4e c4 
+                    $0000 $0000 
+                    ; OR
+                    4f d2 
+                    $0000 $0000 
+                    ; EOR
+                    45 4f d2 
+                    $0000 $0000 
+                    ; NOT
+                    4e 4f d4 
+                    $0000 $0000 
+                    00 
+                    
+h_assemble          3c 66 73 70 3e 20 3c 66 73 70 be 
+h_base              3c 61 64 64 72 be 
+h_calc              3c 65 78 70 72 be 
+h_change            3c 61 64 64 72 3e 20 3c 62 79 74 65 20 73 74 72 69 6e 67 be 
+h_clr               28 3c 61 64 64 72 3e a9 
+h_dis               3c 73 74 72 74 3e 28 2e 2e 3c 65 6e 64 3e 29 20 28 48 3c 70 72 65 66 69 78 3e 
+                    29 20 28 50 2c 4c a9 
+h_edit              3c 61 64 64 72 be 
+h_flist             28 
+                    3c 6e 75 6d 62 65 72 3e a9 
+h_form              3c 74 72 61 63 6b 73 3e 20 28 3c 64 72 76 3e a9 
+h_find              3c 73 74 72 74 3e 28 2e 2e 3c 65 6e 64 3e 29 20 3c 62 79 74 65 20 73 74 72 69 6e 67 be 
+h_get               3c 74 72 61 63 6b 3e 20 28 3c 64 72 76 3e a9 
+h_go                3c 61 64 64 72 3e 20 28 3c 41 3e 29 20 28 3c 58 3e 29 20 28 3c 59 3e a9 
+h_look              3c 61 64 64 72 3e 20 28 48 3c 70 72 65 66 69 78 3e a9 
+h_mem               3c 73 74 72 74 3e 28 2e 2e 3c 65 6e 64 3e 29 20 28 50 2c 4c a9 
+h_mode              3c 6d 6f 64 65 be 
+h_monitor           a0 
+h_move              28 3e 29 20 3c 73 72 63 3e 20 3c 64 65 73 74 3e 20 3c 6c 65 6e 3e 20 28 3c 61 64 64 72 3e a9 
+h_onbrk             3c 63 6f 6d 6d 61 6e 64 20 6c 69 6e 65 be 
+h_put               3c 74 72 61 63 6b 3e 20 28 3c 64 72 76 3e a9 
+h_regs              a0 
+h_same              3c 61 64 64 72 3e 20 3c 61 64 64 72 3e 20 3c 6c 65 6e be 
+h_select            3c 72 6f 6d 20 6e 75 6d 62 65 72 be 
+h_set               3c 61 64 64 72 be 
+h_step              3c 61 64 64 72 3e 20 28 48 3c 70 72 65 66 69 78 3e 29 20 28 50 2c 4c a9 
+h_vdu               3c 62 79 74 65 20 73 74 72 69 6e 67 be 
+h_verify            28 
+                    3c 64 72 76 3e a9 
+h_where             a0 
+                    00 
+                    
+c_assemble          lda x_present
+                    cmp #$ff
+                    bne throw_noasm
+                    jmp x_assemble
+                    
+throw_noasm         jsr throw
+                    ; "No Assembler"
+                    a0 4e 6f 20 61 73 73 65 6d 62 6c 65 72 00 
+                    
+dispatch_cmd        lda cmdline_lo
+                    pha
+                    lda cmdline_hi
+                    pha
+                    jsr lookup_command
+                    bpl L82fc
+                    jsr getch
+                    and #$df
+                    cmp #$41
+                    bcc L8304
+                    cmp #$5b
+                    bcs L8304
+L82fc               pla
+                    sta cmdline_hi
+                    pla
+                    sta cmdline_lo
+                    sec
+                    rts
+                    
+L8304               jsr unget
+                    lda cmdjmp_lo
+                    ora cmdjmp_hi
+                    beq L82fc
+                    pla
+                    pla
+                    jsr call_cmd
+                    clc
+                    rts
+                    
+call_cmd            jmp (cmdjmp_lo)
+                    
+pr_muts             jsr prstr
+                    ; "M-UTS 1.60"
+                    4d 2d 55 54 53 20 31 2e 36 30 0d 00 
+L8326               rts
+                    
+pr_banner           jsr newline
+                    jsr pr_muts
+                    jsr prstr
+                    ; "MONITOR"
+                    fe 4d 4f 4e 49 54 4f 52 0d 00 
+L833a               rts
+                    
+oswrch_counted      inc acc2_lo
+                    jmp oswrch
+                    
+show_help           jsr newline
+                    jsr pr_muts
+                    jsr newline
+                    ldx #$00
+                    ldy #$00
+                    ; 8153 = help table
+                    lda #$53
+                    sta acc0_lo
+                    lda #$81
+                    sta acc0_hi
+L8355               lda #$02
+                    sta acc2_lo
+                    tya
+                    pha
+                    jsr prstr
+                    fe 00 
+L8360               pla
+                    tay
+L8362               lda cmd_table,y
+                    iny
+                    pha
+                    and #$7f
+                    jsr oswrch_counted
+                    pla
+                    bpl L8362
+                    iny
+                    iny
+                    iny
+                    iny
+                    lda #$20
+                    jsr oswrch_counted
+L8378               lda (acc0_lo,x)
+                    inc acc0_lo
+                    bne L8380
+                    inc acc0_hi
+L8380               pha
+                    and #$7f
+                    jsr oswrch_counted
+                    pla
+                    bpl L8378
+                    jsr check_escape
+                    ; pad with spaces to 40 cols
+                    lda #$20
+                    ldx acc2_lo
+L8390               jsr oswrch_counted
+                    inx
+                    cpx #$28
+                    bcc L8390
+                    ldx #$00
+                    lda (acc0_lo,x)
+                    bne L8355
+                    jmp newline
+                    
+prstr               pla
+                    sta ptr0_lo
+                    pla
+                    sta ptr0_hi
+                    ldy #$00
+L83a9               inc ptr0_lo
+                    bne L83af
+                    inc ptr0_hi
+L83af               lda (ptr0_lo),y
+                    beq L83c5
+                    bpl L83c0
+                    tax
+                    lda #$20
+L83b8               jsr oswrch
+                    inx
+                    bne L83b8
+                    beq L83a9
+L83c0               jsr osasci
+                    bne L83a9
+L83c5               lda ptr0_hi
+                    pha
+                    lda ptr0_lo
+                    pha
+                    rts
+                    
+throw               jsr reset_terminal
+                    pla
+                    sta ptr0_lo
+                    pla
+                    sta ptr0_hi
+                    ldy #$00
+                    sty $0100
+L83da               iny
+                    lda (ptr0_lo),y
+                    sta $0100,y
+                    bne L83da
+                    jmp $0100
+                    
+newline             jsr osnewl
+check_escape        bit esc_flag
+                    bmi throw_escape
+                    rts
+                    
+throw_escape        jsr throw
+                    ; "Escape"
+                    11 45 73 63 61 70 65 00 
+                    
+hexbyte             pha
+                    ror a
+                    ror a
+                    ror a
+                    ror a
+                    jsr hexnybble
+                    pla
+hexnybble           pha
+                    and #$0f
+                    cmp #$0a
+                    sed
+                    adc #$30
+                    cld
+L840a               jsr oswrch
+                    pla
+                    rts
+                    
+hexbyte_space       jsr hexbyte
+                    pha
+                    lda #$20
+                    bne L840a
+                    
+radix_out           sta acc1_lo
+                    lda #$00
+                    pha
+L841c               lda #$00
+                    ldy #$10
+L8420               asl acc0_lo
+                    rol acc0_hi
+                    rol a
+                    cmp acc1_lo
+                    bcc L842d
+                    sbc acc1_lo
+                    inc acc0_lo
+L842d               dey
+                    bne L8420
+                    cmp #$0a
+                    bcc L8436
+                    adc #$06
+L8436               adc #$30
+                    pha
+                    dex
+                    lda acc0_lo
+                    ora acc0_hi
+                    bne L841c
+                    lda #$20
+L8442               dex
+                    bmi L844a
+                    jsr oswrch
+                    bne L8442
+L844a               pla
+                    jsr oswrch
+                    bne L844a
+                    rts
+                    
+getch               ldy #$00
+                    lda (cmdline_lo),y
+                    inc cmdline_lo
+                    bne L845b
+                    inc cmdline_hi
+L845b               rts
+                    
+skip_space          jsr getch
+                    cmp #$20
+                    beq skip_space
+                    cmp #$0d
+                    rts
+                    
+to_upper            pha
+                    and #$df
+                    cmp #$41
+                    bcc L8475
+                    cmp #$5b
+                    bcs L8475
+                    pla
+                    and #$df
+                    rts
+L8475               pla
+                    rts
+                    
+radix_parse         sta acc1_lo
+                    lda ptr0_lo
+                    pha
+                    lda ptr0_hi
+                    pha
+                    lda #$00
+                    sta acc0_lo
+                    sta acc0_hi
+                    jsr skip_space
+L8488               jsr to_upper
+                    sec
+                    sbc #$30
+                    bcc L84d9
+                    cmp #$0a
+                    bcc L849a
+                    cmp #$11
+                    bcc L84d9
+                    sbc #$07
+L849a               cmp acc1_lo
+                    bcs L84d9
+                    pha
+                    lda acc0_lo
+                    sta ptr0_lo
+                    lda acc0_hi
+                    sta ptr0_hi
+                    lda #$00
+                    sta acc0_lo
+                    sta acc0_hi
+                    ldx #$05
+                    lda acc1_lo
+L84b1               ror a
+                    bcc L84c3
+                    pha
+                    clc
+                    lda acc0_lo
+                    adc ptr0_lo
+                    sta acc0_lo
+                    lda acc0_hi
+                    adc ptr0_hi
+                    sta acc0_hi
+                    pla
+L84c3               asl ptr0_lo
+                    rol ptr0_hi
+                    dex
+                    bne L84b1
+                    clc
+                    pla
+                    adc acc0_lo
+                    sta acc0_lo
+                    bcc L84d4
+                    inc acc0_hi
+L84d4               lda (cmdline_lo),y
+                    iny
+                    bne L8488
+L84d9               pla
+                    sta ptr0_hi
+                    pla
+                    sta ptr0_lo
+                    tya
+                    clc
+                    adc cmdline_lo
+                    sta cmdline_lo
+                    bcc L84e9
+                    inc cmdline_hi
+L84e9               jsr unget
+                    dey
+                    rts
+                    
+eval_atom           tsx
+                    cpx #$80
+                    bcs L850b
+                    jsr throw
+                    ; "Formula too complex"
+                    a1 46 6f 72 6d 75 6c 61 20 74 6f 6f 20 63 6f 6d 70 6c 65 78 00 
+                    
+L850b               jsr lookup_token
+                    ; - = negate term
+                    cmp #$2d
+                    bne L8523
+                    jsr eval_atom
+                    lda #$00
+                    sec
+                    sbc acc0_lo
+                    sta acc0_lo
+                    lda #$00
+                    sbc acc0_hi
+                    sta acc0_hi
+                    rts
+                    
+                    ; + = skipped
+L8523               cmp #$2b
+                    beq eval_atom
+                    ; ? = peek
+                    cmp #$3f
+                    bne L8537
+                    jsr eval_atom
+                    ldy #$00
+                    lda (acc0_lo),y
+                    sta acc0_lo
+                    sty acc0_hi
+                    rts
+                    
+                    ; ! = word peek
+L8537               cmp #$21
+                    bne L854b
+                    jsr eval_atom
+                    ldy #$00
+                    lda (acc0_lo),y
+                    tax
+                    iny
+                    lda (acc0_lo),y
+                    sta acc0_hi
+                    stx acc0_lo
+                    rts
+                    
+                    ; @ = set radix
+L854b               cmp #$40
+                    bne L8568
+                    lda #$0a
+                    sta acc1_lo
+                    jsr eval_d
+                    lda acc0_lo
+                    cmp #$02
+                    bcc L857c
+                    cmp #$23
+                    bcs L857c
+                    sta acc1_lo
+                    jsr skip_comma
+                    jmp eval_atom
+                    
+                    ; 9e = NOT
+L8568               cmp #$9e
+                    bne L8589
+                    jsr eval_atom
+                    lda acc0_lo
+                    eor #$ff
+                    sta acc0_lo
+                    lda acc0_hi
+                    eor #$ff
+                    sta acc0_hi
+L857b               rts
+                    
+L857c               jsr throw
+                    a2 42 61 64 20 62 61 73 65 00 
+                    
+                    ; ( = nested
+L8589               cmp #$28
+                    beq L8595
+                    ; { = nested
+                    cmp #$7b
+                    beq L8595
+                    ; [ = nested
+                    cmp #$5b
+                    bne L85bb
+L8595               cmp #$5a
+                    adc #$01
+                    pha
+                    jsr eval_hex
+                    jsr skip_space
+                    sta ptr0_lo
+                    pla
+                    cmp ptr0_lo
+                    beq L857b
+                    jsr throw
+                    a3 4d 69 73 73 69 6e 67 20 62 72 61 63 6b 65 74 00 
+                    ; ' = char const
+L85bb               cmp #$27
+                    bne L85ce
+                    jsr getch
+                    sta acc0_lo
+                    sty acc0_hi
+                    jsr getch
+                    cmp #$27
+                    bne L8629
+                    rts
+                    
+                    ; : = variable lookup
+L85ce               cmp #$3a
+                    bne L85fd
+                    jsr getch
+                    and #$df
+                    cmp #$41
+                    bcs L85ec
+throw_badvar        jsr throw
+                    ; "Bad variable"
+                    a4 42 61 64 20 76 61 72 69 61 62 6c 65 00 
+L85ec               cmp #$5b
+                    bcs throw_badvar
+                    asl a
+                    tax
+                    lda $037e,x
+                    sta acc0_lo
+                    lda $037f,x
+                    sta acc0_hi
+                    rts
+                    
+                    ; extended rom?
+L85fd               ldx x_present
+                    cpx #$ff
+                    bne L8607
+                    jmp x_eval
+                    
+L8607               jsr unget
+                    lda acc1_lo
+                    jsr radix_parse
+                    bmi L8629
+                    jsr skip_space
+                    jsr to_upper
+                    ; k suffix?
+                    cmp #$4b
+                    bne L8626
+                    lda acc0_lo
+                    asl a
+                    asl a
+                    sta acc0_hi
+                    lda #$00
+                    sta acc0_lo
+                    rts
+                    
+L8626               jmp unget
+                    
+L8629               jmp syntax_error
+                    
+eval_b              jsr eval_atom
+                    jsr skip_space
+                    ; * = multiply
+                    cmp #$2a
+                    bne L866a
+                    lda acc0_lo
+                    pha
+                    lda acc0_hi
+                    pha
+                    jsr eval_b
+                    pla
+                    sta acc2_hi
+                    pla
+                    sta acc2_lo
+                    lda #$00
+                    sta ptr0_lo
+                    sta ptr0_hi
+                    ldy #$10
+L864d               lsr acc0_hi
+                    ror acc0_lo
+                    bcc L8660
+                    clc
+                    lda acc2_lo
+                    adc ptr0_lo
+                    sta ptr0_lo
+                    lda acc2_hi
+                    adc ptr0_hi
+                    sta ptr0_hi
+L8660               asl acc2_lo
+                    rol acc2_hi
+                    dey
+                    bne L864d
+                    jmp L867f
+                    
+                    ; / = divide
+L866a               cmp #$2f
+                    bne L8678
+                    jsr divmod
+                    lda acc2_lo
+                    ldx acc2_hi
+                    jmp L8683
+                    
+                    ; % = mod
+L8678               cmp #$25
+                    bne L8688
+                    jsr divmod
+L867f               lda ptr0_lo
+                    ldx ptr0_hi
+L8683               sta acc0_lo
+                    stx acc0_hi
+                    rts
+                    
+L8688               jmp unget
+                    
+eval_c              jsr eval_b
+                    jsr skip_space
+                    ; + = add
+                    cmp #$2b
+                    bne L86aa
+                    lda acc0_hi
+                    pha
+                    lda acc0_lo
+                    pha
+                    jsr eval_c
+                    clc
+                    pla
+                    adc acc0_lo
+                    sta acc0_lo
+                    pla
+                    adc acc0_hi
+                    sta acc0_hi
+                    rts
+                    
+                    ; - = subtract
+L86aa               cmp #$2d
+                    bne L86c3
+                    lda acc0_hi
+                    pha
+                    lda acc0_lo
+                    pha
+                    jsr eval_c
+                    sec
+                    pla
+                    sbc acc0_lo
+                    sta acc0_lo
+                    pla
+                    sbc acc0_hi
+                    sta acc0_hi
+                    rts
+                    
+L86c3               jmp unget
+                    
+divmod              lda acc0_lo
+                    pha
+                    lda acc0_hi
+                    pha
+                    jsr eval_b
+                    pla
+                    sta acc2_hi
+                    pla
+                    sta acc2_lo
+                    ldy #$10
+                    lda #$00
+                    sta ptr0_lo
+                    sta ptr0_hi
+L86dd               asl acc2_lo
+                    rol acc2_hi
+                    rol ptr0_lo
+                    rol ptr0_hi
+                    lda ptr0_lo
+                    cmp acc0_lo
+                    lda ptr0_hi
+                    sbc acc0_hi
+                    bcc L86fd
+                    lda ptr0_lo
+                    sbc acc0_lo
+                    sta ptr0_lo
+                    lda ptr0_hi
+                    sbc acc0_hi
+                    sta ptr0_hi
+                    inc acc2_lo
+L86fd               dey
+                    bne L86dd
+                    rts
+                    
+eval_hex            lda #$10
+                    sta acc1_lo
+eval_d              jsr eval_c
+                    jsr lookup_token
+                    ; AND
+                    cmp #$9b
+                    bne L8723
+                    lda acc0_lo
+                    pha
+                    lda acc0_hi
+                    pha
+                    jsr eval_d
+                    pla
+                    and acc0_hi
+                    sta acc0_hi
+                    pla
+                    and acc0_lo
+                    sta acc0_lo
+                    rts
+                    
+                    ; OR
+L8723               cmp #$9c
+                    bne L873b
+                    lda acc0_lo
+                    pha
+                    lda acc0_hi
+                    pha
+                    jsr eval_d
+                    pla
+                    ora acc0_hi
+                    sta acc0_hi
+                    pla
+                    ora acc0_lo
+                    sta acc0_lo
+                    rts
+                    
+                    ; EOR
+L873b               cmp #$9d
+                    bne unget
+                    lda acc0_lo
+                    pha
+                    lda acc0_hi
+                    pha
+                    jsr eval_d
+                    pla
+                    eor acc0_hi
+                    sta acc0_hi
+                    pla
+                    eor acc0_lo
+                    sta acc0_lo
+                    rts
+                    
+unget               lda cmdline_hi
+                    bne L8759
+                    dec cmdline_hi
+L8759               dec cmdline_lo
+                    rts
+                    
+eval                php
+                    pha
+                    tya
+                    pha
+                    txa
+                    pha
+                    lda ptr0_lo
+                    pha
+                    lda ptr0_hi
+                    pha
+                    lda acc2_lo
+                    pha
+                    lda acc2_hi
+                    pha
+                    jsr eval_hex
+                    jsr skip_comma
+                    pla
+                    sta acc2_hi
+                    pla
+                    sta acc2_lo
+                    pla
+                    sta ptr0_hi
+                    pla
+                    sta ptr0_lo
+                    pla
+                    tax
+                    pla
+                    tay
+                    pla
+                    plp
+                    rts
+                    
+eval_byte           lda acc0_lo
+                    pha
+                    lda acc0_hi
+                    pha
+                    jsr eval
+                    ldy acc0_lo
+                    lda acc0_hi
+                    beq L87ac
+                    jsr throw
+                    ; "Byte out of range"
+                    a5 42 79 74 65 20 6f 75 74 20 6f 66 20 72 61 6e 67 65 00 
+L87ac               pla
+                    sta acc0_hi
+                    pla
+                    sta acc0_lo
+                    tya
+                    rts
+                    
+skip_comma          jsr skip_space
+                    cmp #$2c
+                    beq L87be
+                    jmp unget
+                    
+L87be               rts
+                    
+lookup_token        lda cmd_offset
+                    pha
+                    lda cmdhelp_lo
+                    pha
+                    lda cmdhelp_hi
+                    pha
+                    jsr lookup_command
+                    tax
+                    pla
+                    sta cmdhelp_hi
+                    pla
+                    sta cmdhelp_lo
+                    pla
+                    sta cmd_offset
+                    txa
+                    rts
+                    
+lookup_command      jsr skip_space
+                    jsr unget
+                    lda #$80
+                    sta acc1_hi
+                    ldx #$00
+lc_next_cmd         ldy #$ff
+                    stx cmd_offset
+lc_next_char        iny
+                    lda (cmdline_lo),y
+                    and #$df
+                    sta ptr0_lo
+                    lda cmd_table,x
+                    php
+                    inx
+                    and #$7f
+                    cmp ptr0_lo
+                    bne lc_dot
+                    plp
+                    bpl lc_next_char
+lc_match            iny
+                    tya
+                    ldy #$00
+                    clc
+                    adc cmdline_lo
+                    sta cmdline_lo
+                    bcc L8809
+                    inc cmdline_hi
+L8809               lda cmd_table,x
+                    sta cmdjmp_lo,y
+                    inx
+                    iny
+                    cpy #$04
+                    bcc L8809
+                    lda acc1_hi
+                    rts
+                    
+                    ; check for . abbreviation of command
+lc_dot              plp
+                    inc acc1_hi
+                    dex
+                    dex
+L881d               inx
+                    lda cmd_table,x
+                    bpl L881d
+                    inx
+                    lda (cmdline_lo),y
+                    cmp #$2e
+                    beq lc_match
+                    inx
+                    inx
+                    inx
+                    inx
+                    lda cmd_table,x
+                    bne lc_next_cmd
+                    jmp getch
+                    
+                    ; "Syntax: "
+syntax_prefix       53 79 6e 74 61 78 3a 20 
+check_eol           jsr skip_space
+                    bne syntax_error
+                    rts
+                    
+syntax_error        ldx #$00
+                    stx $0100
+                    lda acc1_hi
+                    sta $0101
+                    ldy cmd_offset
+                    cpy #$ff
+                    bne L8867
+                    jsr throw
+                    ; "Bad expression"
+                    a6 42 61 64 20 65 78 70 72 65 73 73 69 6f 6e 00 
+L8867               lda syntax_prefix,x
+                    sta $0102,x
+                    inx
+                    cpx #$08
+                    bcc L8867
+L8872               lda cmd_table,y
+                    php
+                    and #$7f
+                    sta $0102,x
+                    iny
+                    inx
+                    plp
+                    bpl L8872
+                    lda #$20
+                    sta $0102,x
+                    ldy #$00
+L8887               lda (cmdhelp_lo),y
+                    php
+                    and #$7f
+                    sta $0103,x
+                    iny
+                    inx
+                    plp
+                    bpl L8887
+S8894               lda #$00
+                    sta $0103,x
+                    jmp $0100
+                    
+parse_bytes         ldx #$00
+parse_bytes_tail    jsr skip_comma
+                    jsr skip_space
+                    cmp #$22
+                    bne L88c0
+L88a8               jsr getch
+                    cmp #$22
+                    bne L88b6
+                    jsr getch
+                    cmp #$22
+                    bne L88c0
+L88b6               cmp #$0d
+                    beq L88e4
+                    jsr try_poke
+                    jmp L88a8
+                    
+L88c0               jsr unget
+                    jsr skip_space
+                    ; $ = peek?
+                    cmp #$24
+                    beq L88e7
+                    jsr unget
+                    jsr skip_space
+                    cmp #$0d
+L88d2               bne L88d5
+                    rts
+                    
+L88d5               jsr unget
+                    jsr skip_comma
+                    jsr eval_byte
+                    jsr try_poke
+                    jmp parse_bytes_tail
+                    
+L88e4               jmp syntax_error
+                    
+L88e7               jsr eval
+                    ldy #$00
+L88ec               lda (acc0_lo),y
+                    iny
+                    cmp #$0d
+                    beq parse_bytes_tail
+                    sty acc1_lo
+                    jsr try_poke
+                    ldy acc1_lo
+                    jmp L88ec
+                    
+try_poke            ldy #$00
+                    sta (ptr0_lo),y
+                    cmp (ptr0_lo),y
+                    beq L891a
+                    jsr throw
+                    ; "Read only memory"
+                    a7 52 65 61 64 20 6f 6e 6c 79 20 6d 65 6d 6f 72 79 00 
+L891a               inc ptr0_lo
+                    bne L8920
+                    inc ptr0_hi
+L8920               inx
+                    rts
+                    
+acc0_to_acc2        lda acc0_lo
+                    sta acc2_lo
+                    lda acc0_hi
+                    sta acc2_hi
+                    rts
+                    
+c_find              jsr parse_range
+                    ldx #$00
+                    stx ptr0_lo
+                    inx
+                    stx ptr0_hi
+                    jsr parse_bytes
+                    stx cmdline_lo
+L893a               ldy #$00
+                    ldx #$00
+L893e               lda $0100,x
+                    cmp (acc2_lo),y
+                    bne L8958
+                    iny
+                    inx
+                    cpx cmdline_lo
+                    bcc L893e
+                    lda acc2_hi
+                    jsr hexbyte
+                    lda acc2_lo
+                    jsr hexbyte_space
+                    jsr check_escape
+L8958               inc acc2_lo
+                    bne L895e
+                    inc acc2_hi
+L895e               lda acc2_lo
+                    cmp acc0_lo
+                    lda acc2_hi
+                    sbc acc0_hi
+                    bcc L893a
+                    jmp newline
+                    
+c_change            jsr eval
+                    lda acc0_lo
+                    sta ptr0_lo
+                    lda acc0_hi
+                    sta ptr0_hi
+                    jmp parse_bytes
+                    
+print_or_page       jsr skip_space
+                    beq L89a0
+                    cmp #$2c
+                    beq print_or_page
+                    and #$df
+                    cmp #$50
+                    bne L898f
+                    lda #$0e
+                    jsr oswrch
+                    bne print_or_page
+L898f               cmp #$4c
+                    bne L8999
+                    jsr enable_printer
+                    jmp print_or_page
+                    
+L8999               cmp #$0d
+                    beq L89a0
+                    jmp syntax_error
+                    
+L89a0               rts
+                    
+                    ; flush buffers
+enable_printer      lda #$0f
+                    ldx #$00
+                    ldy #$00
+                    jsr osbyte
+                    lda #$02
+                    jsr oswrch
+                    jsr skip_space
+                    cmp #$2a
+                    beq L89a0
+                    jsr unget
+                    lda #$20
+                    jsr oswrch
+                    lda #$0d
+                    jsr oswrch
+                    lda #$03
+                    jsr oswrch
+                    lda #$80
+                    dey
+                    ldx #$fc
+                    jsr osbyte
+                    cpx #$3f
+                    bne throw_noprinter
+                    lda #$02
+                    jmp oswrch
+                    
+throw_noprinter     jsr throw
+                    ; "No printer"
+                    a8 4e 6f 20 70 72 69 6e 74 65 72 00 
+                    
+parse_range         jsr eval
+                    jsr acc0_to_acc2
+                    jsr skip_space
+                    cmp #$2e
+                    bne L89ff
+                    jsr skip_space
+                    cmp #$2e
+                    beq L8a09
+                    jmp syntax_error
+                    
+L89ff               jsr unget
+                    lda #$ff
+                    sta acc0_lo
+                    sta acc0_hi
+                    rts
+                    
+L8a09               jmp eval
+                    
+reset_terminal      jsr prstr
+                    ; disable printer, page mode off
+                    03 0f 00 
+L8a12               rts
+                    
+calc_columns        jsr osnewl
+                    lda #$08
+                    jsr oswrch
+                    lda #$86
+                    jsr osbyte
+                    jsr newline
+                    lda #$10
+                    cpx #$4f
+                    beq L8a2a
+                    lsr a
+L8a2a               rts
+                    
+ram_warning         txa
+                    pha
+                    tya
+                    pha
+                    jsr prstr
+                    ; "RAM from "
+                    52 41 4d 20 66 72 6f 6d 20 00 
+L8a3c               pla
+                    jsr hexbyte
+                    tya
+                    jsr hexbyte_space
+                    jsr prstr
+                    ; "to "
+                    74 6f 20 00 
+L8a4b               pla
+                    jsr hexbyte
+                    tya
+                    jsr hexbyte_space
+L8a54 = * + 1       
+L8a53               jsr prstr
+                    ; "will be corrupted"
+                    77 69 6c 6c 20 62 65 20 63 6f 72 72 75 70 74 65 64 0d 00 
+ask_continue        jsr prstr
+                    ; "continue (Y/N) ?"
+                    63 6f 6e 74 69 6e 75 65 20 28 59 2f 4e 29 20 3f 20 00 
+L8a7e               jsr osrdch
+                    bcc L8a86
+                    jmp throw_escape
+                    
+L8a86               and #$df
+                    cmp #$59
+                    beq L8a8e
+                    lda #$4e
+L8a8e               jsr oswrch
+                    pha
+                    jsr newline
+                    pla
+                    lsr a
+L8a97               rts
+                    
+c_monitor           jsr skip_space
+                    cmp #$0d
+                    beq L8ace
+                    jsr unget
+                    lda cmdline_lo
+                    sta $0100
+                    lda cmdline_hi
+                    sta $0101
+                    lda #$83
+                    jsr osbyte
+                    stx $0102
+                    sty $0103
+                    lda #$82
+                    jsr osbyte
+                    stx $0104
+                    sty $0105
+                    ldx #$00
+                    stx $0106
+                    ldy #$01
+                    lda #$ff
+                    jsr osfile
+L8ace               ldx cur_rom
+                    lda #$8e
+                    jmp osbyte
+                    
+                    ; address
+readline_parms      $0700 
+                    ; length
+                    9e 
+                    ; min char
+                    20 
+                    ; max char
+                    ff 
+                    0d 00 00 00 
+                    
+                    ; ROM service entry
+language            cmp #$01
+                    bne L8a97
+                    lda #$1d
+                    sta brkv
+                    lda #$8b
+                    sta $0203
+                    lda #$00
+                    ldx #$3f
+                    sta $0600
+                    sta $0601
+                    sta $0602
+L8af9               sta breakpoints_lo,x
+                    dex
+                    bpl L8af9
+                    ldx #$04
+L8b01               lda $8ada,x
+                    sta brk_cmd,x
+                    dex
+                    bpl L8b01
+                    inx
+                    stx $0604
+                    lda #$f0
+                    sta $0424
+                    lda #$5d
+                    sta $0603
+                    cli
+                    cld
+                    jmp repl
+                    
+brk_handler         txa
+                    pha
+                    ldx #$00
+                    lda err_lo
+                    sec
+                    sbc #$01
+                    sta acc0_lo
+                    lda err_hi
+                    sbc #$00
+                    sta acc0_hi
+L8b2e               lda acc0_lo
+                    cmp breakpoints_lo,x
+                    bne L8b3f
+                    lda acc0_hi
+                    cmp breakpoints_hi,x
+                    bne L8b3f
+                    jmp bp_handler
+                    
+L8b3f               inx
+                    inx
+                    inx
+                    inx
+                    cpx #$40
+                    bcc L8b2e
+                    lda #$7e
+                    jsr osbyte
+                    jsr osnewl
+                    ldy #$01
+L8b51               lda (err_lo),y
+                    beq L8b63
+                    iny
+                    cmp #$20
+                    bcc L8b51
+                    cmp #$7f
+                    beq L8b51
+                    jsr oswrch
+                    bne L8b51
+L8b63               cli
+                    cld
+                    ldx #$ff
+                    txs
+                    jsr osnewl
+                    
+                    ; start of repl loop
+repl                jsr set_private
+                    ldx #$00
+L8b70               lda $0603,x
+                    inx
+                    jsr oswrch
+                    bne L8b70
+                    sta cmdline_lo
+                    ; readline_parms
+                    ldx #$d5
+                    ldy #$8a
+                    jsr osword
+                    bcc L8b87
+                    jmp throw_escape
+                    
+L8b87               ldx #$07
+                    stx cmdline_hi
+                    jsr skip_space
+                    beq repl
+                    ; :<var> =
+                    cmp #$3a
+                    bne L8bd2
+                    jsr skip_space
+                    and #$df
+                    cmp #$41
+                    bcs L8ba0
+L8b9d               jmp throw_badvar
+                    
+L8ba0               cmp #$5b
+                    bcs L8b9d
+                    asl a
+                    tax
+                    ldy #$ff
+                    sty cmd_offset
+                    jsr skip_space
+                    cmp #$3d
+                    beq L8bbf
+throw_missingeq     jsr throw
+                    ; "Missing ="
+                    a9 4d 69 73 73 69 6e 67 20 3d 00 
+L8bbf               jsr eval
+                    jsr check_eol
+                    lda acc0_lo
+                    sta $037e,x
+                    lda acc0_hi
+                    sta $037f,x
+                    jmp repl
+                    
+                    ; / = set prompt
+L8bd2               cmp #$2f
+                    bne L8bed
+                    ldx #$00
+L8bd8               jsr getch
+                    cmp #$0d
+                    beq L8be5
+                    sta $0603,x
+                    inx
+                    bne L8bd8
+L8be5               lda #$00
+                    sta $0603,x
+                    jmp repl
+                    
+                    ; ? = show help
+L8bed               cmp #$3f
+                    bne L8bf7
+                    jsr show_help
+                    jmp repl
+                    
+                    ; $<addr> = bytestring
+L8bf7               cmp #$24
+                    bne L8c18
+                    jsr eval
+                    lda acc0_lo
+                    sta ptr0_lo
+                    lda acc0_hi
+                    sta ptr0_hi
+                    jsr skip_space
+                    cmp #$3d
+                    bne throw_missingeq
+                    jsr parse_bytes
+                    lda #$0d
+                    jsr try_poke
+                    jmp repl
+                    
+                    ; attempt command
+L8c18               jsr unget
+                    jsr dispatch_cmd
+                    bcs L8c23
+                    jmp repl
+                    
+                    ; fallback to oscli
+L8c23               ldx #$00
+                    ldy #$07
+                    jsr oscli
+                    jmp repl
+                    
+bp_handler          pla
+                    sta $042e
+                    lda $fc
+                    sta $0400
+                    sty $0430
+                    pla
+                    sta $041e
+                    jsr prstr
+                    ; "Break: PC = "
+                    42 72 65 61 6b 3a 20 50 43 20 3d 20 00 
+L8c4d               lda acc0_hi
+                    jsr hexbyte
+                    lda acc0_lo
+                    jsr hexbyte
+                    jsr newline
+                    lda #$a0
+                    sta cmdline_lo
+                    jmp L8b87
+                    
+do_calc             jsr eval
+                    jsr check_eol
+                    ldy #$02
+                    ldx #$12
+                    jsr radix_print
+                    ldy #$08
+                    ldx #$08
+                    jsr radix_print
+                    ldy #$0a
+                    ldx #$07
+                    jsr radix_print
+                    ldy #$10
+                    ldx #$06
+                    jsr radix_print
+                    lda $0402
+                    cmp #$02
+                    bcc L8cc6
+                    cmp #$24
+                    bcs L8cc6
+                    ldx cur_rom
+                    ldy rom_private,x
+                    bpl L8cc6
+                    pha
+                    jsr prstr
+                    0d 42 61 73 65 20 00 
+L8ca0               pla
+                    pha
+                    tay
+                    lda acc0_lo
+                    pha
+                    lda acc0_hi
+                    pha
+                    ldx #$00
+                    stx acc0_hi
+                    sty acc0_lo
+                    ldy #$0a
+                    jsr radix_print
+                    pla
+                    sta acc0_hi
+                    pla
+                    sta acc0_lo
+                    jsr prstr
+                    3a 20 00 
+L8cc0               pla
+                    tay
+                    ldx #$00
+                    beq radix_print
+L8cc6               rts
+                    
+radix_print         lda acc0_lo
+                    pha
+                    lda acc0_hi
+                    pha
+                    tya
+                    jsr radix_out
+                    pla
+                    sta acc0_hi
+                    pla
+                    sta acc0_lo
+                    rts
+                    
+c_calc              jsr do_calc
+                    jmp newline
+                    
+c_move              lda #$00
+                    sta $0100
+                    jsr skip_space
+                    cmp #$3e
+                    bne L8cef
+                    sta $0100
+                    beq L8cf2
+L8cef               jsr unget
+L8cf2               jsr eval
+                    jsr acc0_to_acc2
+                    jsr eval
+                    lda #$83
+                    jsr osbyte
+                    txa
+                    cmp acc0_lo
+                    tya
+                    sbc acc0_hi
+                    bcc L8d35
+                    lda $0100
+                    bne L8d35
+                    txa
+                    pha
+                    tya
+                    pha
+                    jsr prstr
+                    44 65 73 74 69 6e 61 74 69 6f 6e 20 3c 3d 20 00 
+L8d24               pla
+                    jsr hexbyte
+                    pla
+                    jsr hexbyte
+                    jsr newline
+                    jsr ask_continue
+                    bcs L8d35
+                    rts
+                    
+L8d35               lda acc0_lo
+                    sta ptr0_lo
+                    lda acc0_hi
+                    sta ptr0_hi
+                    jsr eval
+                    lda $0100
+                    bne L8d48
+                    jsr check_eol
+L8d48               ldy #$00
+                    lda ptr0_lo
+                    cmp acc2_lo
+                    lda ptr0_hi
+                    sbc acc2_hi
+                    bcc L8d8e
+                    clc
+                    lda acc2_lo
+                    adc acc0_lo
+                    sta acc2_lo
+                    lda acc2_hi
+                    adc acc0_hi
+                    sta acc2_hi
+                    clc
+                    lda ptr0_lo
+                    adc acc0_lo
+                    sta ptr0_lo
+                    lda ptr0_hi
+                    adc acc0_hi
+                    sta ptr0_hi
+                    inc acc0_lo
+                    bne L8d74
+                    inc acc0_hi
+L8d74               lda (acc2_lo),y
+                    sta (ptr0_lo),y
+                    lda acc2_lo
+                    bne L8d7e
+                    dec acc2_hi
+L8d7e               dec acc2_lo
+                    lda ptr0_lo
+                    bne L8d86
+                    dec ptr0_hi
+L8d86               dec ptr0_lo
+                    jsr countdown
+                    bne L8d74
+                    rts
+                    
+L8d8e               lda (acc2_lo),y
+                    jsr try_poke
+                    inc acc2_lo
+                    bne L8d99
+                    inc acc2_hi
+L8d99               jsr countdown
+                    bne L8d8e
+                    lda $0100
+                    beq L8dac
+                    jsr eval
+                    jsr check_eol
+                    jmp (acc0_lo)
+                    
+L8dac               rts
+                    
+countdown           lda acc0_lo
+                    bne L8db3
+                    dec acc0_hi
+L8db3               dec acc0_lo
+                    lda acc0_lo
+                    ora acc0_hi
+                    rts
+                    
+set_private         lda #$ff
+                    bne L8dc0
+clr_private         lda #$00
+L8dc0               ldx cur_rom
+                    sta rom_private,x
+                    rts
+                    
+get_private         ldx cur_rom
+                    lda rom_private,x
+L8dcb               rts
+                    
+check_cmd_mode      jsr get_private
+                    bmi L8dcb
+                    jsr throw
+                    ; "Command mode only"
+                    aa 43 6f 6d 6d 61 6e 64 20 6d 6f 64 65 20 6f 6e 6c 79 00 
+                                         0c 0f 14 16 1a 1e 22 29 30 
+                    32 34 38 48 31 00 48 31 2c 49 00 32 00 32 2c 49 
+                    00 32 2c 59 00 28 32 29 00 28 48 31 29 2c 59 00 
+                    28 48 31 2c 58 29 00 41 00 20 00 23 48 31 00 48 
+                    2b 00 0d 0c 
+op_decode_huh       08 19 
+op_decode           90 ff 28 19 b0 ff a4 19 f0 ff 
+                    94 1b 30 ff cc 1b d0 ff 5a 1c 10 ff d8 1c 00 ff 
+                    c8 1d 50 ff e8 1d 70 ff 48 23 18 ff 4a 23 d8 ff 
+                    54 23 58 ff 6e 23 b8 ff b2 29 ca ff b4 29 88 ff 
+                    f2 53 e8 ff f4 53 c8 ff 26 5d 20 ff 22 7c ea ff 
+                    44 8a 48 ff 62 8a 08 ff 44 8b 68 ff 62 8b 28 ff 
+                    54 9d 40 ff 68 9d 60 ff 88 a1 38 ff 8a a1 f8 ff 
+                    94 a1 78 ff b2 a8 aa ff b4 a8 a8 ff 32 ad ba ff 
+                    44 ae 8a ff 68 ae 9a ff 84 ae 98 ff aa 1a 24 f7 
+                    a2 5b 4c df 72 24 e0 f3 74 24 c0 f3 72 a5 86 e7 
+                    74 a5 84 e7 88 29 c6 e7 c8 53 e6 e7 1a 15 02 e3 
+                    26 6d 42 e3 1a 9c 22 e3 26 9c 62 e3 72 69 a2 e3 
+                    74 69 a0 e3 44 a5 81 e3 48 11 61 e3 ca 13 21 e3 
+                    a2 23 c1 e3 26 34 41 e3 44 69 a1 e3 c4 84 01 e3 
+                    c8 a0 e1 e3 00 00 00 00 00 00 20 ff 02 10 1f 0b 
+                    09 1f 0a 0a 9f 08 08 0d 09 00 9f 09 4c ff 02 80 
+                    9d 0a 84 9d 00 8c 9d 02 94 9d 01 9c 9d 03 6c ff 
+                    05 00 1c 07 04 1c 00 0c 1c 02 10 1c 06 14 1c 01 
+                    18 1c 04 1c 1c 03 
+optab               04 0c 12 14 1a 1c 22 32 34 3a 3c 42 44 52 54 5a 5c 62 64 72 74 7a 7c 80 82 89 92 9c 9e b2 c2 d2 d4 da dc e2 f2 f4 fa fc 
+                    
+L8f6e               jsr S8894
+                    lda #$0d
+peek                ldx #$00
+                    stx $b6
+read_rom            php
+                    sei
+                    tya
+                    pha
+                    lda acc2_lo
+                    sta $f6
+                    lda acc2_hi
+                    sta $f7
+                    jsr get_private
+                    bmi L8f8b
+                    txa
+                    bpl L8f8e
+L8f8b               lda $0602
+L8f8e               tay
+                    jsr $ffb9
+                    inc acc2_lo
+                    bne L8f98
+                    inc acc2_hi
+L8f98               pha
+                    inc $b6
+                    lda $b6
+                    and #$07
+                    tax
+                    pla
+                    sta $010a,x
+                    tax
+                    pla
+                    tay
+                    txa
+                    plp
+                    rts
+                    
+dump_line           txa
+                    pha
+                    lda acc2_hi
+                    pha
+                    jsr hexbyte
+                    lda acc2_lo
+                    pha
+                    jsr hexbyte_space
+L8fb8               txa
+                    pha
+                    jsr peek
+                    jsr hexbyte_space
+                    pla
+                    tax
+                    dex
+                    bne L8fb8
+                    pla
+                    sta acc2_lo
+                    pla
+                    sta acc2_hi
+                    pla
+                    tax
+L8fcd               txa
+                    pha
+                    jsr peek
+                    jsr safe_ascii
+                    pla
+                    tax
+                    dex
+                    bne L8fcd
+                    rts
+                    
+L8fdb               lda #$2e
+safe_ascii          cmp #$20
+                    bcc L8fdb
+                    cmp #$7f
+                    bcs L8fdb
+                    jmp oswrch
+                    
+c_mem               jsr parse_range
+                    jsr calc_columns
+                    pha
+                    jsr print_or_page
+L8ff2               pla
+                    pha
+                    tax
+                    jsr dump_line
+                    jsr newline
+                    lda acc2_lo
+                    cmp acc0_lo
+                    lda acc2_hi
+                    sbc acc0_hi
+                    bcc L8ff2
+                    pla
+                    jmp reset_terminal
+                    
+decode_admode       ldy #$00
+                    sty $b6
+                    jsr read_rom
+L9010               pha
+                    and $8f0b,y
+                    cmp $8f0a,y
+                    beq L9022
+                    pla
+                    iny
+                    iny
+                    iny
+                    cpy #$3e
+                    bcc L9010
+                    pha
+L9022               pla
+                    lda $8f0c,y
+                    cmp #$0c
+                    bcs L9093
+                    ldx $b7
+                    beq L9093
+                    tay
+                    lda #$20
+                    jsr oswrch
+                    lda $8de7,y
+                    tay
+L9038               lda $8de7,y
+                    beq L9093
+                    iny
+                    cmp #$31
+                    bne L904b
+                    jsr read_rom
+                    jsr hexbyte
+                    jmp L9038
+                    
+L904b               cmp #$32
+                    bne L9055
+                    jsr pr_sym16
+                    jmp L9038
+                    
+L9055               cmp #$2b
+                    bne L9081
+                    jsr read_rom
+                    tax
+                    lda acc2_lo
+                    pha
+                    lda acc2_hi
+                    pha
+                    txa
+                    php
+                    ldx #$00
+                    plp
+                    bpl L906b
+                    dex
+L906b               clc
+                    adc acc2_lo
+                    sta acc2_lo
+                    txa
+                    adc acc2_hi
+                    sta acc2_hi
+                    jsr pr_addr
+                    pla
+                    sta acc2_hi
+                    pla
+                    sta acc2_lo
+                    jmp L9038
+                    
+L9081               cmp #$49
+                    bne L9087
+                    lda $b7
+L9087               cmp #$48
+                    bne L908d
+                    lda $b8
+L908d               jsr oswrch
+                    jmp L9038
+                    
+L9093               rts
+                    
+pr_addr             clc
+                    lda acc2_lo
+                    adc ptr0_lo
+                    pha
+                    lda acc2_hi
+                    adc ptr0_hi
+                    jsr hexbyte
+                    pla
+                    jmp hexbyte
+                    
+decode_instr        lda acc2_lo
+                    pha
+                    lda acc2_hi
+                    pha
+                    lda #$58
+                    sta $b7
+                    jsr read_rom
+                    ldx #$00
+L90b4               cmp optab,x
+                    beq L90c5
+                    inx
+                    cpx #$28
+                    bcc L90b4
+                    tax
+                    and #$03
+                    cmp #$03
+                    bne L90cb
+L90c5               ldx #$0b
+                    lda #$00
+                    sta $b7
+L90cb               txa
+                    ldx #$00
+L90ce               pha
+                    and op_decode + 1,x
+                    cmp op_decode,x
+                    beq L90e1
+                    pla
+                    inx
+                    inx
+                    inx
+                    inx
+                    cpx #$e4
+                    bcc L90ce
+                    pha
+L90e1               pla
+                    lda op_decode_huh,x
+                    sta $0100
+                    lda op_decode_huh + 1,x
+                    sta $0101
+                    ldy #$03
+L90f0               ldx #$05
+                    lda #$00
+L90f4               asl $0100
+                    rol $0101
+                    rol a
+                    dex
+                    bne L90f4
+                    clc
+                    adc #$3f
+                    jsr oswrch
+                    cmp #$58
+                    bne L910a
+                    inc $b7
+L910a               dey
+                    bne L90f0
+                    pla
+                    sta acc2_hi
+                    pla
+                    sta acc2_lo
+                    rts
+                    
+dis_op              jsr pr_addr
+                    lda #$20
+                    jsr oswrch
+                    jsr decode_instr
+                    jsr decode_admode
+                    lda #$86
+                    jsr osbyte
+                    lda #$20
+L9129               jsr oswrch
+                    inx
+                    cpx #$13
+                    bcc L9129
+                    ldy #$00
+L9133               lda $010b,y
+                    jsr hexbyte_space
+                    iny
+                    cpy $b6
+                    bcc L9133
+                    lda #$86
+                    jsr osbyte
+                    lda #$20
+L9145               jsr oswrch
+                    inx
+                    cpx #$1d
+                    bcc L9145
+                    ldy #$00
+L914f               lda $010b,y
+                    jsr safe_ascii
+                    iny
+                    cpy $b6
+                    bcc L914f
+                    jmp newline
+                    
+c_base              jsr check_cmd_mode
+                    jsr eval
+                    jsr check_eol
+                    lda acc0_lo
+                    sta $0600
+                    lda acc0_hi
+                    sta $0601
+                    rts
+                    
+copyright_marker    00 28 43 29 
+                    
+c_select            jsr check_cmd_mode
+                    jsr eval_byte
+                    pha
+                    jsr check_eol
+                    pla
+                    cmp #$10
+                    bcc L9190
+L9184               jsr throw
+                    ; "Bad ROM"
+                    ab 42 61 64 20 52 4f 4d 00 
+L9190               sta $0602
+                    lda #$07
+                    sta acc2_lo
+                    lda #$80
+                    sta acc2_hi
+                    jsr read_rom
+                    sta acc2_lo
+                    ldx #$04
+L91a2               txa
+                    pha
+                    jsr read_rom
+                    tay
+                    pla
+                    tax
+                    cpy copyright_marker
+                    bne L9184
+                    inx
+                    cpx #$04
+                    bcc L91a2
+                    lda #$09
+                    sta acc2_lo
+                    jsr prstr
+                    ; "Rom: "
+                    52 6f 6d 3a 20 00 
+L91c1               jsr read_rom
+                    jsr oswrch
+                    bne L91c1
+                    jmp newline
+                    
+c_dis               jsr parse_range
+                    jsr get_private
+                    bmi L91db
+L91d4               lda acc2_lo
+                    ldx acc2_hi
+                    jmp L91e9
+                    
+L91db               lda $0600
+                    ora $0601
+                    beq L91d4
+                    lda $0600
+                    ldx $0601
+L91e9               sta ptr0_lo
+                    stx ptr0_hi
+                    sec
+                    lda ptr0_lo
+                    sbc acc2_lo
+                    sta ptr0_lo
+                    lda ptr0_hi
+                    sbc acc2_hi
+                    sta ptr0_hi
+                    jsr hex_prefix
+                    jsr print_or_page
+L9200               jsr dis_op
+                    lda acc2_lo
+                    cmp acc0_lo
+                    lda acc2_hi
+                    sbc acc0_hi
+                    bcc L9200
+                    jmp reset_terminal
+                    
+hex_prefix          jsr skip_space
+                    cmp #$48
+                    bne L921c
+                    jsr skip_space
+                    bne L9221
+L921c               jsr unget
+                    lda #$26
+L9221               sta $b8
+                    rts
+                    
+service             php
+                    pha
+                    txa
+                    pha
+                    tya
+                    pha
+                    lda cmdline_lo
+                    pha
+                    lda cmdline_hi
+                    pha
+                    clc
+                    tya
+                    adc cmdline_lo
+                    sta cmdline_lo
+                    bcc L923a
+                    inc cmdline_hi
+L923a               tsx
+                    lda $0105,x
+                    ; star command not recognised
+                    cmp #$04
+                    beq star_command
+                    ; *help
+                    cmp #$09
+                    beq help
+service_done        pla
+                    sta cmdline_hi
+                    pla
+                    sta cmdline_lo
+                    pla
+                    tay
+service_exit        pla
+                    tax
+                    pla
+                    plp
+                    rts
+                    
+help                jsr skip_space
+                    php
+                    jsr unget
+                    plp
+                    beq L926a
+                    jsr lookup_command
+                    cmp #$8f
+                    bne L926d
+                    jsr show_help
+                    jmp L9278
+                    
+L926a               jsr pr_banner
+L926d               jmp service_done
+                    
+star_command        jsr clr_private
+                    jsr dispatch_cmd
+                    bcs L9285
+L9278               tsx
+                    lda #$00
+                    sta $0105,x
+                    pla
+                    pla
+                    pla
+                    ldy #$00
+                    beq service_exit
+L9285               jmp service_done
+                    
+regnames            41 58 59 53 
+flagnames           6e 76 2e 62 64 69 7a 63 
+                    
+show_regs           jsr check_eol
+                    ldx #$00
+L9299               lda regnames,x
+                    pha
+                    jsr oswrch
+                    jsr prstr
+                    ; " : "
+                    20 3d 20 00 
+                    
+L92a7               pla
+                    asl a
+                    tay
+                    lda $037e,y
+                    jsr hexbyte_space
+                    inx
+                    cpx #$04
+                    bcc L9299
+                    jsr prstr
+                    ; "\rP = "
+                    0d 50 20 3d 20 00 
+                    
+show_flags          ldy #$00
+                    lda $041e
+L92c3               ldx #$2e
+                    asl a
+                    bcc L92cb
+                    ldx flagnames,y
+L92cb               pha
+                    txa
+                    jsr oswrch
+                    pla
+                    iny
+                    cpy #$08
+                    bcc L92c3
+                    rts
+                    
+c_regs              jsr show_regs
+                    jmp newline
+                    
+c_go                jsr check_cmd_mode
+                    jsr eval
+                    ldx #$00
+L92e5               jsr skip_space
+                    beq L9305
+                    jsr unget
+                    lda regnames,x
+                    asl a
+                    sta $0100
+                    jsr eval_byte
+                    ldy $0100
+                    sta $037e,y
+                    inx
+                    cpx #$04
+                    bcc L92e5
+                    jmp syntax_error
+                    
+L9305               php
+                    jsr load_regs
+                    jsr go_acc
+                    jsr save_regs
+                    plp
+                    jmp newline
+                    
+go_acc              jmp (acc0_lo)
+                    
+load_regs           lda $041e
+                    pha
+                    lda $0400
+                    ldx $042e
+                    ldy $0430
+                    plp
+                    rts
+                    
+save_regs           php
+                    sta $0400
+                    stx $042e
+                    sty $0430
+                    pla
+                    sta $041e
+                    rts
+                    
+c_where             jsr check_cmd_mode
+                    jsr check_eol
+                    jsr prstr
+                    ; "Breakpoints:"
+                    42 72 65 61 6b 70 6f 69 6e 74 73 3a 0d 00 a2 00 
+L934f = * + 2       
+L934d               lda breakpoints_lo,x
+                    ora breakpoints_hi,x
+                    beq L9361
+                    lda breakpoints_hi,x
+                    jsr hexbyte
+                    lda breakpoints_lo,x
+                    jsr hexbyte_space
+L9361               inx
+                    inx
+                    inx
+                    inx
+                    cpx #$40
+                    bcc L934d
+                    jmp newline
+                    
+c_set               jsr check_cmd_mode
+                    jsr eval
+                    jsr check_eol
+                    ldx #$00
+                    lda acc0_lo
+                    sta ptr0_lo
+                    lda acc0_hi
+                    sta ptr0_hi
+L937f               lda breakpoints_lo,x
+                    ora breakpoints_hi,x
+                    beq L939b
+                    inx
+                    inx
+                    inx
+                    inx
+                    cpx #$40
+                    bcc L937f
+                    jsr throw
+                    ; "No room"
+                    ac 4e 6f 20 72 6f 6f 6d 00 
+L939b               txa
+                    pha
+                    lda (acc0_lo),y
+                    sta breakpoints_save,x
+                    tya
+                    jsr try_poke
+                    pla
+                    tax
+                    lda acc0_lo
+                    sta breakpoints_lo,x
+                    lda acc0_hi
+                    sta breakpoints_hi,x
+                    rts
+                    
+c_clr               jsr check_cmd_mode
+                    jsr skip_space
+                    beq L9402
+                    jsr unget
+                    jsr eval
+                    jsr check_eol
+                    ldx #$00
+L93c6               lda acc0_lo
+                    cmp breakpoints_lo,x
+                    bne L93e1
+                    lda acc0_hi
+                    cmp breakpoints_hi,x
+                    bne L93e1
+                    lda breakpoints_save,x
+                    sta (acc0_lo),y
+                    tya
+                    sta breakpoints_lo,x
+                    sta breakpoints_hi,x
+                    rts
+                    
+L93e1               inx
+                    inx
+                    inx
+                    inx
+                    cpx #$40
+                    bcc L93c6
+                    jsr throw
+                    ; "Breakpoint not found"
+                    ad 42 72 65 61 6b 70 6f 69 6e 74 20 6e 6f 74 20 66 6f 75 6e 64 00 
+L9402               ldx #$00
+                    ldy #$00
+L9406               lda breakpoints_lo,x
+                    ora breakpoints_hi,x
+                    beq L9424
+                    lda breakpoints_lo,x
+                    sta acc0_lo
+                    lda breakpoints_hi,x
+                    sta acc0_hi
+                    lda breakpoints_save,x
+                    sta (acc0_lo),y
+                    tya
+                    sta breakpoints_lo,x
+                    sta breakpoints_hi,x
+L9424               inx
+                    inx
+                    inx
+                    inx
+                    cpx #$40
+                    bcc L9406
+                    rts
+                    
+c_onbrk             jsr check_cmd_mode
+                    ldx #$00
+L9432               jsr getch
+                    sta brk_cmd,x
+                    inx
+                    cmp #$0d
+                    bne L9432
+                    rts
+                    
+get_put_parms       sta $0100
+                    stx $0109
+                    sty $0106
+                    lda acc0_lo
+                    sta $0107
+                    lda acc0_hi
+                    sta $0108
+                    ; page
+                    lda #$83
+                    jsr osbyte
+                    stx $0101
+                    sty $0102
+                    ; machine address
+                    lda #$82
+                    jsr osbyte
+                    stx $0103
+                    sty $0104
+                    lda #$03
+                    sta $0105
+                    lda #$7f
+                    ldx #$00
+                    ldy #$01
+                    rts
+                    
+get_drive           lda #$01
+                    sta $0100
+                    ; machine high order address
+                    lda #$82
+                    jsr osbyte
+                    stx $0103
+                    sty $0104
+                    lda #$08
+                    sta $0101
+                    ldy #$01
+                    sty $0102
+                    lda #$06
+                    ldx #$00
+                    jsr osgbpb
+                    lda $0109
+                    and #$03
+                    rts
+                    
+c_verify            jsr get_drive
+                    pha
+                    jsr skip_space
+                    bne L94a8
+                    pla
+                    pha
+                    jmp L94c5
+                    
+L94a8               jsr unget
+                    jsr eval_byte
+                    pha
+                    jsr check_eol
+                    pla
+                    cmp #$04
+                    bcc L94c5
+throw_baddrive      jsr throw
+                    ; "Bad drive"
+                    ae 42 61 64 20 64 72 69 76 65 00 
+L94c5               jsr star_drive
+                    sta ptr0_lo
+                    lda #$00
+                    sta acc0_lo
+                    sta acc0_hi
+                    jsr disk_size
+L94d3               lda acc0_lo
+                    jsr hexbyte
+                    lda ptr0_lo
+                    ldx #$2a
+                    ldy #$5f
+                    jsr get_put_parms
+                    jsr osword
+                    lda #$20
+                    ldx $010a
+                    beq L94ed
+                    lda #$3f
+L94ed               jsr oswrch
+                    lda #$20
+                    jsr oswrch
+                    inc acc0_lo
+                    sec
+                    lda acc2_lo
+                    sbc #$0a
+                    sta acc2_lo
+                    bcs L9502
+                    dec acc2_hi
+L9502               ora acc2_hi
+                    bne L94d3
+                    pla
+                    jmp star_drive
+                    
+disk_size           lda cmdhelp_hi
+                    pha
+                    lda $b6
+                    pha
+                    ldx #$b3
+                    ldy #$00
+                    lda #$7e
+                    jsr osword
+                    pla
+                    sta $b6
+                    pla
+                    sta cmdhelp_hi
+                    rts
+                    
+drive_cmd           44 52 49 56 45 20 
+star_drive          pha
+                    ldx #$00
+L9529               lda drive_cmd,x
+                    sta $010a,x
+                    inx
+                    cpx #$06
+                    bcc L9529
+                    pla
+                    ora #$30
+                    sta $0110
+                    lda #$0d
+                    sta $0111
+                    ldx #$0a
+                    ldy #$01
+                    jmp oscli
+                    
+show_fkeys          ldy #$00
+L9548               jsr show_fkey
+                    iny
+                    cpy #$10
+                    bcc L9548
+                    rts
+                    
+c_flist             jsr skip_space
+                    beq show_fkeys
+                    jsr unget
+                    jsr eval_byte
+                    cmp #$10
+                    bcc L956c
+                    jsr throw
+                    ; "Bad key"
+                    fb 42 61 64 20 6b 65 79 00 
+L956c               tay
+show_fkey           sty acc0_lo
+                    jsr prstr
+                    ; "*KEY"
+                    2a 4b 45 59 00 
+L9577               jsr check_escape
+                    ldx #$00
+L957c               stx acc0_hi
+                    ldy #$0a
+                    jsr radix_print
+                    lda acc0_lo
+                    ora #$80
+                    tay
+                    ldx #$00
+                    lda #$8a
+                    jsr osbyte
+                    jsr prstr
+                    fe 00 
+L9594               lda #$04
+                    ldx #$02
+                    jsr osbyte
+                    lda #$81
+                    ldy #$00
+L959f               ldx #$00
+                    jsr osbyte
+                    cpy #$00
+                    bne L95af
+                    txa
+                    jsr esc_char
+                    jmp L9594
+                    
+L95af               lda #$04
+                    ldx #$00
+                    jsr osbyte
+                    ldy acc0_lo
+                    jmp newline
+                    
+esc_char            ldx #$7c
+                    cmp #$80
+                    bcc L95ce
+                    pha
+                    txa
+                    jsr oswrch
+                    lda #$21
+                    jsr oswrch
+                    pla
+                    and #$7f
+L95ce               cmp #$20
+                    bcs L95da
+                    pha
+                    txa
+                    jsr oswrch
+                    pla
+                    ora #$40
+L95da               cmp #$7c
+                    bne L95e1
+                    jsr oswrch
+L95e1               cmp #$7f
+                    bne L95eb
+                    txa
+                    jsr oswrch
+                    lda #$3f
+L95eb               jmp oswrch
+                    
+times3              sta $0100
+                    asl a
+                    clc
+                    adc $0100
+                    rts
+                    
+div3                sta $0100
+                    ldx #$08
+                    lda #$00
+L95fe               asl $0100
+                    rol a
+                    cmp #$03
+                    bcc L960b
+                    sbc #$03
+                    inc $0100
+L960b               dex
+                    bne L95fe
+                    sta $0101
+                    rts
+                    
+show_line           lda acc2_lo
+                    pha
+                    lda acc2_hi
+                    pha
+                    jsr cursor_off
+                    lda #$0d
+                    jsr oswrch
+                    ldx acc0_hi
+                    jsr dump_line
+                    lda #$86
+                    jsr osbyte
+                    lda #$1f
+                    jsr oswrch
+                    lda acc0_lo
+                    jsr oswrch
+                    tya
+                    jsr oswrch
+                    pla
+                    sta acc2_hi
+                    pla
+                    sta acc2_lo
+                    jmp cursor_on
+                    
+c_edit              jsr eval
+                    jsr acc0_to_acc2
+                    jsr check_eol
+                    jsr prstr
+                    ; restore default windows, clear screen
+                    1a 0c 00 
+L9650               lda acc2_lo
+                    pha
+                    lda acc2_hi
+                    pha
+                    jsr calc_columns
+                    sta acc0_hi
+                    ldy #$00
+                    sty ptr0_hi
+                    ldx #$00
+                    ldy #$00
+                    cmp #$08
+                    beq L9669
+                    ldy #$03
+L9669               lda layout_40,y
+                    sta cmdjmp_lo,x
+                    iny
+                    inx
+                    cpx #$03
+                    bcc L9669
+L9674               ldx acc0_hi
+                    jsr dump_line
+                    jsr newline
+                    ; read cursor position
+                    lda #$86
+                    jsr osbyte
+                    cpy ptr0_hi
+                    beq L9689
+                    sty ptr0_hi
+                    bne L9674
+L9689               lda #$05
+                    sta acc0_lo
+                    pla
+                    sta acc2_hi
+                    pla
+                    sta acc2_lo
+                    jsr prstr
+                    ; move cursor home
+                    1e 00 
+                    ; setup keyboard
+L9698               lda #$04
+                    ldx #$02
+                    jsr osbyte
+                    ; function key base code
+                    lda #$e1
+                    ldx #$7c
+                    ldy #$00
+L96a5               jsr osbyte
+                    ; shift function key base code
+                    lda #$e2
+                    ldx #$94
+                    ldy #$00
+                    jsr osbyte
+edit_getch          jsr show_line
+                    ; flush input buffers
+                    lda #$0f
+                    ldx #$01
+                    jsr osbyte
+                    jsr osrdch
+                    bcc edit_dispatch
+                    ; ack escape and exit
+                    lda #$7e
+                    jsr osbyte
+                    lda #$04
+                    ldx #$00
+                    jsr osbyte
+                    lda #$e1
+                    ldx #$01
+                    jsr osbyte
+                    lda #$e2
+                    ldx #$01
+                    jsr osbyte
+                    jmp newline
+                    
+                    ; left
+edit_dispatch       cmp #$88
+                    bne L96fb
+                    lda acc0_lo
+                    cmp #$05
+                    beq L96ef
+                    cmp cmdjmp_hi
+                    beq L96f3
+                    dec acc0_lo
+                    bne edit_getch
+L96ef               lda cmdjmp_lo
+                    bne L96f5
+L96f3               lda cmdhelp_lo
+L96f5               sta acc0_lo
+                    ; fake up
+                    lda #$8b
+                    bne L9731
+                    ; right
+L96fb               cmp #$89
+                    bne L9717
+                    lda acc0_lo
+                    cmp cmdjmp_lo
+                    beq L970d
+                    cmp cmdhelp_lo
+                    beq L9711
+                    inc acc0_lo
+                    bne edit_getch
+L970d               lda #$05
+                    bne L9713
+L9711               lda cmdjmp_hi
+L9713               sta acc0_lo
+                    lda #$8a
+                    ; down
+L9717               cmp #$8a
+                    bne L9731
+                    jsr show_line
+                    lda #$0a
+                    jsr oswrch
+                    lda acc2_lo
+                    clc
+                    adc acc0_hi
+                    sta acc2_lo
+                    bcc L974b
+                    inc acc2_hi
+                    jmp edit_getch
+                    
+                    ; up
+L9731               cmp #$8b
+                    bne L974e
+                    jsr show_line
+                    lda #$0b
+                    jsr oswrch
+                    lda acc2_lo
+                    sec
+                    sbc acc0_hi
+                    sta acc2_lo
+                    bcs L974b
+                    dec acc2_hi
+                    jmp edit_getch
+                    
+L974b               jmp edit_getch
+                    
+                    ; shift right = skip to ascii column
+L974e               cmp #$a1
+                    bne L976b
+                    lda cmdjmp_lo
+                    cmp acc0_lo
+                    bcc L974b
+                    lda acc0_lo
+                    sec
+                    sbc #$05
+                    jsr div3
+                    lda $0100
+                    clc
+                    adc cmdjmp_hi
+                    sta acc0_lo
+                    jmp edit_getch
+                    
+                    ; shift left = skip to hex column
+L976b               cmp #$a0
+                    bne L9785
+                    lda acc0_lo
+                    cmp cmdjmp_hi
+                    bcc L974b
+                    lda acc0_lo
+                    sec
+                    sbc cmdjmp_hi
+                    jsr times3
+                    clc
+                    adc #$05
+                    sta acc0_lo
+                    jmp edit_getch
+                    
+                    ; return
+L9785               cmp #$0d
+                    bne edit_input
+                    ldx #$05
+                    lda acc0_lo
+                    cmp cmdjmp_hi
+                    bcc L9793
+                    ldx cmdjmp_hi
+L9793               stx acc0_lo
+                    ; fake line down. Could just jump to the code after the key test
+                    lda #$8a
+                    jmp L9717
+                    
+                    ; text input
+edit_input          tax
+                    lda acc0_lo
+                    cmp cmdjmp_hi
+                    bcc edit_hex
+                    sbc cmdjmp_hi
+                    tay
+                    txa
+                    sta (acc2_lo),y
+                    cmp (acc2_lo),y
+                    bne edit_bell
+                    ; fake right. Could just jump in after the test
+                    lda #$89
+                    jmp L96fb
+                    
+edit_hex            stx $b6
+L97b2               sbc #$04
+                    jsr div3
+                    cmp #$02
+                    bne L97ca
+                    ; move forward and try again
+                    inc acc0_lo
+                    lda acc0_lo
+                    clc
+                    bcc L97b2
+edit_bell           lda #$07
+                    jsr oswrch
+                    jmp edit_getch
+                    
+L97ca               lda $b6
+                    sbc #$2f
+                    bcc edit_bell
+                    cmp #$0a
+                    bcc L97da
+                    cmp #$11
+                    bcc edit_bell
+                    sbc #$07
+L97da               cmp #$10
+                    bcs edit_bell
+                    ldx #$f0
+                    ldy $0101
+                    bne L97eb
+                    ldx #$0f
+                    asl a
+                    asl a
+                    asl a
+                    asl a
+L97eb               stx $0101
+                    ldy $0100
+                    sta $0100
+                    lda (acc2_lo),y
+                    and $0101
+                    ora $0100
+                    sta (acc2_lo),y
+                    cmp (acc2_lo),y
+                    bne edit_bell
+                    ; fake right
+                    lda #$89
+                    jmp L96fb
+                    
+L9807               jmp edit_getch
+                    
+layout_40           1b 1d 24 
+layout_80           33 35 44 
+                    
+cursor_off          lda ptr0_lo
+                    pha
+                    lda ptr0_hi
+                    pha
+                    jsr prstr
+                    ; cursor off
+                    17 01 00 
+L981c               jmp L982c
+                    
+cursor_on           lda ptr0_lo
+                    pha
+                    lda ptr0_hi
+                    pha
+                    jsr prstr
+                    ; cursor on
+                    17 01 01 00 
+L982c               tya
+                    ldx #$0a
+L982f               jsr oswrch
+                    dex
+                    bne L982f
+                    pla
+                    sta ptr0_hi
+                    pla
+                    sta ptr0_lo
+                    rts
+                    
+inst_len_table      69 69 65 7d a5 69 75 7d e5 a9 65 fd a5 69 75 7d 
+                    65 69 65 fd a5 69 75 7d 65 69 65 fd a5 69 75 7d 
+                    65 a9 55 fd a5 a9 75 75 a9 a9 65 fd a5 a9 75 fd 
+                    a5 a9 65 fd a5 69 75 7d a5 a9 65 fd a5 69 75 7d 
+                    
+inst_len            pha
+                    lsr a
+                    lsr a
+                    tax
+                    pla
+                    and #$03
+                    tay
+                    lda inst_len_table,x
+L9887               iny
+                    cpy #$04
+                    beq L9891
+                    lsr a
+                    lsr a
+                    jmp L9887
+                    
+L9891               and #$03
+                    rts
+                    
+                    ; bootstrap for stepper
+step_bootstrap      nop
+                    nop
+                    jmp stepped
+                    jmp branched
+                    
+c_step              jsr check_cmd_mode
+                    jsr eval
+                    jsr acc0_to_acc2
+                    jsr hex_prefix
+                    jsr print_or_page
+                    ldx $0424
+                    cpx #$80
+                    bcs L98c5
+                    jsr throw
+                    ; "Stack overflow"
+                    af 53 74 61 63 6b 20 6f 76 65 72 66 6c 6f 77 00 
+L98c5               txs
+                    jsr prstr
+                    ; "PC  A X Y P S Opcode"
+L98cc = * + 3       
+                    50 43 fd 41 fe 58 fe 59 fe 50 f8 53 fe 4f 70 63 6f 64 65 0d 00 
+L98de               sty ptr0_lo
+                    sty ptr0_hi
+step_next           inc $0410
+                    bne L98ea
+                    inc $0411
+L98ea               lda acc2_hi
+                    jsr hexbyte
+                    lda acc2_lo
+                    jsr hexbyte_space
+                    tsx
+                    stx $0424
+                    lda $0400
+                    jsr hexbyte_space
+                    lda $042e
+                    jsr hexbyte_space
+                    lda $0430
+                    jsr hexbyte_space
+                    lda $041e
+L990e = * + 1       
+L990d               jsr show_flags
+                    lda #$20
+                    jsr oswrch
+                    lda $0424
+                    jsr hexbyte_space
+                    ldx #$07
+L991d               lda step_bootstrap,x
+                    sta $010c,x
+                    dex
+                    bpl L991d
+                    lda acc2_lo
+                    sta acc0_lo
+                    lda acc2_hi
+                    sta acc0_hi
+                    inx
+                    stx $b6
+                    jsr decode_instr
+                    ldx #$00
+                    stx $b6
+                    jsr decode_admode
+                    jsr osrdch
+                    jsr newline
+                    ; JMP, Bxx, RTS etc are emulated
+                    lda $010b
+                    beq do_brk
+                    ; JSR
+                    cmp #$20
+                    beq do_jsr
+                    ; JMP
+                    cmp #$4c
+                    beq do_jmp
+                    ; JMP ()
+                    cmp #$6c
+                    beq do_jmpi
+                    ; RTS
+                    cmp #$60
+                    beq do_rts
+                    ; RTI
+                    cmp #$40
+                    beq do_rti
+                    ; branch?
+                    and #$1f
+                    cmp #$10
+                    beq do_branch
+step_execute        php
+                    pla
+                    sta acc1_lo
+                    lda #$00
+                    sta $b6
+                    jsr load_regs
+                    jmp $010b
+                    
+do_brk              jsr throw
+                    ; "Halted"
+                    b0 48 61 6c 74 65 64 00 
+                    
+do_jsr              jsr ex_or_step
+                    bne step_execute
+                    clc
+                    lda acc0_lo
+                    adc #$02
+                    tax
+                    lda acc0_hi
+                    adc #$00
+                    pha
+                    txa
+                    pha
+                    
+do_jmp              jsr next_pc
+                    jsr indirect
+                    jmp step_next
+                    
+do_jmpi             jsr next_pc
+                    jsr indirect
+                    jsr indirect
+                    jmp step_next
+                    
+do_rts              pla
+                    adc #$00
+                    sta acc2_lo
+                    pla
+                    adc #$00
+                    sta acc2_hi
+                    jmp step_next
+                    
+do_rti              pla
+                    sta $041e
+                    clc
+                    bcc do_rts
+                    
+do_branch           lda $010c
+                    sta acc1_hi
+                    lda #$04
+L99bb               sta $010c
+                    jmp step_execute
+                    
+ex_or_step          jsr prstr
+                    ; "Execute or step (E/S) ?"
+                    45 78 65 63 75 74 65 ff 6f 72 ff 73 74 65 70 ff 28 45 2f 53 29 ff 3f ff 00 
+                    ; why?
+L99dd               sty ptr0_lo
+                    sty ptr0_hi
+L99e1               jsr osrdch
+                    jsr check_escape
+                    and #$df
+                    cmp #$53
+                    beq L99f1
+                    cmp #$45
+                    bne L99e1
+L99f1               jsr oswrch
+                    cmp #$53
+                    php
+                    jsr newline
+                    plp
+                    rts
+                    
+indirect            jsr read_rom
+                    pha
+                    jsr read_rom
+                    sta acc2_hi
+                    pla
+                    sta acc2_lo
+                    rts
+                    
+next_pc             lda acc0_lo
+                    clc
+                    adc #$01
+                    sta acc2_lo
+                    lda acc0_hi
+                    adc #$00
+                    sta acc2_hi
+                    rts
+                    
+branched            jsr save_regs
+                    lda acc1_lo
+                    pha
+                    plp
+                    ldx #$00
+                    lda acc1_hi
+                    bpl L9a25
+                    dex
+L9a25               clc
+                    adc acc2_lo
+                    sta acc2_lo
+                    txa
+                    adc acc2_hi
+                    sta acc2_hi
+                    jmp step_next
+                    
+stepped             jsr save_regs
+                    lda acc1_lo
+                    pha
+                    plp
+                    jmp step_next
+                    
+c_look              jsr eval
+                    jsr acc0_to_acc2
+                    jsr hex_prefix
+                    jsr check_eol
+                    ldx cur_rom
+                    lda rom_private,x
+                    bmi L9a54
+                    lda #$00
+                    tax
+                    beq L9a69
+L9a54               lda $0600
+                    ora $0601
+                    tax
+                    beq L9a69
+                    sec
+                    lda $0600
+                    sbc acc2_lo
+                    tax
+                    lda $0601
+                    sbc acc2_hi
+L9a69               stx ptr0_lo
+                    sta ptr0_hi
+                    ; cursor edit
+                    lda #$04
+                    ldx #$01
+                    jsr osbyte
+L9a74               sec
+                    lda acc2_lo
+                    sta acc0_lo
+                    sbc #$28
+                    sta acc2_lo
+                    lda acc2_hi
+                    sta acc0_hi
+                    sbc #$00
+                    sta acc2_hi
+L9a85               lda acc2_lo
+                    pha
+                    lda acc2_hi
+                    pha
+                    jsr read_rom
+                    jsr inst_len
+                    sec
+                    sbc #$01
+                    clc
+                    adc acc2_lo
+                    sta acc2_lo
+                    bcc L9a9d
+                    inc acc2_hi
+L9a9d               lda acc2_lo
+                    cmp acc0_lo
+                    lda acc2_hi
+                    sbc acc0_hi
+                    bcc L9b00
+L9aa7               jsr osrdch
+                    bcc L9ab6
+                    lda #$04
+                    ldx #$00
+                    jsr osbyte
+                    jmp throw_escape
+                    
+L9ab6               cmp #$8a
+                    beq L9acf
+                    cmp #$8b
+                    bne L9aa7
+                    pla
+                    sta acc2_hi
+                    pla
+                    sta acc2_lo
+                    lda #$0b
+                    jsr oswrch
+                    jsr oswrch
+                    jmp L9ae4
+                    
+L9acf               pla
+                    pla
+                    jsr read_rom
+                    jsr inst_len
+                    sec
+                    sbc #$01
+                    clc
+                    clc
+                    adc acc2_lo
+                    sta acc2_lo
+                    bcc L9ae4
+                    inc acc2_hi
+L9ae4               lda acc2_lo
+                    pha
+                    lda acc2_hi
+                    pha
+                    ldx #$00
+                    stx $b6
+                    jsr cursor_off
+                    jsr dis_op
+                    jsr cursor_on
+                    pla
+                    sta acc2_hi
+                    pla
+                    sta acc2_lo
+                    jmp L9a74
+                    
+L9b00               pla
+                    pla
+                    jmp L9a85
+                    
+parse_tracks        jsr skip_space
+                    ldx #$28
+                    cmp #$34
+                    beq L9b28
+                    ldx #$50
+                    cmp #$38
+                    beq L9b28
+L9b14               jsr throw
+                    ; "40 or 80 tracks"
+                    b1 34 30 20 6f 72 20 38 30 20 74 72 61 63 6b 73 00 
+L9b28               jsr getch
+                    cmp #$30
+                    bne L9b14
+                    txa
+                    pha
+                    jsr skip_comma
+                    pla
+                    rts
+                    
+parse_drive         jsr skip_space
+                    pha
+L9b3b = * + 1       
+                    jsr unget
+                    pla
+                    cmp #$0d
+                    beq L9b4d
+                    jsr eval_byte
+                    cmp #$04
+                    bcc L9b4c
+                    jmp throw_baddrive
+                    
+L9b4c               rts
+                    
+L9b4d               lda #$01
+                    sta $0100
+                    lda #$82
+                    jsr osbyte
+                    stx $0103
+                    sty $0104
+                    lda #$10
+                    sta $0101
+                    ldy #$01
+                    sty $0102
+                    lda #$06
+                    ldx #$00
+                    lda #$06
+                    ldx #$00
+                    stx $0105
+                    stx $0106
+                    stx $0107
+                    stx $0108
+                    lda acc2_lo
+                    pha
+                    lda acc2_hi
+                    pha
+                    jsr osgbpb
+                    pla
+                    sta acc2_hi
+                    pla
+                    sta acc2_lo
+                    lda $0111
+                    and #$03
+                    rts
+                    
+empty_disc          00 ff ff ff ff 01 69 00 00 00 ff ff ff ff 05 63 
+                    00 10 2a 00 10 00 00 00 19 ff ff 03 5f 00 00 2a 
+                    00 00 ff ff ff ff 04 4b 00 00 22 00 
+L9bbc               pla
+                    rts
+                    
+c_form              jsr parse_tracks
+                    sta acc2_lo
+                    sta acc2_hi
+                    jsr parse_drive
+                    pha
+                    jsr check_eol
+                    lda #$83
+                    jsr osbyte
+                    sty acc0_hi
+                    stx acc0_lo
+                    tya
+                    tax
+                    inx
+                    inx
+                    inx
+                    jsr ram_warning
+                    bcc L9bbc
+                    ldy #$2b
+L9be1               lda empty_disc,y
+                    
+                    pla
+                    ldy #$00
+                    sta (acc0_lo),y
+                    ldy #$09
+                    sta (acc0_lo),y
+                    ldy #$16
+                    sta (acc0_lo),y
+                    ldy #$21
+                    sta (acc0_lo),y
+                    ldx acc0_lo
+                    ldy acc0_hi
+                    lda #$7f
+                    jsr osword
+                    lda #$00
+                    sta acc1_lo
+                    sta acc1_hi
+L9c0c               ldy #$03
+L9c0e               jsr wrap_sector
+                    dey
+                    bne L9c0e
+                    lda acc1_lo
+                    jsr hexbyte
+                    jsr prstr
+                    fe 00 
+L9c1e               ldy #$59
+                    ldx #$0a
+L9c22               lda #$01
+                    sta (acc0_lo),y
+                    dey
+                    txa
+                    pha
+                    jsr wrap_sector
+                    sta (acc0_lo),y
+                    dey
+                    pla
+                    tax
+                    lda #$00
+                    sta (acc0_lo),y
+                    dey
+                    lda acc1_lo
+                    sta (acc0_lo),y
+                    dey
+                    dex
+                    bne L9c22
+                    ldy #$0a
+                    lda acc0_lo
+                    clc
+                    adc #$32
+                    sta (acc0_lo),y
+                    iny
+                    lda acc0_hi
+                    adc #$00
+                    sta (acc0_lo),y
+                    ldy #$10
+                    lda acc1_lo
+                    sta (acc0_lo),y
+                    lda acc0_lo
+                    clc
+                    adc #$09
+                    tax
+                    lda acc0_hi
+                    adc #$00
+                    tay
+                    lda #$7f
+                    jsr osword
+                    ldy #$15
+                    lda (acc0_lo),y
+                    beq L9c7b
+                    jsr throw
+                    ; "Format error"
+                    b2 46 6f 72 6d 61 74 20 65 72 72 6f 72 00 
+L9c7b               ldy #$1d
+                    lda acc1_lo
+                    sta (acc0_lo),y
+                    lda acc0_lo
+                    clc
+                    adc #$16
+                    tax
+                    lda acc0_hi
+                    adc #$00
+                    tay
+                    lda #$7f
+                    jsr osword
+                    ldy #$20
+                    lda (acc0_lo),y
+                    beq L9ca8
+                    jsr throw
+                    ; "Verify error"
+                    b3 56 65 72 69 66 79 20 65 72 72 6f 72 00 
+L9ca8               inc acc1_lo
+                    lda acc1_lo
+                    cmp acc2_lo
+                    bcs L9cb3
+                    jmp L9c0c
+                    
+L9cb3               ldy acc0_lo
+                    sty ptr0_lo
+                    ldx acc0_hi
+                    inx
+                    stx ptr0_hi
+                    ldy #$00
+                    tya
+L9cbf               sta (ptr0_lo),y
+                    iny
+                    bne L9cbf
+                    inc ptr0_hi
+L9cc6               sta (ptr0_lo),y
+                    iny
+                    bne L9cc6
+                    sty acc2_hi
+                    lda acc2_lo
+                    asl a
+                    pha
+                    asl a
+                    rol acc2_hi
+                    asl a
+                    rol acc2_hi
+                    sta acc2_lo
+                    pla
+                    adc acc2_lo
+                    sta acc2_lo
+                    bcc L9ce2
+                    inc acc2_hi
+L9ce2               ldy #$07
+                    lda acc2_lo
+                    sta (ptr0_lo),y
+                    dey
+                    lda acc2_hi
+                    sta (ptr0_lo),y
+                    ldy #$22
+                    lda ptr0_lo
+                    sta (acc0_lo),y
+                    iny
+                    ldx ptr0_hi
+                    dex
+                    txa
+                    sta (acc0_lo),y
+                    lda acc0_lo
+                    clc
+                    adc #$21
+                    tax
+                    lda acc0_hi
+                    adc #$00
+                    tay
+                    lda #$7f
+                    jmp osword
+                    
+disc_block          lda #$82
+                    jsr osbyte
+                    stx ptr0_lo
+                    sty ptr0_hi
+                    ldx #$00
+L9d15               ldy disc_offsets,x
+                    lda ptr0_lo
+                    sta (acc0_lo),y
+                    iny
+                    lda ptr0_hi
+                    sta (acc0_lo),y
+                    inx
+                    cpx #$04
+                    bcc L9d15
+                    rts
+                    
+disc_offsets        03 0c 19 24 
+wrap_sector         ldx acc1_hi
+                    dex
+                    bpl L9d32
+                    ldx #$09
+L9d32               txa
+                    stx acc1_hi
+                    rts
+                    
+parse_track_drive   lda #$00
+                    sta acc0_hi
+                    sta acc2_lo
+                    jsr eval_byte
+                    sta acc0_lo
+                    jsr skip_comma
+                    jsr parse_drive
+                    sta acc2_lo
+                    jsr check_eol
+                    lda acc2_lo
+                    ldx #$2a
+                    rts
+                    
+c_get               jsr parse_track_drive
+                    ldy #$53
+                    bne L9d5d
+c_put               jsr parse_track_drive
+                    ldy #$4b
+L9d5d               jsr get_put_parms
+                    jsr osword
+                    jsr prstr
+                    ; "I/O result = "
+L9d68 = * + 2       
+                    49 2f 4f ff 72 65 73 75 6c 74 ff 3d ff 00 
+L9d74               lda $010a
+                    sta acc0_lo
+                    sty acc0_hi
+                    ldx #$00
+                    lda #$0a
+                    jsr radix_out
+                    jmp newline
+                    
+c_mode              jsr eval_byte
+                    tax
+                    jsr check_eol
+                    cpx #$08
+                    bcc L9d9d
+                    jsr throw
+                    ; "Bad MODE"
+                    19 42 61 64 20 4d 4f 44 45 00 
+L9d9d               lda #$16
+                    jsr oswrch
+                    txa
+                    jmp oswrch
+                    
+c_vdu               ldx #$00
+                    stx ptr0_lo
+                    inx
+                    stx ptr0_hi
+                    jsr parse_bytes
+L9db0               dex
+                    bmi L9dbc
+                    lda $0100,y
+                    jsr oswrch
+                    iny
+                    bne L9db0
+L9dbc               rts
+                    
+c_same              jsr eval
+                    jsr acc0_to_acc2
+                    jsr eval
+                    lda acc0_lo
+                    sta $b6
+                    lda acc0_hi
+                    sta $b7
+                    jsr eval
+                    jsr check_eol
+L9dd4               lda ($b6),y
+                    cmp (acc2_lo),y
+                    beq L9de7
+                    ldx #$b4
+                    jsr pr_membyte
+                    ldx #$b6
+                    jsr pr_membyte
+                    jsr newline
+L9de7               iny
+                    bne L9dee
+                    inc $b7
+                    inc acc2_hi
+L9dee               lda acc0_lo
+                    bne L9df4
+                    dec acc0_hi
+L9df4               dec acc0_lo
+                    lda acc0_lo
+                    ora acc0_hi
+                    bne L9dd4
+                    rts
+                    
+pr_membyte          lda #$28
+                    jsr oswrch
+                    clc
+                    tya
+                    pha
+                    adc $00,x
+                    sta ptr0_lo
+                    lda $01,x
+                    adc #$00
+                    sta ptr0_hi
+                    jsr hexbyte
+                    lda ptr0_lo
+                    jsr hexbyte
+                    lda #$29
+                    jsr oswrch
+                    lda #$3d
+                    jsr oswrch
+                    ldy #$00
+                    lda (ptr0_lo),y
+                    jsr hexbyte_space
+                    pla
+                    tay
+                    rts
+                    
+pr_sym16            tya
+                    pha
+                    txa
+                    pha
+                    lda $00
+                    pha
+                    lda $01
+                    pha
+                    lda $02
+                    pha
+                    lda $03
+                    pha
+                    lda #$a5
+                    sta $00
+                    lda #$9e
+                    sta $01
+                    jsr read_rom
+                    sta $02
+                    jsr read_rom
+                    sta $03
+                    ldy #$00
+L9e4f               lda ($00),y
+                    cmp $02
+                    bne L9e6b
+                    iny
+                    lda ($00),y
+                    cmp $03
+                    bne L9e6c
+                    iny
+L9e5d               lda ($00),y
+                    pha
+                    iny
+                    and #$7f
+                    jsr oswrch
+                    pla
+                    bpl L9e5d
+                    bmi L9e94
+L9e6b               iny
+L9e6c               iny
+                    lda ($00),y
+                    bpl L9e6c
+                    iny
+                    tya
+                    clc
+                    adc $00
+                    sta $00
+                    bcc L9e7c
+                    inc $01
+L9e7c               ldy #$01
+                    lda ($00),y
+                    dey
+                    ora ($00),y
+                    bne L9e4f
+                    lda $b8
+                    jsr oswrch
+                    lda $03
+                    jsr hexbyte
+                    lda $02
+                    jsr hexbyte
+L9e94               pla
+                    sta $03
+                    pla
+                    sta $02
+                    pla
+                    sta $01
+                    pla
+                    sta $00
+                    pla
+                    tax
+                    pla
+                    tay
+                    rts
+                    
+symtab              oswrch 
+                    4f 53 57 52 43 c8 
+                    osrdch 
+                    4f 53 52 44 43 c8 
+                    osnewl 
+                    4f 53 4e 45 57 cc 
+                    osasci 
+                    4f 53 41 53 43 c9 
+                    $ffc2 
+                    47 53 49 4e 49 d4 
+                    $ffc5 
+                    47 53 52 45 41 c4 
+                    $ffb9 
+                    4f 53 52 44 52 cd 
+                    $ffbf 
+                    4f 53 45 56 45 ce 
+                    oscli 
+                    4f 53 43 4c c9 
+                    osbyte 
+                    4f 53 42 59 54 c5 
+                    osword 
+                    4f 53 57 4f 52 c4 
+                    osfind 
+                    4f 53 46 49 4e c4 
+                    osgbpb 
+                    4f 53 47 42 50 c2 
+                    osbput 
+                    4f 53 42 50 55 d4 
+                    osbget 
+                    4f 53 42 47 45 d4 
+                    osargs 
+                    4f 53 41 52 47 d3 
+                    osfile 
+                    4f 53 46 49 4c c5 
+                    brkv 
+                    62 72 6b f6 
+                    $0203 
+                    62 72 6b 76 2b b1 
+                    wrchv 
+                    77 72 63 68 f6 
+                    $020f 
+                    77 72 63 68 76 2b b1 
+                    rdchv 
+                    72 64 63 68 f6 
+                    $0211 
+                    72 64 63 68 76 2b b1 
+                    $0100 
+                    73 74 61 63 eb 
+                    L8000 
+                    6c 61 6e e7 
+                    L8003 
+                    73 65 72 76 e5 
+                    $0000 
+credits             28 43 29 20 41 6e 64 72 65 77 20 41 72 6d 73 74 
+                    72 6f 6e 67 20 31 39 38 34 2e 20 54 68 61 6e 6b 
+                    73 20 74 6f 20 4e 69 67 65 6c 2c 20 4a 6f 65 20 
+                    61 6e 64 20 61 6c 6c 20 61 74 20 48 43 43 53 2e 
+                    56 65 72 73 69 6f 6e 20 31 2e 36 30 20 31 32 2e 
+                    32 2e 31 39 38 34 20 20 20 20 20 20 20 20 20 20 
+                    20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 
+                    20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 
+                    20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 
