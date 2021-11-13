@@ -8,7 +8,7 @@ async function readSource(src) {
 async function main(args) {
   for (const src of args) {
     const lines = await readSource(src);
-    console.log(lines);
+    for (let l = 0; l < lines.length; l++) {}
   }
 }
 

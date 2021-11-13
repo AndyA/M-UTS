@@ -83,7 +83,8 @@ L8003               jmp service
                     !hex 13 
                     ; Version
                     !hex 02 
-title               !hex 4d 2d 55 54 53 00 31 2e 36 30 00 
+title               !hex 4d 2d 55 54 53 00 
+version             !hex 31 2e 36 30 00 
 copyright           !hex 28 43 29 20 41 49 41 41 20 31 39 38 34 00 
 j_prstr             jmp prstr
                     
@@ -227,10 +228,7 @@ c_assemble          lda x_present
                     jmp x_assemble
                     
 throw_noasm         jsr throw
-                    ; "No Assembler"
-                    !hex a0 4e 6f 20 61 73 73 65 6d 62 6c 65 72 00 
-
-                    ; +throw $a0, "No Assembler"
+                    !text $a0, "No assembler", 0
 
 dispatch_cmd        lda cmdline_lo
                     pha
@@ -296,7 +294,7 @@ L8355               lda #$02
                     !hex fe 00 
 L8360               pla
                     tay
-L8362               lda cmd_table,y
+L8362               lda cmd_table, y
                     iny
                     pha
                     and #$7f
@@ -309,7 +307,7 @@ L8362               lda cmd_table,y
                     iny
                     lda #$20
                     jsr oswrch_counted
-L8378               lda (acc0_lo,x)
+L8378               lda (acc0_lo, x)
                     inc acc0_lo
                     bne L8380
                     inc acc0_hi
@@ -327,7 +325,7 @@ L8390               jsr oswrch_counted
                     cpx #$28
                     bcc L8390
                     ldx #$00
-                    lda (acc0_lo,x)
+                    lda (acc0_lo, x)
                     bne L8355
                     jmp newline
                     
@@ -339,7 +337,7 @@ prstr               pla
 L83a9               inc ptr0_lo
                     bne L83af
                     inc ptr0_hi
-L83af               lda (ptr0_lo),y
+L83af               lda (ptr0_lo), y
                     beq L83c5
                     bpl L83c0
                     tax
@@ -364,8 +362,8 @@ throw               jsr reset_terminal
                     ldy #$00
                     sty $0100
 L83da               iny
-                    lda (ptr0_lo),y
-                    sta $0100,y
+                    lda (ptr0_lo), y
+                    sta $0100, y
                     bne L83da
                     jmp $0100
                     
@@ -434,7 +432,7 @@ L844a               pla
                     rts
                     
 getch               ldy #$00
-                    lda (cmdline_lo),y
+                    lda (cmdline_lo), y
                     inc cmdline_lo
                     bne L845b
                     inc cmdline_hi
@@ -509,7 +507,7 @@ L84c3               asl ptr0_lo
                     sta acc0_lo
                     bcc L84d4
                     inc acc0_hi
-L84d4               lda (cmdline_lo),y
+L84d4               lda (cmdline_lo), y
                     iny
                     bne L8488
 L84d9               pla
@@ -555,7 +553,7 @@ L8523               cmp #$2b
                     bne L8537
                     jsr eval_atom
                     ldy #$00
-                    lda (acc0_lo),y
+                    lda (acc0_lo), y
                     sta acc0_lo
                     sty acc0_hi
                     rts
@@ -565,10 +563,10 @@ L8537               cmp #$21
                     bne L854b
                     jsr eval_atom
                     ldy #$00
-                    lda (acc0_lo),y
+                    lda (acc0_lo), y
                     tax
                     iny
-                    lda (acc0_lo),y
+                    lda (acc0_lo), y
                     sta acc0_hi
                     stx acc0_lo
                     rts
@@ -648,9 +646,9 @@ L85ec               cmp #$5b
                     bcs throw_badvar
                     asl
                     tax
-                    lda $037e,x
+                    lda $037e, x
                     sta acc0_lo
-                    lda $037f,x
+                    lda $037f, x
                     sta acc0_hi
                     rts
                     
@@ -946,10 +944,10 @@ lookup_command      jsr skip_space
 lc_next_cmd         ldy #$ff
                     stx cmd_offset
 lc_next_char        iny
-                    lda (cmdline_lo),y
+                    lda (cmdline_lo), y
                     and #$df
                     sta ptr0_lo
-                    lda cmd_table,x
+                    lda cmd_table, x
                     php
                     inx
                     and #$7f
@@ -965,8 +963,8 @@ lc_match            iny
                     sta cmdline_lo
                     bcc L8809
                     inc cmdline_hi
-L8809               lda cmd_table,x
-                    sta cmdjmp_lo,y
+L8809               lda cmd_table, x
+                    sta cmdjmp_lo, y
                     inx
                     iny
                     cpy #$04
@@ -980,17 +978,17 @@ lc_dot              plp
                     dex
                     dex
 L881d               inx
-                    lda cmd_table,x
+                    lda cmd_table, x
                     bpl L881d
                     inx
-                    lda (cmdline_lo),y
+                    lda (cmdline_lo), y
                     cmp #$2e
                     beq lc_match
                     inx
                     inx
                     inx
                     inx
-                    lda cmd_table,x
+                    lda cmd_table, x
                     bne lc_next_cmd
                     jmp getch
                     
@@ -1010,32 +1008,32 @@ syntax_error        ldx #$00
                     jsr throw
                     ; "Bad expression"
                     !hex a6 42 61 64 20 65 78 70 72 65 73 73 69 6f 6e 00 
-L8867               lda syntax_prefix,x
-                    sta $0102,x
+L8867               lda syntax_prefix, x
+                    sta $0102, x
                     inx
                     cpx #$08
                     bcc L8867
-L8872               lda cmd_table,y
+L8872               lda cmd_table, y
                     php
                     and #$7f
-                    sta $0102,x
+                    sta $0102, x
                     iny
                     inx
                     plp
                     bpl L8872
                     lda #$20
-                    sta $0102,x
+                    sta $0102, x
                     ldy #$00
-L8887               lda (cmdhelp_lo),y
+L8887               lda (cmdhelp_lo), y
                     php
                     and #$7f
-                    sta $0103,x
+                    sta $0103, x
                     iny
                     inx
                     plp
                     bpl L8887
 S8894               lda #$00
-                    sta $0103,x
+                    sta $0103, x
                     jmp $0100
                     
 parse_bytes         ldx #$00
@@ -1075,7 +1073,7 @@ L88e4               jmp syntax_error
                     
 L88e7               jsr eval
                     ldy #$00
-L88ec               lda (acc0_lo),y
+L88ec               lda (acc0_lo), y
                     iny
                     cmp #$0d
                     beq parse_bytes_tail
@@ -1085,8 +1083,8 @@ L88ec               lda (acc0_lo),y
                     jmp L88ec
                     
 try_poke            ldy #$00
-                    sta (ptr0_lo),y
-                    cmp (ptr0_lo),y
+                    sta (ptr0_lo), y
+                    cmp (ptr0_lo), y
                     beq L891a
                     jsr throw
                     ; "Read only memory"
@@ -1112,8 +1110,8 @@ c_find              jsr parse_range
                     stx cmdline_lo
 L893a               ldy #$00
                     ldx #$00
-L893e               lda $0100,x
-                    cmp (acc2_lo),y
+L893e               lda $0100, x
+                    cmp (acc2_lo), y
                     bne L8958
                     iny
                     inx
@@ -1300,7 +1298,7 @@ readline_parms      !word $0700
                     !hex 20 
                     ; max char
                     !hex ff 
-                    !hex 0d 00 00 00 
+empty               !hex 0d 00 00 00 
                     
                     ; ROM service entry
 language            cmp #$01
@@ -1314,12 +1312,12 @@ language            cmp #$01
                     sta $0600
                     sta $0601
                     sta $0602
-L8af9               sta breakpoints_lo,x
+L8af9               sta breakpoints_lo, x
                     dex
                     bpl L8af9
                     ldx #$04
-L8b01               lda $8ada,x
-                    sta brk_cmd,x
+L8b01               lda empty, x
+                    sta brk_cmd, x
                     dex
                     bpl L8b01
                     inx
@@ -1343,10 +1341,10 @@ brk_handler         txa
                     sbc #$00
                     sta acc0_hi
 L8b2e               lda acc0_lo
-                    cmp breakpoints_lo,x
+                    cmp breakpoints_lo, x
                     bne L8b3f
                     lda acc0_hi
-                    cmp breakpoints_hi,x
+                    cmp breakpoints_hi, x
                     bne L8b3f
                     jmp bp_handler
                     
@@ -1360,7 +1358,7 @@ L8b3f               inx
                     jsr osbyte
                     jsr osnewl
                     ldy #$01
-L8b51               lda (err_lo),y
+L8b51               lda (err_lo), y
                     beq L8b63
                     iny
                     cmp #$20
@@ -1378,7 +1376,7 @@ L8b63               cli
                     ; start of repl loop
 repl                jsr set_private
                     ldx #$00
-L8b70               lda $0603,x
+L8b70               lda $0603, x
                     inx
                     jsr oswrch
                     bne L8b70
@@ -1418,9 +1416,9 @@ throw_missingeq     jsr throw
 L8bbf               jsr eval
                     jsr check_eol
                     lda acc0_lo
-                    sta $037e,x
+                    sta $037e, x
                     lda acc0_hi
-                    sta $037f,x
+                    sta $037f, x
                     jmp repl
                     
                     ; / = set prompt
@@ -1430,11 +1428,11 @@ L8bd2               cmp #$2f
 L8bd8               jsr getch
                     cmp #$0d
                     beq L8be5
-                    sta $0603,x
+                    sta $0603, x
                     inx
                     bne L8bd8
 L8be5               lda #$00
-                    sta $0603,x
+                    sta $0603, x
                     jmp repl
                     
                     ; ? = show help
@@ -1510,7 +1508,7 @@ do_calc             jsr eval
                     cmp #$24
                     bcs L8cc6
                     ldx cur_rom
-                    ldy rom_private,x
+                    ldy rom_private, x
                     bpl L8cc6
                     pha
                     jsr prstr
@@ -1620,8 +1618,8 @@ L8d48               ldy #$00
                     inc acc0_lo
                     bne L8d74
                     inc acc0_hi
-L8d74               lda (acc2_lo),y
-                    sta (ptr0_lo),y
+L8d74               lda (acc2_lo), y
+                    sta (ptr0_lo), y
                     lda acc2_lo
                     bne L8d7e
                     dec acc2_hi
@@ -1634,7 +1632,7 @@ L8d86               dec ptr0_lo
                     bne L8d74
                     rts
                     
-L8d8e               lda (acc2_lo),y
+L8d8e               lda (acc2_lo), y
                     jsr try_poke
                     inc acc2_lo
                     bne L8d99
@@ -1661,11 +1659,11 @@ set_private         lda #$ff
                     bne L8dc0
 clr_private         lda #$00
 L8dc0               ldx cur_rom
-                    sta rom_private,x
+                    sta rom_private, x
                     rts
                     
 get_private         ldx cur_rom
-                    lda rom_private,x
+                    lda rom_private, x
 L8dcb               rts
                     
 check_cmd_mode      jsr get_private
@@ -1728,7 +1726,7 @@ L8f98               pha
                     and #$07
                     tax
                     pla
-                    sta $010a,x
+                    sta $010a, x
                     tax
                     pla
                     tay
@@ -1796,8 +1794,8 @@ decode_admode       ldy #$00
                     sty $b6
                     jsr read_rom
 L9010               pha
-                    and $8f0b,y
-                    cmp $8f0a,y
+                    and $8f0b, y ; FIXME
+                    cmp $8f0a, y ; FIXME
                     beq L9022
                     pla
                     iny
@@ -1807,7 +1805,7 @@ L9010               pha
                     bcc L9010
                     pha
 L9022               pla
-                    lda $8f0c,y
+                    lda $8f0c, y ; FIXME
                     cmp #$0c
                     bcs L9093
                     ldx $b7
@@ -1815,9 +1813,9 @@ L9022               pla
                     tay
                     lda #$20
                     jsr oswrch
-                    lda $8de7,y
+                    lda $8de7, y ; FIXME
                     tay
-L9038               lda $8de7,y
+L9038               lda $8de7, y ; FIXME
                     beq L9093
                     iny
                     cmp #$31
@@ -1887,7 +1885,7 @@ decode_instr        lda acc2_lo
                     sta $b7
                     jsr read_rom
                     ldx #$00
-L90b4               cmp optab,x
+L90b4               cmp optab, x
                     beq L90c5
                     inx
                     cpx #$28
@@ -1902,8 +1900,8 @@ L90c5               ldx #$0b
 L90cb               txa
                     ldx #$00
 L90ce               pha
-                    and op_decode + 1,x
-                    cmp op_decode,x
+                    and op_decode + 1, x
+                    cmp op_decode, x
                     beq L90e1
                     pla
                     inx
@@ -1914,9 +1912,9 @@ L90ce               pha
                     bcc L90ce
                     pha
 L90e1               pla
-                    lda op_decode_huh,x
+                    lda op_decode_huh, x
                     sta $0100
-                    lda op_decode_huh + 1,x
+                    lda op_decode_huh + 1, x
                     sta $0101
                     ldy #$03
 L90f0               ldx #$05
@@ -1953,7 +1951,7 @@ L9129               jsr oswrch
                     cpx #$13
                     bcc L9129
                     ldy #$00
-L9133               lda $010b,y
+L9133               lda $010b, y
                     jsr hexbyte_space
                     iny
                     cpy $b6
@@ -1966,7 +1964,7 @@ L9145               jsr oswrch
                     cpx #$1d
                     bcc L9145
                     ldy #$00
-L914f               lda $010b,y
+L914f               lda $010b, y
                     jsr safe_ascii
                     iny
                     cpy $b6
@@ -2081,7 +2079,7 @@ service             php
                     bcc L923a
                     inc cmdline_hi
 L923a               tsx
-                    lda $0105,x
+                    lda $0105, x
                     ; star command not recognised
                     cmp #$04
                     beq star_command
@@ -2119,7 +2117,7 @@ star_command        jsr clr_private
                     bcs L9285
 L9278               tsx
                     lda #$00
-                    sta $0105,x
+                    sta $0105, x
                     pla
                     pla
                     pla
@@ -2132,7 +2130,7 @@ flagnames           !hex 6e 76 2e 62 64 69 7a 63
                     
 show_regs           jsr check_eol
                     ldx #$00
-L9299               lda regnames,x
+L9299               lda regnames, x
                     pha
                     jsr oswrch
                     jsr prstr
@@ -2142,7 +2140,7 @@ L9299               lda regnames,x
 L92a7               pla
                     asl
                     tay
-                    lda $037e,y
+                    lda $037e, y
                     jsr hexbyte_space
                     inx
                     cpx #$04
@@ -2156,7 +2154,7 @@ show_flags          ldy #$00
 L92c3               ldx #$2e
                     asl
                     bcc L92cb
-                    ldx flagnames,y
+                    ldx flagnames, y
 L92cb               pha
                     txa
                     jsr oswrch
@@ -2175,12 +2173,12 @@ c_go                jsr check_cmd_mode
 L92e5               jsr skip_space
                     beq L9305
                     jsr unget
-                    lda regnames,x
+                    lda regnames, x
                     asl
                     sta $0100
                     jsr eval_byte
                     ldy $0100
-                    sta $037e,y
+                    sta $037e, y
                     inx
                     cpx #$04
                     bcc L92e5
@@ -2217,12 +2215,12 @@ c_where             jsr check_cmd_mode
                     ; "Breakpoints:"
                     !hex 42 72 65 61 6b 70 6f 69 6e 74 73 3a 0d 00 a2 00 
 L934f = * + 2       
-L934d               lda breakpoints_lo,x
-                    ora breakpoints_hi,x
+L934d               lda breakpoints_lo, x
+                    ora breakpoints_hi, x
                     beq L9361
-                    lda breakpoints_hi,x
+                    lda breakpoints_hi, x
                     jsr hexbyte
-                    lda breakpoints_lo,x
+                    lda breakpoints_lo, x
                     jsr hexbyte_space
 L9361               inx
                     inx
@@ -2240,8 +2238,8 @@ c_set               jsr check_cmd_mode
                     sta ptr0_lo
                     lda acc0_hi
                     sta ptr0_hi
-L937f               lda breakpoints_lo,x
-                    ora breakpoints_hi,x
+L937f               lda breakpoints_lo, x
+                    ora breakpoints_hi, x
                     beq L939b
                     inx
                     inx
@@ -2254,16 +2252,16 @@ L937f               lda breakpoints_lo,x
                     !hex ac 4e 6f 20 72 6f 6f 6d 00 
 L939b               txa
                     pha
-                    lda (acc0_lo),y
-                    sta breakpoints_save,x
+                    lda (acc0_lo), y
+                    sta breakpoints_save, x
                     tya
                     jsr try_poke
                     pla
                     tax
                     lda acc0_lo
-                    sta breakpoints_lo,x
+                    sta breakpoints_lo, x
                     lda acc0_hi
-                    sta breakpoints_hi,x
+                    sta breakpoints_hi, x
                     rts
                     
 c_clr               jsr check_cmd_mode
@@ -2274,16 +2272,16 @@ c_clr               jsr check_cmd_mode
                     jsr check_eol
                     ldx #$00
 L93c6               lda acc0_lo
-                    cmp breakpoints_lo,x
+                    cmp breakpoints_lo, x
                     bne L93e1
                     lda acc0_hi
-                    cmp breakpoints_hi,x
+                    cmp breakpoints_hi, x
                     bne L93e1
-                    lda breakpoints_save,x
-                    sta (acc0_lo),y
+                    lda breakpoints_save, x
+                    sta (acc0_lo), y
                     tya
-                    sta breakpoints_lo,x
-                    sta breakpoints_hi,x
+                    sta breakpoints_lo, x
+                    sta breakpoints_hi, x
                     rts
                     
 L93e1               inx
@@ -2297,18 +2295,18 @@ L93e1               inx
                     !hex ad 42 72 65 61 6b 70 6f 69 6e 74 20 6e 6f 74 20 66 6f 75 6e 64 00 
 L9402               ldx #$00
                     ldy #$00
-L9406               lda breakpoints_lo,x
-                    ora breakpoints_hi,x
+L9406               lda breakpoints_lo, x
+                    ora breakpoints_hi, x
                     beq L9424
-                    lda breakpoints_lo,x
+                    lda breakpoints_lo, x
                     sta acc0_lo
-                    lda breakpoints_hi,x
+                    lda breakpoints_hi, x
                     sta acc0_hi
-                    lda breakpoints_save,x
-                    sta (acc0_lo),y
+                    lda breakpoints_save, x
+                    sta (acc0_lo), y
                     tya
-                    sta breakpoints_lo,x
-                    sta breakpoints_hi,x
+                    sta breakpoints_lo, x
+                    sta breakpoints_hi, x
 L9424               inx
                     inx
                     inx
@@ -2320,7 +2318,7 @@ L9424               inx
 c_onbrk             jsr check_cmd_mode
                     ldx #$00
 L9432               jsr getch
-                    sta brk_cmd,x
+                    sta brk_cmd, x
                     inx
                     cmp #$0d
                     bne L9432
@@ -2435,8 +2433,8 @@ disk_size           lda cmdhelp_hi
 drive_cmd           !hex 44 52 49 56 45 20 
 star_drive          pha
                     ldx #$00
-L9529               lda drive_cmd,x
-                    sta $010a,x
+L9529               lda drive_cmd, x
+                    sta $010a, x
                     inx
                     cpx #$06
                     bcc L9529
@@ -2591,8 +2589,8 @@ L9650               lda acc2_lo
                     cmp #$08
                     beq L9669
                     ldy #$03
-L9669               lda layout_40,y
-                    sta cmdjmp_lo,x
+L9669               lda layout_40, y
+                    sta cmdjmp_lo, x
                     iny
                     inx
                     cpx #$03
@@ -2765,8 +2763,8 @@ edit_input          tax
                     sbc cmdjmp_hi
                     tay
                     txa
-                    sta (acc2_lo),y
-                    cmp (acc2_lo),y
+                    sta (acc2_lo), y
+                    cmp (acc2_lo), y
                     bne edit_bell
                     ; fake right. Could just jump in after the test
                     lda #$89
@@ -2807,11 +2805,11 @@ L97da               cmp #$10
 L97eb               stx $0101
                     ldy $0100
                     sta $0100
-                    lda (acc2_lo),y
+                    lda (acc2_lo), y
                     and $0101
                     ora $0100
-                    sta (acc2_lo),y
-                    cmp (acc2_lo),y
+                    sta (acc2_lo), y
+                    cmp (acc2_lo), y
                     bne edit_bell
                     ; fake right
                     lda #$89
@@ -2861,7 +2859,7 @@ inst_len            pha
                     pla
                     and #$03
                     tay
-                    lda inst_len_table,x
+                    lda inst_len_table, x
 L9887               iny
                     cpy #$04
                     beq L9891
@@ -2919,8 +2917,8 @@ L990d               jsr show_flags
                     lda $0424
                     jsr hexbyte_space
                     ldx #$07
-L991d               lda step_bootstrap,x
-                    sta $010c,x
+L991d               lda step_bootstrap, x
+                    sta $010c, x
                     dex
                     bpl L991d
                     lda acc2_lo
@@ -3073,7 +3071,7 @@ c_look              jsr eval
                     jsr hex_prefix
                     jsr check_eol
                     ldx cur_rom
-                    lda rom_private,x
+                    lda rom_private, x
                     bmi L9a54
                     lda #$00
                     tax
@@ -3260,20 +3258,20 @@ c_form              jsr parse_tracks
                     jsr ram_warning
                     bcc L9bbc
                     ldy #$2b
-L9be1               lda empty_disc,y
-L9be4               sta (acc0_lo),y
+L9be1               lda empty_disc, y
+L9be4               sta (acc0_lo), y
                     dey
                     bpl L9be1
                     jsr disc_block                    
                     pla
                     ldy #$00
-                    sta (acc0_lo),y
+                    sta (acc0_lo), y
                     ldy #$09
-                    sta (acc0_lo),y
+                    sta (acc0_lo), y
                     ldy #$16
-                    sta (acc0_lo),y
+                    sta (acc0_lo), y
                     ldy #$21
-                    sta (acc0_lo),y
+                    sta (acc0_lo), y
                     ldx acc0_lo
                     ldy acc0_hi
                     lda #$7f
@@ -3292,20 +3290,20 @@ L9c0e               jsr wrap_sector
 L9c1e               ldy #$59
                     ldx #$0a
 L9c22               lda #$01
-                    sta (acc0_lo),y
+                    sta (acc0_lo), y
                     dey
                     txa
                     pha
                     jsr wrap_sector
-                    sta (acc0_lo),y
+                    sta (acc0_lo), y
                     dey
                     pla
                     tax
                     lda #$00
-                    sta (acc0_lo),y
+                    sta (acc0_lo), y
                     dey
                     lda acc1_lo
-                    sta (acc0_lo),y
+                    sta (acc0_lo), y
                     dey
                     dex
                     bne L9c22
@@ -3313,14 +3311,14 @@ L9c22               lda #$01
                     lda acc0_lo
                     clc
                     adc #$32
-                    sta (acc0_lo),y
+                    sta (acc0_lo), y
                     iny
                     lda acc0_hi
                     adc #$00
-                    sta (acc0_lo),y
+                    sta (acc0_lo), y
                     ldy #$10
                     lda acc1_lo
-                    sta (acc0_lo),y
+                    sta (acc0_lo), y
                     lda acc0_lo
                     clc
                     adc #$09
@@ -3331,14 +3329,14 @@ L9c22               lda #$01
                     lda #$7f
                     jsr osword
                     ldy #$15
-                    lda (acc0_lo),y
+                    lda (acc0_lo), y
                     beq L9c7b
                     jsr throw
                     ; "Format error"
                     !hex b2 46 6f 72 6d 61 74 20 65 72 72 6f 72 00 
 L9c7b               ldy #$1d
                     lda acc1_lo
-                    sta (acc0_lo),y
+                    sta (acc0_lo), y
                     lda acc0_lo
                     clc
                     adc #$16
@@ -3349,7 +3347,7 @@ L9c7b               ldy #$1d
                     lda #$7f
                     jsr osword
                     ldy #$20
-                    lda (acc0_lo),y
+                    lda (acc0_lo), y
                     beq L9ca8
                     jsr throw
                     ; "Verify error"
@@ -3367,11 +3365,11 @@ L9cb3               ldy acc0_lo
                     stx ptr0_hi
                     ldy #$00
                     tya
-L9cbf               sta (ptr0_lo),y
+L9cbf               sta (ptr0_lo), y
                     iny
                     bne L9cbf
                     inc ptr0_hi
-L9cc6               sta (ptr0_lo),y
+L9cc6               sta (ptr0_lo), y
                     iny
                     bne L9cc6
                     sty acc2_hi
@@ -3390,18 +3388,18 @@ L9cc6               sta (ptr0_lo),y
                     inc acc2_hi
 L9ce2               ldy #$07
                     lda acc2_lo
-                    sta (ptr0_lo),y
+                    sta (ptr0_lo), y
                     dey
                     lda acc2_hi
-                    sta (ptr0_lo),y
+                    sta (ptr0_lo), y
                     ldy #$22
                     lda ptr0_lo
-                    sta (acc0_lo),y
+                    sta (acc0_lo), y
                     iny
                     ldx ptr0_hi
                     dex
                     txa
-                    sta (acc0_lo),y
+                    sta (acc0_lo), y
                     lda acc0_lo
                     clc
                     adc #$21
@@ -3417,12 +3415,12 @@ disc_block          lda #$82
                     stx ptr0_lo
                     sty ptr0_hi
                     ldx #$00
-L9d15               ldy disc_offsets,x
+L9d15               ldy disc_offsets, x
                     lda ptr0_lo
-                    sta (acc0_lo),y
+                    sta (acc0_lo), y
                     iny
                     lda ptr0_hi
-                    sta (acc0_lo),y
+                    sta (acc0_lo), y
                     inx
                     cpx #$04
                     bcc L9d15
@@ -3489,7 +3487,7 @@ c_vdu               ldx #$00
                     jsr parse_bytes
 L9db0               dex
                     bmi L9dbc
-                    lda $0100,y
+                    lda $0100, y
                     jsr oswrch
                     iny
                     bne L9db0
@@ -3504,8 +3502,8 @@ c_same              jsr eval
                     sta $b7
                     jsr eval
                     jsr check_eol
-L9dd4               lda ($b6),y
-                    cmp (acc2_lo),y
+L9dd4               lda ($b6), y
+                    cmp (acc2_lo), y
                     beq L9de7
                     ldx #$b4
                     jsr pr_membyte
@@ -3530,9 +3528,9 @@ pr_membyte          lda #$28
                     clc
                     tya
                     pha
-                    adc $00,x
+                    adc $00, x
                     sta ptr0_lo
-                    lda $01,x
+                    lda $01, x
                     adc #$00
                     sta ptr0_hi
                     jsr hexbyte
@@ -3543,7 +3541,7 @@ pr_membyte          lda #$28
                     lda #$3d
                     jsr oswrch
                     ldy #$00
-                    lda (ptr0_lo),y
+                    lda (ptr0_lo), y
                     jsr hexbyte_space
                     pla
                     tay
@@ -3570,15 +3568,15 @@ pr_sym16            tya
                     jsr read_rom
                     sta $03
                     ldy #$00
-L9e4f               lda ($00),y
+L9e4f               lda ($00), y
                     cmp $02
                     bne L9e6b
                     iny
-                    lda ($00),y
+                    lda ($00), y
                     cmp $03
                     bne L9e6c
                     iny
-L9e5d               lda ($00),y
+L9e5d               lda ($00), y
                     pha
                     iny
                     and #$7f
@@ -3588,7 +3586,7 @@ L9e5d               lda ($00),y
                     bmi L9e94
 L9e6b               iny
 L9e6c               iny
-                    lda ($00),y
+                    lda ($00), y
                     bpl L9e6c
                     iny
                     tya
@@ -3598,9 +3596,9 @@ L9e6c               iny
                     bcc L9e7c
                     inc $01
 L9e7c               ldy #$01
-                    lda ($00),y
+                    lda ($00), y
                     dey
-                    ora ($00),y
+                    ora ($00), y
                     bne L9e4f
                     lda $b8
                     jsr oswrch
