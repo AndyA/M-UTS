@@ -6,6 +6,13 @@ async function readSource(src) {
 }
 
 const isPrint = c => c >= 32 && c < 127;
+const isCtrl = c => c === 13 || c === 10 || c === 0;
+
+const isHiLastByte = bytes => {
+  const b = [...bytes];
+  const lb = b.pop();
+  return lb >= 0x80 && b.every(isPrint) && isPrint(lb & 0x7f);
+};
 
 function acmeStringParts(bytes) {
   const out = [];
@@ -27,7 +34,7 @@ function acmeStringFormat(parts) {
     .map(arg => {
       if (Array.isArray(arg)) return arg[0];
       if (typeof arg === "string") return `"${arg}"`;
-      if (arg === 0) return 0;
+      if (arg < 0x20) return arg;
       if (arg === 0x22) return `'"'`;
       return `\$${arg.toString(16)}`;
     })
@@ -36,6 +43,10 @@ function acmeStringFormat(parts) {
 
 function acmeString(bytes) {
   const parts = acmeStringParts(bytes);
+  if (isHiLastByte(bytes)) {
+    const lb = parts.pop();
+    parts.push([`'${String.fromCharCode(lb & 0x7f)}' + $80`]);
+  }
   return acmeStringFormat(parts);
 }
 
