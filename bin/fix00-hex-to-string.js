@@ -5,35 +5,45 @@ async function readSource(src) {
   return txt.split(/\n/);
 }
 
-function acmeString(bytes) {
-  const args = [];
-  let inString = false;
+const isPrint = c => c >= 32 && c < 127;
+
+function acmeStringParts(bytes) {
+  const out = [];
   for (const b of bytes) {
-    if (b >= 32 && b < 127 && b !== 0x22) {
+    if (isPrint(b) && b !== 0x22) {
       // printable, not a quote
-      if (args.length === 0 || typeof args[args.length - 1] !== "string")
-        args.push("");
-      args[args.length - 1] += String.fromCharCode(b);
+      if (out.length === 0 || typeof out[out.length - 1] !== "string")
+        out.push("");
+      out[out.length - 1] += String.fromCharCode(b);
     } else {
-      args.push(b);
+      out.push(b);
     }
   }
-  return args
-    .map((arg) =>
-      typeof arg === "string"
-        ? `"${arg}"`
-        : arg === 0
-        ? 0
-        : `\$${arg.toString(16)}`
-    )
+  return out;
+}
+
+function acmeStringFormat(parts) {
+  return parts
+    .map(arg => {
+      if (Array.isArray(arg)) return arg[0];
+      if (typeof arg === "string") return `"${arg}"`;
+      if (arg === 0) return 0;
+      if (arg === 0x22) return `'"'`;
+      return `\$${arg.toString(16)}`;
+    })
     .join(", ");
+}
+
+function acmeString(bytes) {
+  const parts = acmeStringParts(bytes);
+  return acmeStringFormat(parts);
 }
 
 function fixHex(line) {
   const m = line.match(/^(.*)!hex ([0-9a-f]{2}(?: [0-9a-f]{2})+)/);
   if (!m) return line;
   const [, prefix, hex] = m;
-  const bytes = hex.split(/ /).map((h) => parseInt(h, 16));
+  const bytes = hex.split(/ /).map(h => parseInt(h, 16));
   const rep = acmeString(bytes);
   return `${prefix}!text ${rep}`;
 }
@@ -50,7 +60,7 @@ async function main(args) {
   }
 }
 
-main(process.argv.slice(2)).catch((e) => {
+main(process.argv.slice(2)).catch(e => {
   console.error(e);
   proces.exit(1);
 });
