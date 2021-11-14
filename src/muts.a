@@ -69,7 +69,8 @@
 n_breakpoints = 16
 !addr breakpoints = $0500
 
-; What's at $0600?
+!addr base_addr = $0600
+!addr rom_sel   = $0602
 
 !addr cmd_line = $0700
 
@@ -1341,9 +1342,9 @@ language            cmp #1
                     sta brkv + 1
                     lda #0
                     ldx #$3f
-                    sta $0600
-                    sta $0601
-                    sta $0602
+                    sta base_addr
+                    sta base_addr + 1
+                    sta rom_sel
 -                   sta breakpoints, x
                     dex
                     bpl -
@@ -1809,7 +1810,7 @@ read_rom            php
                     bmi L8f8b
                     txa
                     bpl L8f8e
-L8f8b               lda $0602
+L8f8b               lda rom_sel
 L8f8e               tay
                     jsr $ffb9
                     +inc16 acc2
@@ -2063,9 +2064,9 @@ c_base              jsr check_cmd_mode
                     jsr eval
                     jsr check_eol
                     lda acc0
-                    sta $0600
+                    sta base_addr
                     lda acc0 + 1
-                    sta $0601
+                    sta base_addr + 1
                     rts
                     
 copyright_marker    !text 0, "(C)"
@@ -2079,7 +2080,7 @@ c_select            jsr check_cmd_mode
                     bcc L9190
 L9184               jsr throw
                     !text $ab, "Bad ROM", 0
-L9190               sta $0602
+L9190               sta rom_sel
                     lda #< copyright_offset
                     sta acc2
                     lda #> copyright_offset
@@ -2115,20 +2116,20 @@ L91d4               lda acc2
                     ldx acc2 + 1
                     jmp L91e9
                     
-L91db               lda $0600
-                    ora $0601
+L91db               lda base_addr
+                    ora base_addr + 1
                     beq L91d4
-                    lda $0600
-                    ldx $0601
+                    lda base_addr
+                    ldx base_addr + 1
 L91e9               sta ptr0
                     stx ptr0 + 1
                     sec
-                    +sbc16 ptr0, ptr0, acc2 ; HERE
+                    +sbc16 ptr0, ptr0, acc2
                     jsr hex_prefix
                     jsr print_or_page
-L9200               jsr dis_op
+-                   jsr dis_op
                     +cmp16 acc2, acc0
-                    bcc L9200
+                    bcc -
                     jmp reset_terminal
                     
 hex_prefix          jsr skip_space
@@ -3155,15 +3156,15 @@ c_look              jsr eval
                     lda #0
                     tax
                     beq L9a69
-L9a54               lda $0600
-                    ora $0601
+L9a54               lda base_addr
+                    ora base_addr + 1
                     tax
                     beq L9a69
                     sec
-                    lda $0600
+                    lda base_addr
                     sbc acc2
                     tax
-                    lda $0601
+                    lda base_addr + 1
                     sbc acc2 + 1
 L9a69               stx ptr0
                     sta ptr0 + 1
