@@ -102,119 +102,124 @@ case_mask = $df
 }
 
 ; FIXME reproduces bug in original code
-!macro dec16bug addr {
-  lda addr + 1
+!macro dec16bug .addr {
+  lda .addr + 1
   bne +
-  dec addr + 1
-+ dec addr
+  dec .addr + 1
++ dec .addr
 }
 
-!macro dec16 addr {
-  lda addr
+!macro dec16 .addr {
+  lda .addr
   bne +
-  dec addr + 1
-+ dec addr
+  dec .addr + 1
++ dec .addr
 }
 
-!macro adc16 dst, lhs, rhs {
-  lda lhs
-  adc rhs
-  sta dst
-  lda lhs + 1
-  adc rhs + 1
-  sta dst + 1
+!macro adc16 .dst, .lhs, .rhs {
+  lda .lhs
+  adc .rhs
+  sta .dst
+  lda .lhs + 1
+  adc .rhs + 1
+  sta .dst + 1
 }
 
-!macro sbc16 dst, lhs, rhs {
-  lda lhs
-  sbc rhs
-  sta dst
-  lda lhs + 1
-  sbc rhs + 1
-  sta dst + 1
+!macro sbc16 .dst, .lhs, .rhs {
+  lda .lhs
+  sbc .rhs
+  sta .dst
+  lda .lhs + 1
+  sbc .rhs + 1
+  sta .dst + 1
 }
 
-!macro cmp16 lhs, rhs {
-  lda lhs
-  cmp rhs
-  lda lhs + 1
-  sbc rhs + 1
+!macro cmp16 .lhs, .rhs {
+  lda .lhs
+  cmp .rhs
+  lda .lhs + 1
+  sbc .rhs + 1
 }
 
-!macro cmz16 reg {
-  lda reg
-  ora reg + 1
+!macro cmz16 .reg {
+  lda .reg
+  ora .reg + 1
 }
 
-!macro mov16 dst, src {
-  lda src
-  sta dst
-  lda src + 1
-  sta dst + 1
+!macro mov16 .dst, .src {
+  lda .src
+  sta .dst
+  lda .src + 1
+  sta .dst + 1
 }
 
-!macro mov16i dst, addr {
-  lda #< addr
-  sta dst
-  lda #> addr
-  sta dst + 1
+!macro mov16i .dst, .addr {
+  lda #< .addr
+  sta .dst
+  lda #> .addr
+  sta .dst + 1
 }
 
-!macro mov16z dst {
+!macro mov16z .dst {
   lda #0
-  sta dst
-  sta dst + 1
+  sta .dst
+  sta .dst + 1
 }
 
-!macro stxy dst {
-  stx dst
-  sty dst + 1
+!macro stxy .dst {
+  stx .dst
+  sty .dst + 1
 }
 
 ; Add A to 16 bit reg
-!macro adca16 dst {
-  adc dst
-  sta dst
+!macro adca16 .dst {
+  adc .dst
+  sta .dst
   bcc +
-  inc dst + 1
+  inc .dst + 1
 +
 }
 
-!macro asl16 reg {
-  asl reg
-  rol reg + 1
+!macro asl16 .reg {
+  asl .reg
+  rol .reg + 1
 }
 
-!macro push16 addr {
-  lda addr
+!macro rol16 .reg {
+  rol .reg
+  rol .reg + 1
+}
+
+!macro push16 .addr {
+  lda .addr
   pha
-  lda addr + 1
+  lda .addr + 1
   pha
 }
 
-!macro pop16 addr {
+!macro pop16 .addr {
   pla
-  sta addr + 1
+  sta .addr + 1
   pla
-  sta addr
+  sta .addr
 }
 
 ; For assembler tables
 
-!macro mnem c1, c2, c3, bits, mask {
-  !set .cc = ((c1 - $3f) << 11) | ((c2 - $3f) << 6) | ((c3 - $3f) << 1)
-  !byte < .cc, > .cc, bits, mask
+!macro mnem .c1, .c2, .c3, .bits, .mask {
+  !set .cc = ((.c1 - $3f) << 11) | ((.c2 - $3f) << 6) | ((.c3 - $3f) << 1)
+  !byte < .cc, > .cc, .bits, .mask
 }
 
-!macro ilen4 l0, l1, l2, l3 {
-  !byte (l0 << 6) | (l1 << 4) | (l2 << 2) | (l3 << 0)
+!macro ilen4 .l0, .l1, .l2, .l3 {
+  !byte (.l0 << 6) | (.l1 << 4) | (.l2 << 2) | (.l3 << 0)
 }
 
-!macro ilen l0, l1, l2, l3, l4, l5, l6, l7, l8, l9, l10, l11, l12, l13, l14, l15 {
-  +ilen4 l0, l1, l2, l3
-  +ilen4 l4, l5, l6, l7
-  +ilen4 l8, l9, l10, l11
-  +ilen4 l12, l13, l14, l15
+!macro ilen .l0, .l1, .l2, .l3, .l4, .l5, .l6, .l7, .l8, .l9, .l10, .l11, .l12, .l13, .l14, .l15 {
+  +ilen4 .l0, .l1, .l2, .l3
+  +ilen4 .l4, .l5, .l6, .l7
+  +ilen4 .l8, .l9, .l10, .l11
+  +ilen4 .l12, .l13, .l14, .l15
 }
 
 L8000               jmp language
@@ -257,73 +262,111 @@ j_x1                jmp 0
 ; the last char set followed by abs pointers to the code and help text for
 ; that command.
 
-cmd_table           !text "ASSEMBL", 'E' + $80
+!set next_token = $80
+
+!macro cmd ~.token {
+  .token = next_token
+  !set next_token = next_token + 1
+}
+
+cmd_table           +cmd ~tok_assemble
+                    !text "ASSEMBL", 'E' + $80
                     !word c_assemble, h_assemble 
+                    +cmd ~tok_base
                     !text "BAS", 'E' + $80
                     !word c_base, h_base 
+                    +cmd ~tok_calc
                     !text "CAL", 'C' + $80
                     !word c_calc, h_calc 
+                    +cmd ~tok_change
                     !text "CHANG", 'E' + $80
                     !word c_change, h_change 
+                    +cmd ~tok_clr
                     !text "CL", 'R' + $80
                     !word c_clr, h_clr 
+                    +cmd ~tok_dis
                     !text "DI", 'S' + $80
                     !word c_dis, h_dis 
+                    +cmd ~tok_edit
                     !text "EDI", 'T' + $80
                     !word c_edit, h_edit 
+                    +cmd ~tok_flist
                     !text "FLIS", 'T' + $80
                     !word c_flist, h_flist 
+                    +cmd ~tok_form
                     !text "FOR", 'M' + $80
                     !word c_form, h_form 
+                    +cmd ~tok_find
                     !text "FIN", 'D' + $80
                     !word c_find, h_find 
+                    +cmd ~tok_get
                     !text "GE", 'T' + $80
                     !word c_get, h_get 
+                    +cmd ~tok_go
                     !text "G", 'O' + $80
                     !word c_go, h_go 
+                    +cmd ~tok_look
                     !text "LOO", 'K' + $80
                     !word c_look, h_look 
+                    +cmd ~tok_mem
                     !text "ME", 'M' + $80
                     !word c_mem, h_mem 
+                    +cmd ~tok_mode
                     !text "MOD", 'E' + $80
                     !word c_mode, h_mode 
+                    +cmd ~tok_monitor
                     !text "MONITO", 'R' + $80
                     !word c_monitor, h_monitor 
+                    +cmd ~tok_move
                     !text "MOV", 'E' + $80
                     !word c_move, h_move 
+                    +cmd ~tok_onbrk
                     !text "ONBR", 'K' + $80
                     !word c_onbrk, h_onbrk 
+                    +cmd ~tok_put
                     !text "PU", 'T' + $80
                     !word c_put, h_put 
+                    +cmd ~tok_regs
                     !text "REG", 'S' + $80
                     !word c_regs, h_regs 
+                    +cmd ~tok_same
                     !text "SAM", 'E' + $80
                     !word c_same, h_same 
+                    +cmd ~tok_select
                     !text "SELEC", 'T' + $80
                     !word c_select, h_select 
+                    +cmd ~tok_set
                     !text "SE", 'T' + $80
                     !word c_set, h_set 
+                    +cmd ~tok_step
                     !text "STE", 'P' + $80
                     !word c_step, h_step 
+                    +cmd ~tok_vdu
                     !text "VD", 'U' + $80
                     !word c_vdu, h_vdu 
+                    +cmd ~tok_verify
                     !text "VERIF", 'Y' + $80
                     !word c_verify, h_verify 
+                    +cmd ~tok_where
                     !text "WHER", 'E' + $80
                     !word c_where, h_where 
 
 ; The command table is also used for operator names
 
                     ; AND
-op_and              !text "AN", 'D' + $80
+op_and              +cmd ~tok_and
+                    !text "AN", 'D' + $80
                     !word 0, 0 
                     ; OR
+                    +cmd ~tok_or
                     !text "O", 'R' + $80
                     !word 0, 0 
                     ; EOR
+                    +cmd ~tok_eor
                     !text "EO", 'R' + $80
                     !word 0, 0 
                     ; NOT
+                    +cmd ~tok_not
                     !text "NO", 'T' + $80
                     !word 0, 0 
                     !text 0
@@ -506,7 +549,6 @@ check_escape        bit esc_flag
                     rts
                     
 throw_escape        jsr throw
-                    ; "Escape"
                     !text 17, "Escape", 0
                     
 hexbyte             pha
@@ -694,16 +736,16 @@ eval_atom           tsx           ; check SP
                     sta acc1
                     jsr eval_d
                     lda acc0
-                    cmp #$02
+                    cmp #2
                     bcc throw_bad_base
-                    cmp #$23
+                    cmp #35
                     bcs throw_bad_base
                     sta acc1
                     jsr skip_comma
                     jmp eval_atom
                     
                     ; 9e = NOT
-+                   cmp #$9e
++                   cmp #tok_not
                     bne +
                     jsr eval_atom
                     lda acc0
@@ -810,7 +852,7 @@ eval_b              jsr eval_atom
                     jsr eval_b
                     +pop16 acc2
                     +mov16z ptr0
-                    ldy #$10
+                    ldy #16 ; bits
 L864d               lsr acc0 + 1
                     ror acc0
                     bcc L8660
@@ -885,8 +927,7 @@ divmod              +push16 acc0
                     ldy #16
                     +mov16z ptr0
 -                   +asl16 acc2
-                    rol ptr0
-                    rol ptr0 + 1
+                    +rol16 ptr0
                     +cmp16 ptr0, acc0
                     bcc +
                     +sbc16 ptr0, ptr0, acc0
@@ -900,7 +941,7 @@ eval_hex            lda #16
 eval_d              jsr eval_c
                     jsr lookup_token
                     ; AND
-                    cmp #$9b
+                    cmp #tok_and
                     bne +
                     +push16 acc0
                     jsr eval_d
@@ -913,7 +954,7 @@ eval_d              jsr eval_c
                     rts
                     
                     ; OR
-+                   cmp #$9c
++                   cmp #tok_or
                     bne +
                     +push16 acc0
                     jsr eval_d
@@ -926,7 +967,7 @@ eval_d              jsr eval_c
                     rts
                     
                     ; EOR
-+                   cmp #$9d
++                   cmp #tok_eor
                     bne unget
                     +push16 acc0
                     jsr eval_d
