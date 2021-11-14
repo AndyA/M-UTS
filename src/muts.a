@@ -66,7 +66,10 @@
 !addr reg_p = regs + ('P' - 'A') * 2
 !addr reg_s = regs + ('S' - 'A') * 2
 
+n_breakpoints = 16
 !addr breakpoints = $0500
+
+; What's at $0600?
 
 !addr cmd_line = $0700
 
@@ -117,6 +120,24 @@ key_sh_up = $a3
   lda lhs + 1
   adc rhs + 1
   sta dst + 1
+}
+
+!macro sbc16 dst, lhs, rhs {
+  lda lhs
+  sbc rhs
+  sta dst
+  lda lhs + 1
+  sbc rhs + 1
+  sta dst + 1
+}
+
+; Add A to 16 bit reg
+!macro adca16 dst {
+  adc dst
+  sta dst
+  bcc +
+  inc dst + 1
++
 }
 
 !macro push16 addr {
@@ -1367,7 +1388,7 @@ brk_handler         txa
                     inx
                     inx
                     inx
-                    cpx #$40
+                    cpx #n_breakpoints * 4
                     bcc -
                     lda #$7e
                     jsr osbyte
@@ -2112,12 +2133,7 @@ L91db               lda $0600
 L91e9               sta ptr0
                     stx ptr0 + 1
                     sec
-                    lda ptr0
-                    sbc acc2
-                    sta ptr0
-                    lda ptr0 + 1
-                    sbc acc2 + 1
-                    sta ptr0 + 1
+                    +sbc16 ptr0, ptr0, acc2
                     jsr hex_prefix
                     jsr print_or_page
 L9200               jsr dis_op
@@ -2147,21 +2163,22 @@ service             php
                     +push16 cmdline
                     clc
                     tya
-                    adc cmdline
-                    sta cmdline
-                    bcc L923a
-                    inc cmdline + 1
-L923a               tsx
+                    +adca16 cmdline
+                    tsx
                     lda stack + 5, x
-                    ; star command not recognised
+                    
+                    ; star command not recognised?
                     cmp #4
                     beq star_command
-                    ; *help
+
+                    ; *help?
                     cmp #9
                     beq help
+
 service_done        +pop16 cmdline
                     pla
                     tay
+
 service_exit        pla
                     tax
                     pla
@@ -2196,40 +2213,42 @@ L9278               tsx
 L9285               jmp service_done
                     
 regnames            !text "AXYS"
+regnames_end
+
 flagnames           !text "nv.bdizc"
+flagnames_end
                     
 show_regs           jsr check_eol
                     ldx #0
-L9299               lda regnames, x
+-                   lda regnames, x
                     pha
                     jsr oswrch
                     jsr prstr
                     !text " = ", 0
-                    
                     pla
                     asl
                     tay
-                    lda vars + '?' * 2, y
+                    lda vars + '?' * 2, y   ; odd calculation - would expect to sub from base
                     jsr hexbyte_space
                     inx
-                    cpx #$04
-                    bcc L9299
+                    cpx #regnames_end - regnames
+                    bcc -
                     jsr prstr
                     !text 13, "P = ", 0
                     
 show_flags          ldy #0
                     lda reg_p
-L92c3               ldx #'.'
+-                   ldx #'.'
                     asl
-                    bcc L92cb
+                    bcc +
                     ldx flagnames, y
-L92cb               pha
++                   pha
                     txa
                     jsr oswrch
                     pla
                     iny
-                    cpy #8
-                    bcc L92c3
+                    cpy #flagnames_end - flagnames
+                    bcc -
                     rts
                     
 c_regs              jsr show_regs
@@ -2238,8 +2257,8 @@ c_regs              jsr show_regs
 c_go                jsr check_cmd_mode
                     jsr eval
                     ldx #0
-L92e5               jsr skip_space
-                    beq L9305
+-                   jsr skip_space
+                    beq +
                     jsr unget
                     lda regnames, x
                     asl
@@ -2248,15 +2267,16 @@ L92e5               jsr skip_space
                     ldy stack
                     sta vars + '?' * 2, y
                     inx
-                    cpx #$04
-                    bcc L92e5
+                    cpx #regnames_end - regnames
+                    bcc -
                     jmp syntax_error
                     
-L9305               php
++                   php
                     jsr load_regs
                     jsr go_acc
                     jsr save_regs
                     plp
+
                     jmp newline
                     
 go_acc              jmp (acc0)
@@ -2280,22 +2300,21 @@ save_regs           php
 c_where             jsr check_cmd_mode
                     jsr check_eol
                     jsr prstr
-                    ; "Breakpoints:"
                     !text "Breakpoints:", 13, 0
                     ldx #0
-L934d               lda breakpoints, x
+-                   lda breakpoints, x
                     ora breakpoints + 1, x
-                    beq L9361
+                    beq +
                     lda breakpoints + 1, x
                     jsr hexbyte
                     lda breakpoints, x
                     jsr hexbyte_space
-L9361               inx
++                   inx
                     inx
                     inx
                     inx
-                    cpx #$40
-                    bcc L934d
+                    cpx #n_breakpoints * 4
+                    bcc -
                     jmp newline
                     
 c_set               jsr check_cmd_mode
@@ -2313,7 +2332,7 @@ L937f               lda breakpoints, x
                     inx
                     inx
                     inx
-                    cpx #$40
+                    cpx #n_breakpoints * 4
                     bcc L937f
                     jsr throw
                     !text $ac, "No room", 0
@@ -2355,7 +2374,7 @@ L93e1               inx
                     inx
                     inx
                     inx
-                    cpx #$40
+                    cpx #n_breakpoints * 4
                     bcc L93c6
                     jsr throw
                     !text $ad, "Breakpoint not found", 0
@@ -2377,7 +2396,7 @@ L9424               inx
                     inx
                     inx
                     inx
-                    cpx #$40
+                    cpx #n_breakpoints * 4
                     bcc L9406
                     rts
                     
@@ -2386,7 +2405,7 @@ c_onbrk             jsr check_cmd_mode
 L9432               jsr getch
                     sta brk_cmd, x
                     inx
-                    cmp #$0d
+                    cmp #13
                     bne L9432
                     rts
                     
@@ -2397,21 +2416,24 @@ get_put_parms       sta stack
                     sta stack + 7
                     lda acc0 + 1
                     sta stack + 8
+
                     ; page
                     lda #$83
                     jsr osbyte
                     stx stack + 1
                     sty stack + 2
+
                     ; machine address
                     lda #$82
                     jsr osbyte
                     stx stack + 3
                     sty stack + 4
+
                     lda #$03
                     sta stack + 5
                     lda #$7f
-                    ldx #0
-                    ldy #$01
+                    ldx #< stack
+                    ldy #> stack
                     rts
                     
 get_drive           lda #$01
@@ -2421,9 +2443,9 @@ get_drive           lda #$01
                     jsr osbyte
                     stx stack + 3
                     sty stack + 4
-                    lda #$08
+                    lda #< stack + 8
                     sta stack + 1
-                    ldy #$01
+                    ldy #> stack + 8
                     sty stack + 2
                     lda #$06
                     ldx #0
@@ -2435,12 +2457,12 @@ get_drive           lda #$01
 c_verify            jsr get_drive
                     pha
                     jsr skip_space
-                    bne L94a8
+                    bne +
                     pla
                     pha
                     jmp L94c5
                     
-L94a8               jsr unget
++                   jsr unget
                     jsr eval_byte
                     pha
                     jsr check_eol
@@ -2488,8 +2510,8 @@ disk_size           lda cmdhelp + 1
                     pha
                     lda acc3
                     pha
-                    ldx #$b3
-                    ldy #0
+                    ldx #< cmdhelp + 1
+                    ldy #> cmdhelp + 1
                     lda #$7e
                     jsr osword
                     pla
@@ -2503,11 +2525,11 @@ drive_cmd_end
 
 star_drive          pha
                     ldx #0
-L9529               lda drive_cmd, x
+-                   lda drive_cmd, x
                     sta stack + 10, x
                     inx
                     cpx #drive_cmd_end - drive_cmd
-                    bcc L9529
+                    bcc -
                     pla
                     ora #'0'
                     sta stack + 16
@@ -2518,10 +2540,10 @@ L9529               lda drive_cmd, x
                     jmp oscli
                     
 show_fkeys          ldy #0
-L9548               jsr show_fkey
+-                   jsr show_fkey
                     iny
                     cpy #16
-                    bcc L9548
+                    bcc -
                     rts
                     
 c_flist             jsr skip_space
@@ -2533,6 +2555,7 @@ c_flist             jsr skip_space
                     jsr throw
                     !text $fb, "Bad key", 0
 L956c               tay
+
 show_fkey           sty acc0
                     jsr prstr
                     !text "*KEY", 0
@@ -2657,6 +2680,7 @@ L9669               lda layout_40, y
 L9674               ldx acc0 + 1
                     jsr dump_line
                     jsr newline
+
                     ; read cursor position
                     lda #$86
                     jsr osbyte
@@ -2668,22 +2692,27 @@ L9689               lda #5
                     sta acc0
                     +pop16 acc2
                     jsr prstr
+
                     ; move cursor home
                     !text 30, 0
+
                     ; setup keyboard
                     lda #$04
                     ldx #$02
                     jsr osbyte
+
                     ; function key base code
                     lda #$e1
                     ldx #$7c
                     ldy #0
                     jsr osbyte
+
                     ; shift function key base code
                     lda #$e2
                     ldx #$94
                     ldy #0
                     jsr osbyte
+
 edit_getch          jsr show_line
                     ; flush input buffers
                     lda #$0f
@@ -2732,7 +2761,7 @@ L96fb               cmp #key_right
                     beq L9711
                     inc acc0
                     bne edit_getch
-L970d               lda #$05
+L970d               lda #5
                     bne L9713
 L9711               lda cmdjmp + 1
 L9713               sta acc0
@@ -2755,7 +2784,7 @@ L9717               cmp #key_down
 L9731               cmp #key_up
                     bne L974e
                     jsr show_line
-                    lda #$0b
+                    lda #11
                     jsr oswrch
                     lda acc2
                     sec
@@ -2775,7 +2804,7 @@ L974e               cmp #key_sh_right
                     bcc L974b
                     lda acc0
                     sec
-                    sbc #$05
+                    sbc #5
                     jsr div3
                     lda stack
                     clc
@@ -2804,9 +2833,10 @@ L9785               cmp #13
                     ldx #$05
                     lda acc0
                     cmp cmdjmp + 1
-                    bcc L9793
+                    bcc +
                     ldx cmdjmp + 1
-L9793               stx acc0
++                   stx acc0
+
                     ; fake line down. Could just jump to the code after the key test
                     lda #key_down
                     jmp L9717
@@ -2822,20 +2852,22 @@ edit_input          tax
                     sta (acc2), y
                     cmp (acc2), y
                     bne edit_bell
+
                     ; fake right. Could just jump in after the test
                     lda #key_right
                     jmp L96fb
                     
 edit_hex            stx acc3
-L97b2               sbc #$04
+L97b2               sbc #4
                     jsr div3
-                    cmp #$02
+                    cmp #2
                     bne L97ca
                     ; move forward and try again
                     inc acc0
                     lda acc0
                     clc
                     bcc L97b2
+
 edit_bell           lda #$07
                     jsr oswrch
                     jmp edit_getch
@@ -2881,17 +2913,17 @@ cursor_off          +push16 ptr0
                     jsr prstr
                     ; cursor off
                     !text 23, 1, 0
-                    jmp L982c
+                    jmp +
                     
 cursor_on           +push16 ptr0
                     jsr prstr
                     ; cursor on
                     !text 23, 1, 1, 0
-L982c               tya
-                    ldx #$0a
-L982f               jsr oswrch
++                   tya
+                    ldx #10
+-                   jsr oswrch
                     dex
-                    bne L982f
+                    bne -
                     +pop16 ptr0
                     rts
 
@@ -2913,6 +2945,8 @@ inst_len_table      +ilen 1, 2, 2, 1, 1, 2, 2, 1, 1, 2, 1, 1, 1, 3, 3, 1
                     +ilen 2, 2, 1, 1, 1, 2, 2, 1, 1, 3, 1, 1, 1, 3, 3, 1
                     +ilen 2, 2, 1, 1, 2, 2, 2, 1, 1, 2, 1, 1, 3, 3, 3, 1
                     +ilen 2, 2, 1, 1, 1, 2, 2, 1, 1, 3, 1, 1, 1, 3, 3, 1
+
+; Compute the length in bytes of the opcode in A
 
 inst_len            pha
                     lsr
@@ -2937,6 +2971,7 @@ step_bootstrap      nop
                     nop
                     jmp stepped
                     jmp branched
+step_bootstrap_end
                     
 c_step              jsr check_cmd_mode
                     jsr eval
@@ -2944,7 +2979,7 @@ c_step              jsr check_cmd_mode
                     jsr hex_prefix
                     jsr print_or_page
                     ldx reg_s
-                    cpx #$80
+                    cpx #$80      ; or just BMI
                     bcs +
                     jsr throw
                     !text $af, "Stack overflow", 0
@@ -2974,11 +3009,11 @@ step_next           +inc16 reg_pc
                     jsr oswrch
                     lda reg_s
                     jsr hexbyte_space
-                    ldx #$07
-L991d               lda step_bootstrap, x
+                    ldx #step_bootstrap_end - step_bootstrap - 1
+-                   lda step_bootstrap, x
                     sta stack + 12, x
                     dex
-                    bpl L991d
+                    bpl -
                     lda acc2
                     sta acc0
                     lda acc2 + 1
@@ -3014,6 +3049,7 @@ L991d               lda step_bootstrap, x
                     and #$1f
                     cmp #$10
                     beq do_branch
+
 step_execute        php
                     pla
                     sta acc1
