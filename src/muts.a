@@ -45,6 +45,7 @@
 !addr cmdhelp = $b2
 
 !addr acc2 = $b4
+!addr acc3 = $b6
 
 !addr hex_pfx = $b8
 
@@ -1771,7 +1772,7 @@ bad_op_end
                     jsr S8894
                     lda #$0d
 peek                ldx #0
-                    stx $b6
+                    stx acc3
 read_rom            php
                     sei
                     tya
@@ -1789,8 +1790,8 @@ L8f8e               tay
                     jsr $ffb9
                     +inc16 acc2
                     pha
-                    inc $b6
-                    lda $b6
+                    inc acc3
+                    lda acc3
                     and #$07
                     tax
                     pla
@@ -1859,7 +1860,7 @@ L8ff2               pla
                     jmp reset_terminal
                     
 decode_admode       ldy #0
-                    sty $b6
+                    sty acc3
                     jsr read_rom
 L9010               pha
                     and addr_decode + 1, y
@@ -1876,7 +1877,7 @@ L9022               pla
                     lda addr_decode + 2, y
                     cmp #$0c
                     bcs L9093
-                    ldx $b7
+                    ldx acc3 + 1
                     beq L9093
                     tay
                     lda #' '
@@ -1921,7 +1922,7 @@ L906b               clc
                     
 L9081               cmp #'I'
                     bne L9087
-                    lda $b7
+                    lda acc3 + 1
 
 L9087               cmp #'H'
                     bne L908d
@@ -1943,7 +1944,7 @@ pr_addr             clc
                     
 decode_instr        +push16 acc2
                     lda #'X'
-                    sta $b7
+                    sta acc3 + 1
                     jsr read_rom
 
                     ; illegal op?
@@ -1959,7 +1960,7 @@ L90b4               cmp bad_op, x
                     bne L90cb
 L90c5               ldx #$0b ; indicate bad op
                     lda #0
-                    sta $b7
+                    sta acc3 + 1
 
                     ; lookup op
 L90cb               txa
@@ -1998,7 +1999,7 @@ L90f4               asl stack
                     jsr oswrch
                     cmp #'X'
                     bne L910a
-                    inc $b7
+                    inc acc3 + 1
 L910a               dey
                     bne L90f0
                     +pop16 acc2
@@ -2020,7 +2021,7 @@ L9129               jsr oswrch
 L9133               lda stack + 11, y
                     jsr hexbyte_space
                     iny
-                    cpy $b6
+                    cpy acc3
                     bcc L9133
                     lda #$86
                     jsr osbyte
@@ -2033,7 +2034,7 @@ L9145               jsr oswrch
 L914f               lda stack + 11, y
                     jsr safe_ascii
                     iny
-                    cpy $b6
+                    cpy acc3
                     bcc L914f
                     jmp newline
                     
@@ -2475,14 +2476,14 @@ L9502               ora acc2 + 1
                     
 disk_size           lda cmdhelp + 1
                     pha
-                    lda $b6
+                    lda acc3
                     pha
                     ldx #$b3
                     ldy #0
                     lda #$7e
                     jsr osword
                     pla
-                    sta $b6
+                    sta acc3
                     pla
                     sta cmdhelp + 1
                     rts
@@ -2815,7 +2816,7 @@ edit_input          tax
                     lda #$89
                     jmp L96fb
                     
-edit_hex            stx $b6
+edit_hex            stx acc3
 L97b2               sbc #$04
                     jsr div3
                     cmp #$02
@@ -2829,7 +2830,7 @@ edit_bell           lda #$07
                     jsr oswrch
                     jmp edit_getch
                     
-L97ca               lda $b6
+L97ca               lda acc3
                     sbc #$2f
                     bcc edit_bell
                     cmp #$0a
@@ -2973,10 +2974,10 @@ L991d               lda step_bootstrap, x
                     lda acc2 + 1
                     sta acc0 + 1
                     inx
-                    stx $b6
+                    stx acc3
                     jsr decode_instr
                     ldx #0
-                    stx $b6
+                    stx acc3
                     jsr decode_admode
                     jsr osrdch
                     jsr newline
@@ -3007,7 +3008,7 @@ step_execute        php
                     pla
                     sta acc1
                     lda #0
-                    sta $b6
+                    sta acc3
                     jsr load_regs
                     jmp stack + 11
                     
@@ -3193,7 +3194,7 @@ L9acf               pla
                     inc acc2 + 1
 L9ae4               +push16 acc2
                     ldx #0
-                    stx $b6
+                    stx acc3
                     jsr cursor_off
                     jsr dis_op
                     jsr cursor_on
@@ -3526,22 +3527,22 @@ c_same              jsr eval
                     jsr acc0_to_acc2
                     jsr eval
                     lda acc0
-                    sta $b6
+                    sta acc3
                     lda acc0 + 1
-                    sta $b7
+                    sta acc3 + 1
                     jsr eval
                     jsr check_eol
-L9dd4               lda ($b6), y
+L9dd4               lda (acc3), y
                     cmp (acc2), y
                     beq L9de7
-                    ldx #$b4
+                    ldx #acc2
                     jsr pr_membyte
-                    ldx #$b6
+                    ldx #acc3
                     jsr pr_membyte
                     jsr newline
 L9de7               iny
                     bne L9dee
-                    inc $b7
+                    inc acc3 + 1
                     inc acc2 + 1
 L9dee               +dec16 acc0
                     lda acc0
