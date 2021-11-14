@@ -105,6 +105,20 @@
   sta dst + 1
 }
 
+!macro push16 addr {
+  lda addr
+  pha
+  lda addr + 1
+  pha
+}
+
+!macro pop16 addr {
+  pla
+  sta addr + 1
+  pla
+  sta addr
+}
+
 !macro mnem c1, c2, c3, bits, mask {
   !set .cc = ((c1 - $3f) << 11) | ((c2 - $3f) << 6) | ((c3 - $3f) << 1)
   !byte < .cc, > .cc, bits, mask
@@ -256,10 +270,7 @@ c_assemble          lda x_present
 throw_noasm         jsr throw
                     !text $a0, "No assembler", 0
 
-dispatch_cmd        lda cmdline
-                    pha
-                    lda cmdline + 1
-                    pha
+dispatch_cmd        +push16 cmdline
                     jsr lookup_command
                     bpl L82fc
                     jsr getch
@@ -268,10 +279,7 @@ dispatch_cmd        lda cmdline
                     bcc +
                     cmp #'Z' + 1
                     bcs +
-L82fc               pla
-                    sta cmdline + 1
-                    pla
-                    sta cmdline
+L82fc               +pop16 cmdline
                     sec
                     rts
                     
@@ -474,10 +482,7 @@ L8475               pla
                     rts
                     
 radix_parse         sta acc1
-                    lda ptr0
-                    pha
-                    lda ptr0 + 1
-                    pha
+                    +push16 ptr0
                     lda #0
                     sta acc0
                     sta acc0 + 1
@@ -522,10 +527,7 @@ L84c3               asl ptr0
 L84d4               lda (cmdline), y
                     iny
                     bne L8488
-L84d9               pla
-                    sta ptr0 + 1
-                    pla
-                    sta ptr0
+L84d9               +pop16 ptr0
                     tya
                     clc
                     adc cmdline
@@ -696,15 +698,9 @@ eval_b              jsr eval_atom
                     ; * = multiply
                     cmp #'*'
                     bne +
-                    lda acc0
-                    pha
-                    lda acc0 + 1
-                    pha
+                    +push16 acc0
                     jsr eval_b
-                    pla
-                    sta acc2 + 1
-                    pla
-                    sta acc2
+                    +pop16 acc2
                     lda #0
                     sta ptr0
                     sta ptr0 + 1
@@ -778,15 +774,9 @@ eval_c              jsr eval_b
                     
 +                   jmp unget
                     
-divmod              lda acc0
-                    pha
-                    lda acc0 + 1
-                    pha
+divmod              +push16 acc0
                     jsr eval_b
-                    pla
-                    sta acc2 + 1
-                    pla
-                    sta acc2
+                    +pop16 acc2
                     ldy #16
                     lda #0
                     sta ptr0
@@ -818,10 +808,7 @@ eval_d              jsr eval_c
                     ; AND
                     cmp #$9b
                     bne +
-                    lda acc0
-                    pha
-                    lda acc0 + 1
-                    pha
+                    +push16 acc0
                     jsr eval_d
                     pla
                     and acc0 + 1
@@ -834,10 +821,7 @@ eval_d              jsr eval_c
                     ; OR
 +                   cmp #$9c
                     bne +
-                    lda acc0
-                    pha
-                    lda acc0 + 1
-                    pha
+                    +push16 acc0
                     jsr eval_d
                     pla
                     ora acc0 + 1
@@ -850,10 +834,7 @@ eval_d              jsr eval_c
                     ; EOR
 +                   cmp #$9d
                     bne unget
-                    lda acc0
-                    pha
-                    lda acc0 + 1
-                    pha
+                    +push16 acc0
                     jsr eval_d
                     pla
                     eor acc0 + 1
@@ -872,24 +853,12 @@ eval                php
                     pha
                     txa
                     pha
-                    lda ptr0
-                    pha
-                    lda ptr0 + 1
-                    pha
-                    lda acc2
-                    pha
-                    lda acc2 + 1
-                    pha
+                    +push16 ptr0
+                    +push16 acc2
                     jsr eval_hex
                     jsr skip_comma
-                    pla
-                    sta acc2 + 1
-                    pla
-                    sta acc2
-                    pla
-                    sta ptr0 + 1
-                    pla
-                    sta ptr0
+                    +pop16 acc2
+                    +pop16 ptr0
                     pla
                     tax
                     pla
@@ -898,10 +867,7 @@ eval                php
                     plp
                     rts
                     
-eval_byte           lda acc0
-                    pha
-                    lda acc0 + 1
-                    pha
+eval_byte           +push16 acc0
                     jsr eval
                     ldy acc0
                     lda acc0 + 1
@@ -909,10 +875,7 @@ eval_byte           lda acc0
                     jsr throw
                     ; "Byte out of range"
                     !text $a5, "Byte out of range", 0
-L87ac               pla
-                    sta acc0 + 1
-                    pla
-                    sta acc0
+L87ac               +pop16 acc0
                     tya
                     rts
                     
@@ -925,16 +888,10 @@ L87be               rts
                     
 lookup_token        lda cmd_offset
                     pha
-                    lda cmdhelp
-                    pha
-                    lda cmdhelp + 1
-                    pha
+                    +push16 cmdhelp
                     jsr lookup_command
                     tax
-                    pla
-                    sta cmdhelp + 1
-                    pla
-                    sta cmdhelp
+                    +pop16 cmdhelp
                     pla
                     sta cmd_offset
                     txa
@@ -1515,19 +1472,13 @@ do_calc             jsr eval
                     pla
                     pha
                     tay
-                    lda acc0
-                    pha
-                    lda acc0 + 1
-                    pha
+                    +push16 acc0
                     ldx #0
                     stx acc0 + 1
                     sty acc0
                     ldy #10
                     jsr radix_print
-                    pla
-                    sta acc0 + 1
-                    pla
-                    sta acc0
+                    +pop16 acc0
                     jsr prstr
                     !text ": ", 0
                     pla
@@ -1536,16 +1487,10 @@ do_calc             jsr eval
                     beq radix_print
 L8cc6               rts
                     
-radix_print         lda acc0
-                    pha
-                    lda acc0 + 1
-                    pha
+radix_print         +push16 acc0
                     tya
                     jsr radix_out
-                    pla
-                    sta acc0 + 1
-                    pla
-                    sta acc0
+                    +pop16 acc0
                     rts
                     
 c_calc              jsr do_calc
@@ -1909,10 +1854,7 @@ L9055               cmp #'+'
                     bne L9081
                     jsr read_rom
                     tax
-                    lda acc2
-                    pha
-                    lda acc2 + 1
-                    pha
+                    +push16 acc2
                     txa
                     php
                     ldx #0
@@ -1926,10 +1868,7 @@ L906b               clc
                     adc acc2 + 1
                     sta acc2 + 1
                     jsr pr_addr
-                    pla
-                    sta acc2 + 1
-                    pla
-                    sta acc2
+                    +pop16 acc2
                     jmp L9038
                     
 L9081               cmp #'I'
@@ -1954,10 +1893,7 @@ pr_addr             clc
                     pla
                     jmp hexbyte
                     
-decode_instr        lda acc2
-                    pha
-                    lda acc2 + 1
-                    pha
+decode_instr        +push16 acc2
                     lda #'X'
                     sta $b7
                     jsr read_rom
@@ -2017,10 +1953,7 @@ L90f4               asl $0100
                     inc $b7
 L910a               dey
                     bne L90f0
-                    pla
-                    sta acc2 + 1
-                    pla
-                    sta acc2
+                    +pop16 acc2
                     rts
                     
 dis_op              jsr pr_addr
@@ -2152,10 +2085,7 @@ service             php
                     pha
                     tya
                     pha
-                    lda cmdline
-                    pha
-                    lda cmdline + 1
-                    pha
+                    +push16 cmdline
                     clc
                     tya
                     adc cmdline
@@ -2170,10 +2100,7 @@ L923a               tsx
                     ; *help
                     cmp #9
                     beq help
-service_done        pla
-                    sta cmdline + 1
-                    pla
-                    sta cmdline
+service_done        +pop16 cmdline
                     pla
                     tay
 service_exit        pla
@@ -2629,10 +2556,7 @@ div3                sta $0100
                     sta $0101
                     rts
                     
-show_line           lda acc2
-                    pha
-                    lda acc2 + 1
-                    pha
+show_line           +push16 acc2
                     jsr cursor_off
                     lda #13
                     jsr oswrch
@@ -2646,10 +2570,7 @@ show_line           lda acc2
                     jsr oswrch
                     tya
                     jsr oswrch
-                    pla
-                    sta acc2 + 1
-                    pla
-                    sta acc2
+                    +pop16 acc2
                     jmp cursor_on
                     
 c_edit              jsr eval
@@ -2658,10 +2579,7 @@ c_edit              jsr eval
                     jsr prstr
                     ; restore default windows, clear screen
                     !text 26, 12, 0
-                    lda acc2
-                    pha
-                    lda acc2 + 1
-                    pha
+                    +push16 acc2
                     jsr calc_columns
                     sta acc0 + 1
                     ldy #0
@@ -2689,10 +2607,7 @@ L9674               ldx acc0 + 1
                     bne L9674
 L9689               lda #5
                     sta acc0
-                    pla
-                    sta acc2 + 1
-                    pla
-                    sta acc2
+                    +pop16 acc2
                     jsr prstr
                     ; move cursor home
                     !text 30, 0
@@ -2904,19 +2819,13 @@ layout_40           !hex 1b 1d 24
 layout_80           !hex 33 35 44 
 ; fix00+
                     
-cursor_off          lda ptr0
-                    pha
-                    lda ptr0 + 1
-                    pha
+cursor_off          +push16 ptr0
                     jsr prstr
                     ; cursor off
                     !text 23, 1, 0
                     jmp L982c
                     
-cursor_on           lda ptr0
-                    pha
-                    lda ptr0 + 1
-                    pha
+cursor_on           +push16 ptr0
                     jsr prstr
                     ; cursor on
                     !text 23, 1, 1, 0
@@ -2925,10 +2834,7 @@ L982c               tya
 L982f               jsr oswrch
                     dex
                     bne L982f
-                    pla
-                    sta ptr0 + 1
-                    pla
-                    sta ptr0
+                    +pop16 ptr0
                     rts
 
 ; Instruction lengths packed into two bit fields
@@ -3182,10 +3088,7 @@ L9a74               sec
                     sta acc0 + 1
                     sbc #0
                     sta acc2 + 1
-L9a85               lda acc2
-                    pha
-                    lda acc2 + 1
-                    pha
+L9a85               +push16 acc2
                     jsr read_rom
                     jsr inst_len
                     sec
@@ -3211,10 +3114,7 @@ L9ab6               cmp #$8a
                     beq L9acf
                     cmp #$8b
                     bne L9aa7
-                    pla
-                    sta acc2 + 1
-                    pla
-                    sta acc2
+                    +pop16 acc2
                     lda #$0b
                     jsr oswrch
                     jsr oswrch
@@ -3232,19 +3132,13 @@ L9acf               pla
                     sta acc2
                     bcc L9ae4
                     inc acc2 + 1
-L9ae4               lda acc2
-                    pha
-                    lda acc2 + 1
-                    pha
+L9ae4               +push16 acc2
                     ldx #0
                     stx $b6
                     jsr cursor_off
                     jsr dis_op
                     jsr cursor_on
-                    pla
-                    sta acc2 + 1
-                    pla
-                    sta acc2
+                    +pop16 acc2
                     jmp L9a74
                     
 L9b00               pla
@@ -3300,15 +3194,9 @@ L9b4d               lda #$01
                     stx $0106
                     stx $0107
                     stx $0108
-                    lda acc2
-                    pha
-                    lda acc2 + 1
-                    pha
+                    +push16 acc2
                     jsr osgbpb
-                    pla
-                    sta acc2 + 1
-                    pla
-                    sta acc2
+                    +pop16 acc2
                     lda $0111
                     and #$03
                     rts
@@ -3629,14 +3517,8 @@ pr_sym16            tya
                     pha
                     txa
                     pha
-                    lda 0
-                    pha
-                    lda $01
-                    pha
-                    lda $02
-                    pha
-                    lda $03
-                    pha
+                    +push16 0
+                    +push16 2
                     lda #< symtab
                     sta 0
                     lda #> symtab
@@ -3684,14 +3566,8 @@ L9e7c               ldy #$01
                     jsr hexbyte
                     lda $02
                     jsr hexbyte
-L9e94               pla
-                    sta $03
-                    pla
-                    sta $02
-                    pla
-                    sta $01
-                    pla
-                    sta 0
+L9e94               +pop16 2
+                    +pop16 0
                     pla
                     tax
                     pla
