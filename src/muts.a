@@ -153,6 +153,13 @@ case_mask = $df
   sta dst + 1
 }
 
+!macro mov16i dst, addr {
+  lda #< addr
+  sta dst
+  lda #> addr
+  sta dst + 1
+}
+
 ; Add A to 16 bit reg
 !macro adca16 dst {
   adc dst
@@ -399,10 +406,7 @@ show_help           jsr newline
                     jsr newline
                     ldx #0
                     ldy #0
-                    lda #< help_table
-                    sta acc0
-                    lda #> help_table
-                    sta acc0 + 1
+                    +mov16i acc0, help_table
 L8355               lda #$02
                     sta acc2
                     tya
@@ -1336,10 +1340,7 @@ empty               !text 13, 0, 0, 0
                     ; ROM service entry
 language            cmp #1
                     bne L8a97
-                    lda #< brk_handler
-                    sta brkv
-                    lda #> brk_handler
-                    sta brkv + 1
+                    +mov16i brkv, brk_handler
                     lda #0
                     ldx #$3f
                     sta base_addr
@@ -2071,10 +2072,7 @@ c_select            jsr check_cmd_mode
 L9184               jsr throw
                     !text $ab, "Bad ROM", 0
 L9190               sta rom_sel
-                    lda #< copyright_offset
-                    sta acc2
-                    lda #> copyright_offset
-                    sta acc2 + 1
+                    +mov16i acc2, copyright_offset
                     jsr read_rom
                     sta acc2
                     ldx #$04
@@ -3587,10 +3585,7 @@ pr_sym16            tya
                     pha
                     +push16 0
                     +push16 2
-                    lda #< symtab
-                    sta 0
-                    lda #> symtab
-                    sta $01
+                    +mov16i 0, symtab
                     jsr read_rom
                     sta $02
                     jsr read_rom
