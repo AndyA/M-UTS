@@ -63,8 +63,6 @@
 
 
 !addr breakpoints = $500
-!addr breakpoints_save = $502
-!addr breakpoints_huh = $503
 
 !addr cmd_line = $700
 
@@ -174,7 +172,11 @@ j_acc0_to_tmp0      jmp acc0_to_acc2
 j_unget             jmp unget
 j_x0                jmp 0
 j_x1                jmp 0
-                    
+
+; Command lookup table. Each entry is the command name with the top bit of
+; the last char set followed by abs pointers to the code and help text for
+; that command.
+
 cmd_table           !text "ASSEMBL", 'E' + $80
                     !word c_assemble, h_assemble 
                     !text "BAS", 'E' + $80
@@ -230,7 +232,7 @@ cmd_table           !text "ASSEMBL", 'E' + $80
                     !text "WHER", 'E' + $80
                     !word c_where, h_where 
 
-                    ; Command table also used for operator names
+; The command table is also used for operator names
 
                     ; AND
 op_and              !text "AN", 'D' + $80
@@ -245,6 +247,8 @@ op_and              !text "AN", 'D' + $80
                     !text "NO", 'T' + $80
                     !word 0, 0 
                     !text 0
+
+; Help text per command. Top bit of last char of each entry is set
 
 help_table                    
 h_assemble          !text "<fsp> <fsp", '>' + $80
@@ -276,7 +280,10 @@ h_vdu               !text "<byte string", '>' + $80
 h_verify            !text "(<drv>", ')' + $80
 h_where             !text ' ' + $80
                     !text 0
-                    
+
+; The ASSEMBLE command checks the upper half of the ROM for a possible
+; assembler implementation
+
 c_assemble          lda x_present
                     cmp #$ff
                     bne throw_noasm
@@ -284,6 +291,8 @@ c_assemble          lda x_present
                     
 throw_noasm         jsr throw
                     !text $a0, "No assembler", 0
+
+; Attempt to execute a command
 
 dispatch_cmd        +push16 cmdline
                     jsr lookup_command
@@ -309,17 +318,23 @@ L82fc               +pop16 cmdline
                     rts
                     
 call_cmd            jmp (cmdjmp)
-                    
+
+; Print M-UTS with version
+
 pr_muts             jsr prstr
                     !text "M-UTS 1.60", 13, 0
                     rts
-                    
+
+; Print a banner
+
 pr_banner           jsr newline
                     jsr pr_muts
                     jsr prstr
                     !text -2, "MONITOR", 13, 0
                     rts
-                    
+
+; Output a character counting it in acc2
+
 oswrch_counted      inc acc2
                     jmp oswrch
                     
@@ -2282,7 +2297,7 @@ L937f               lda breakpoints, x
 L939b               txa
                     pha
                     lda (acc0), y
-                    sta breakpoints_save, x
+                    sta breakpoints + 2, x
                     tya
                     jsr try_poke
                     pla
@@ -2306,7 +2321,7 @@ L93c6               lda acc0
                     lda acc0 + 1
                     cmp breakpoints + 1, x
                     bne L93e1
-                    lda breakpoints_save, x
+                    lda breakpoints + 2, x
                     sta (acc0), y
                     tya
                     sta breakpoints, x
@@ -2330,7 +2345,7 @@ L9406               lda breakpoints, x
                     sta acc0
                     lda breakpoints + 1, x
                     sta acc0 + 1
-                    lda breakpoints_save, x
+                    lda breakpoints + 2, x
                     sta (acc0), y
                     tya
                     sta breakpoints, x
