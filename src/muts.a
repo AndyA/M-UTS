@@ -402,7 +402,7 @@ hexnybble           pha
                     sed
                     adc #'0'
                     cld
--                   jsr oswrch
+-                    jsr oswrch
                     pla
                     rts
                     
@@ -539,7 +539,7 @@ eval_atom           tsx           ; check SP
 L850b               jsr lookup_token
                     ; - = negate term
                     cmp #'-'
-                    bne L8523
+                    bne +
                     jsr eval_atom
                     lda #0
                     sec
@@ -551,11 +551,12 @@ L850b               jsr lookup_token
                     rts
                     
                     ; + = skipped
-L8523               cmp #'+'
++                   cmp #'+'
                     beq eval_atom
+
                     ; ? = peek
                     cmp #'?'
-                    bne L8537
+                    bne +
                     jsr eval_atom
                     ldy #0
                     lda (acc0_lo), y
@@ -564,8 +565,8 @@ L8523               cmp #'+'
                     rts
                     
                     ; ! = word peek
-L8537               cmp #'!'
-                    bne L854b
++                   cmp #'!'
+                    bne +
                     jsr eval_atom
                     ldy #0
                     lda (acc0_lo), y
@@ -577,23 +578,23 @@ L8537               cmp #'!'
                     rts
                     
                     ; @ = set radix
-L854b               cmp #'@'
-                    bne L8568
++                   cmp #'@'
+                    bne +
                     lda #$0a
                     sta acc1_lo
                     jsr eval_d
                     lda acc0_lo
                     cmp #$02
-                    bcc L857c
+                    bcc throw_bad_base
                     cmp #$23
-                    bcs L857c
+                    bcs throw_bad_base
                     sta acc1_lo
                     jsr skip_comma
                     jmp eval_atom
                     
                     ; 9e = NOT
-L8568               cmp #$9e
-                    bne L8589
++                   cmp #$9e
+                    bne +
                     jsr eval_atom
                     lda acc0_lo
                     eor #$ff
@@ -603,19 +604,19 @@ L8568               cmp #$9e
                     sta acc0_hi
 L857b               rts
                     
-L857c               jsr throw
+throw_bad_base      jsr throw
                     !text $a2, "Bad base", 0
                     
                     ; ( = nested
-L8589               cmp #'('
-                    beq L8595
++                   cmp #'('
+                    beq +
                     ; { = nested
                     cmp #'{'
-                    beq L8595
+                    beq +
                     ; [ = nested
                     cmp #'['
                     bne L85bb
-L8595               cmp #'[' - 1
++                   cmp #'[' - 1
                     adc #1
                     pha
                     jsr eval_hex
@@ -628,7 +629,7 @@ L8595               cmp #'[' - 1
                     !text $a3, "Missing bracket", 0
                     ; ' = char const
 L85bb               cmp #"'"
-                    bne L85ce
+                    bne +
                     jsr getch
                     sta acc0_lo
                     sty acc0_hi
@@ -638,8 +639,8 @@ L85bb               cmp #"'"
                     rts
                     
                     ; : = variable lookup
-L85ce               cmp #':'
-                    bne L85fd
++                   cmp #':'
+                    bne +
                     jsr getch
                     and #$df
                     cmp #'A'
@@ -657,12 +658,12 @@ L85ec               cmp #'Z' + 1
                     rts
                     
                     ; extended rom?
-L85fd               ldx x_present
++                   ldx x_present
                     cpx #$ff
-                    bne L8607
+                    bne +
                     jmp x_eval
                     
-L8607               jsr unget
++                   jsr unget
                     lda acc1_lo
                     jsr radix_parse
                     bmi L8629
@@ -670,7 +671,7 @@ L8607               jsr unget
                     jsr to_upper
                     ; k suffix?
                     cmp #'K'
-                    bne L8626
+                    bne +
                     ; multiply by 1024
                     lda acc0_lo
                     asl
@@ -680,7 +681,7 @@ L8607               jsr unget
                     sta acc0_lo
                     rts
                     
-L8626               jmp unget
++                   jmp unget
                     
 L8629               jmp syntax_error
                     
@@ -688,7 +689,7 @@ eval_b              jsr eval_atom
                     jsr skip_space
                     ; * = multiply
                     cmp #'*'
-                    bne L866a
+                    bne +
                     lda acc0_lo
                     pha
                     lda acc0_hi
@@ -714,16 +715,16 @@ L8660               asl acc2_lo
                     jmp L867f
                     
                     ; / = divide
-L866a               cmp #'/'
-                    bne L8678
++                   cmp #'/'
+                    bne +
                     jsr divmod
                     lda acc2_lo
                     ldx acc2_hi
                     jmp L8683
                     
                     ; % = mod
-L8678               cmp #'%'
-                    bne L8688
++                   cmp #'%'
+                    bne +
                     jsr divmod
 L867f               lda ptr0_lo
                     ldx ptr0_hi
@@ -731,13 +732,13 @@ L8683               sta acc0_lo
                     stx acc0_hi
                     rts
                     
-L8688               jmp unget
++                   jmp unget
                     
 eval_c              jsr eval_b
                     jsr skip_space
                     ; + = add
                     cmp #'+'
-                    bne L86aa
+                    bne +
                     lda acc0_hi
                     pha
                     lda acc0_lo
@@ -753,8 +754,8 @@ eval_c              jsr eval_b
                     rts
                     
                     ; - = subtract
-L86aa               cmp #'-'
-                    bne L86c3
++                   cmp #'-'
+                    bne +
                     lda acc0_hi
                     pha
                     lda acc0_lo
@@ -769,7 +770,7 @@ L86aa               cmp #'-'
                     sta acc0_hi
                     rts
                     
-L86c3               jmp unget
++                   jmp unget
                     
 divmod              lda acc0_lo
                     pha
@@ -784,7 +785,7 @@ divmod              lda acc0_lo
                     lda #0
                     sta ptr0_lo
                     sta ptr0_hi
-L86dd               asl acc2_lo
+-                   asl acc2_lo
                     rol acc2_hi
                     rol ptr0_lo
                     rol ptr0_hi
@@ -792,7 +793,7 @@ L86dd               asl acc2_lo
                     cmp acc0_lo
                     lda ptr0_hi
                     sbc acc0_hi
-                    bcc L86fd
+                    bcc +
                     lda ptr0_lo
                     sbc acc0_lo
                     sta ptr0_lo
@@ -800,8 +801,8 @@ L86dd               asl acc2_lo
                     sbc acc0_hi
                     sta ptr0_hi
                     inc acc2_lo
-L86fd               dey
-                    bne L86dd
++                   dey
+                    bne -
                     rts
                     
 eval_hex            lda #16
@@ -810,7 +811,7 @@ eval_d              jsr eval_c
                     jsr lookup_token
                     ; AND
                     cmp #$9b
-                    bne L8723
+                    bne +
                     lda acc0_lo
                     pha
                     lda acc0_hi
@@ -825,8 +826,8 @@ eval_d              jsr eval_c
                     rts
                     
                     ; OR
-L8723               cmp #$9c
-                    bne L873b
++                   cmp #$9c
+                    bne +
                     lda acc0_lo
                     pha
                     lda acc0_hi
@@ -841,7 +842,7 @@ L8723               cmp #$9c
                     rts
                     
                     ; EOR
-L873b               cmp #$9d
++                   cmp #$9d
                     bne unget
                     lda acc0_lo
                     pha
