@@ -66,6 +66,8 @@
 !addr breakpoints_save = $502
 !addr breakpoints_huh = $503
 
+!addr cmd_line = $700
+
 !addr brk_cmd = $7a0
 
 !addr rom_private = $df0
@@ -325,34 +327,34 @@ L8355               lda #$02
                     !text -2, 0
                     pla
                     tay
-L8362               lda cmd_table, y
+-                   lda cmd_table, y
                     iny
                     pha
                     and #$7f
                     jsr oswrch_counted
                     pla
-                    bpl L8362
+                    bpl -
                     iny
                     iny
                     iny
                     iny
                     lda #' '
                     jsr oswrch_counted
-L8378               lda (acc0, x)
+-                   lda (acc0, x)
                     +inc16 acc0
                     pha
                     and #$7f
                     jsr oswrch_counted
                     pla
-                    bpl L8378
+                    bpl -
                     jsr check_escape
                     ; pad with spaces to 40 cols
                     lda #' '
                     ldx acc2
-L8390               jsr oswrch_counted
+-                   jsr oswrch_counted
                     inx
                     cpx #40
-                    bcc L8390
+                    bcc -
                     ldx #0
                     lda (acc0, x)
                     bne L8355
@@ -388,10 +390,10 @@ throw               jsr reset_terminal
                     sta ptr0 + 1
                     ldy #0
                     sty $0100
-L83da               iny
+-                   iny
                     lda (ptr0), y
                     sta $0100, y
-                    bne L83da
+                    bne -
                     jmp $0100
                     
 newline             jsr osnewl
@@ -416,7 +418,7 @@ hexnybble           pha
                     sed
                     adc #'0'
                     cld
--                    jsr oswrch
+-                   jsr oswrch
                     pla
                     rts
                     
@@ -472,13 +474,14 @@ skip_space          jsr getch
 to_upper            pha
                     and #$df
                     cmp #'A'
-                    bcc L8475
+                    bcc +
                     cmp #'Z' + 1
-                    bcs L8475
+                    bcs +
                     pla
                     and #$df
                     rts
-L8475               pla
+
++                   pla
                     rts
                     
 radix_parse         sta acc1
@@ -522,9 +525,9 @@ L84c3               asl ptr0
                     pla
                     adc acc0
                     sta acc0
-                    bcc L84d4
+                    bcc +
                     inc acc0 + 1
-L84d4               lda (cmdline), y
++              lda (cmdline), y
                     iny
                     bne L8488
 L84d9               +pop16 ptr0
@@ -532,19 +535,19 @@ L84d9               +pop16 ptr0
                     clc
                     adc cmdline
                     sta cmdline
-                    bcc L84e9
+                    bcc +
                     inc cmdline + 1
-L84e9               jsr unget
++                   jsr unget
                     dey
                     rts
                     
 eval_atom           tsx           ; check SP
                     cpx #$80
-                    bcs L850b
+                    bcs +
                     jsr throw
                     !text $a1, "Formula too complex", 0
                     
-L850b               jsr lookup_token
++                   jsr lookup_token
                     ; - = negate term
                     cmp #'-'
                     bne +
@@ -635,6 +638,7 @@ throw_bad_base      jsr throw
                     beq L857b
                     jsr throw
                     !text $a3, "Missing bracket", 0
+
                     ; ' = char const
 L85bb               cmp #"'"
                     bne +
@@ -653,6 +657,7 @@ L85bb               cmp #"'"
                     and #$df
                     cmp #'A'
                     bcs L85ec
+
 throw_badvar        jsr throw
                     !text $a4, "Bad variable", 0
 L85ec               cmp #'Z' + 1
@@ -938,9 +943,9 @@ lc_dot              plp
                     inc acc1 + 1
                     dex
                     dex
-L881d               inx
+-                   inx
                     lda cmd_table, x
-                    bpl L881d
+                    bpl -
                     inx
                     lda (cmdline), y
                     cmp #'.'
@@ -955,6 +960,7 @@ L881d               inx
                     
                     ; "Syntax: "
 syntax_prefix       !text "Syntax: "
+
 check_eol           jsr skip_space
                     bne syntax_error
                     rts
@@ -972,7 +978,7 @@ syntax_error        ldx #0
 L8867               lda syntax_prefix, x
                     sta $0102, x
                     inx
-                    cpx #$08
+                    cpx #8
                     bcc L8867
 L8872               lda cmd_table, y
                     php
@@ -1183,9 +1189,9 @@ calc_columns        jsr osnewl
                     jsr newline
                     lda #16
                     cpx #80 - 1
-                    beq L8a2a
+                    beq +
                     lsr
-L8a2a               rts
++                   rts
                     
 ram_warning         txa
                     pha
@@ -1208,14 +1214,14 @@ ram_warning         txa
 ask_continue        jsr prstr
                     !text "continue (Y/N) ? ", 0
                     jsr osrdch
-                    bcc L8a86
+                    bcc +
                     jmp throw_escape
                     
-L8a86               and #$df
++                   and #$df
                     cmp #'Y'
-                    beq L8a8e
+                    beq +
                     lda #'N'
-L8a8e               jsr oswrch
++                   jsr oswrch
                     pha
                     jsr newline
                     pla
@@ -1224,7 +1230,7 @@ L8a97               rts
                     
 c_monitor           jsr skip_space
                     cmp #13
-                    beq L8ace
+                    beq +
                     jsr unget
                     lda cmdline
                     sta $0100
@@ -1243,12 +1249,12 @@ c_monitor           jsr skip_space
                     ldy #$01
                     lda #$ff
                     jsr osfile
-L8ace               ldx cur_rom
++                   ldx cur_rom
                     lda #$8e
                     jmp osbyte
                     
                     ; address
-readline_parms      !word $0700 
+readline_parms      !word cmd_line
                     ; length
                     !byte 160 - 2
                     ; min char
@@ -1270,14 +1276,14 @@ language            cmp #1
                     sta $0600
                     sta $0601
                     sta $0602
-L8af9               sta breakpoints, x
+-                   sta breakpoints, x
                     dex
-                    bpl L8af9
-                    ldx #$04
-L8b01               lda empty, x
+                    bpl -
+                    ldx #4
+-                   lda empty, x
                     sta brk_cmd, x
                     dex
-                    bpl L8b01
+                    bpl -
                     inx
                     stx $0604
                     lda #$f0
@@ -1298,34 +1304,34 @@ brk_handler         txa
                     lda err + 1
                     sbc #0
                     sta acc0 + 1
-L8b2e               lda acc0
+-                   lda acc0
                     cmp breakpoints, x
-                    bne L8b3f
+                    bne +
                     lda acc0 + 1
                     cmp breakpoints + 1, x
-                    bne L8b3f
+                    bne +
                     jmp bp_handler
                     
-L8b3f               inx
++                   inx
                     inx
                     inx
                     inx
                     cpx #$40
-                    bcc L8b2e
+                    bcc -
                     lda #$7e
                     jsr osbyte
                     jsr osnewl
                     ldy #$01
-L8b51               lda (err), y
-                    beq L8b63
+-                   lda (err), y
+                    beq +
                     iny
                     cmp #' '
-                    bcc L8b51
+                    bcc -
                     cmp #$7f
-                    beq L8b51
+                    beq -
                     jsr oswrch
-                    bne L8b51
-L8b63               cli
+                    bne -
++                   cli
                     cld
                     ldx #$ff
                     txs
@@ -1334,10 +1340,10 @@ L8b63               cli
                     ; start of repl loop
 repl                jsr set_private
                     ldx #0
-L8b70               lda $0603, x
+-                   lda $0603, x
                     inx
                     jsr oswrch
-                    bne L8b70
+                    bne -
                     sta cmdline
                     ; readline_parms
                     ldx #< readline_parms
@@ -1356,21 +1362,23 @@ L8b87               ldx #$07
                     jsr skip_space
                     and #$df
                     cmp #'A'
-                    bcs L8ba0
-L8b9d               jmp throw_badvar
+                    bcs +
+-                   jmp throw_badvar
                     
-L8ba0               cmp #'Z' + 1
-                    bcs L8b9d
++                   cmp #'Z' + 1
+                    bcs -
                     asl
                     tax
                     ldy #$ff
                     sty cmd_offset
                     jsr skip_space
-                    cmp #$3d
-                    beq L8bbf
+                    cmp #"="
+                    beq +
+
 throw_missingeq     jsr throw
                     !text $a9, "Missing =", 0
-L8bbf               jsr eval
+
++                   jsr eval
                     jsr check_eol
                     lda acc0
                     sta vars + '?' * 2, x
@@ -1421,8 +1429,8 @@ L8c18               jsr unget
                     jmp repl
                     
                     ; fallback to oscli
-L8c23               ldx #0
-                    ldy #$07
+L8c23               ldx #< cmd_line
+                    ldy #> cmd_line
                     jsr oscli
                     jmp repl
                     
