@@ -63,7 +63,7 @@
 
 !addr regs = $400
 !addr reg_a = regs + ('A' - 'A') * 2
-!addr reg_i = regs + ('I' - 'A') * 2
+!addr reg_pc = regs + ('I' - 'A') * 2
 !addr reg_x = regs + ('X' - 'A') * 2
 !addr reg_y = regs + ('Y' - 'A') * 2
 !addr reg_p = regs + ('P' - 'A') * 2
@@ -2936,12 +2936,12 @@ L982f               jsr oswrch
                     sta ptr0_lo
                     rts
 
-; fix00-                    
+; Instruction lengths packed into two bit fields
+
 inst_len_table      !hex 69 69 65 7d a5 69 75 7d e5 a9 65 fd a5 69 75 7d 
                     !hex 65 69 65 fd a5 69 75 7d 65 69 65 fd a5 69 75 7d 
                     !hex 65 a9 55 fd a5 a9 75 75 a9 a9 65 fd a5 a9 75 fd 
                     !hex a5 a9 65 fd a5 69 75 7d a5 a9 65 fd a5 69 75 7d 
-; fix00+
 
 inst_len            pha
                     lsr
@@ -2984,7 +2984,7 @@ c_step              jsr check_cmd_mode
 
 L98de               sty ptr0_lo
                     sty ptr0_hi
-step_next           +inc16 reg_i
+step_next           +inc16 reg_pc
                     lda acc2_hi
                     jsr hexbyte
                     lda acc2_lo
