@@ -309,7 +309,7 @@ L8355               lda #$02
                     pha
                     jsr prstr
                     !text -2, 0
-L8360               pla
+                    pla
                     tay
 L8362               lda cmd_table, y
                     iny
@@ -1062,7 +1062,7 @@ L88c0               jsr unget
                     jsr unget
                     jsr skip_space
                     cmp #13
-L88d2               bne L88d5
+                    bne L88d5
                     rts
                     
 L88d5               jsr unget
@@ -1212,7 +1212,7 @@ L8a09               jmp eval
 reset_terminal      jsr prstr
                     ; disable printer, page mode off
                     !text 3, 15, 0
-L8a12               rts
+                    rts
                     
 calc_columns        jsr osnewl
                     lda #8
@@ -1232,21 +1232,21 @@ ram_warning         txa
                     pha
                     jsr prstr
                     !text "RAM from ", 0
-L8a3c               pla
+                    pla
                     jsr hexbyte
                     tya
                     jsr hexbyte_space
                     jsr prstr
                     !text "to ", 0
-L8a4b               pla
+                    pla
                     jsr hexbyte
                     tya
                     jsr hexbyte_space
-L8a53               jsr prstr
+                    jsr prstr
                     !text "will be corrupted", 13, 0
 ask_continue        jsr prstr
                     !text "continue (Y/N) ? ", 0
-L8a7e               jsr osrdch
+                    jsr osrdch
                     bcc L8a86
                     jmp throw_escape
                     
@@ -1474,7 +1474,7 @@ bp_handler          pla
                     sta reg_p
                     jsr prstr
                     !text "Break: PC = ", 0
-L8c4d               lda acc0_hi
+                    lda acc0_hi
                     jsr hexbyte
                     lda acc0_lo
                     jsr hexbyte
@@ -1508,7 +1508,7 @@ do_calc             jsr eval
                     pha
                     jsr prstr
                     !text 13, "Base ", 0
-L8ca0               pla
+                    pla
                     pha
                     tay
                     lda acc0_lo
@@ -1526,7 +1526,7 @@ L8ca0               pla
                     sta acc0_lo
                     jsr prstr
                     !text ": ", 0
-L8cc0               pla
+                    pla
                     tay
                     ldx #0
                     beq radix_print
@@ -1573,7 +1573,7 @@ L8cf2               jsr eval
                     pha
                     jsr prstr
                     !text "Destination <= ", 0
-L8d24               pla
+                    pla
                     jsr hexbyte
                     pla
                     jsr hexbyte
@@ -1780,7 +1780,7 @@ bad_op              !byte $04, $0c, $12, $14, $1a, $1c, $22, $32
                     !byte $d4, $da, $dc, $e2, $f2, $f4, $fa, $fc
 bad_op_end
 
-L8f6e               jsr S8894
+                    jsr S8894
                     lda #$0d
 peek                ldx #0
                     stx $b6
@@ -2225,7 +2225,7 @@ L9299               lda regnames, x
                     jsr prstr
                     !text " = ", 0
                     
-L92a7               pla
+                    pla
                     asl
                     tay
                     lda vars + '?' * 2, y
@@ -2555,9 +2555,9 @@ L956c               tay
 show_fkey           sty acc0_lo
                     jsr prstr
                     !text "*KEY", 0
-L9577               jsr check_escape
+                    jsr check_escape
                     ldx #0
-L957c               stx acc0_hi
+                    stx acc0_hi
                     ldy #10
                     jsr radix_print
                     lda acc0_lo
@@ -2573,7 +2573,7 @@ L957c               stx acc0_hi
                     jsr osbyte
                     lda #$81
                     ldy #0
-L959f               ldx #0
+                    ldx #0
                     jsr osbyte
                     cpy #0
                     bne L95af
@@ -2663,7 +2663,7 @@ c_edit              jsr eval
                     jsr prstr
                     ; restore default windows, clear screen
                     !text 26, 12, 0
-L9650               lda acc2_lo
+                    lda acc2_lo
                     pha
                     lda acc2_hi
                     pha
@@ -2702,14 +2702,14 @@ L9689               lda #5
                     ; move cursor home
                     !text 30, 0
                     ; setup keyboard
-L9698               lda #$04
+                    lda #$04
                     ldx #$02
                     jsr osbyte
                     ; function key base code
                     lda #$e1
                     ldx #$7c
                     ldy #0
-L96a5               jsr osbyte
+                    jsr osbyte
                     ; shift function key base code
                     lda #$e2
                     ldx #$94
@@ -2902,7 +2902,7 @@ L97eb               stx $0101
                     lda #$89
                     jmp L96fb
                     
-L9807               jmp edit_getch
+                    jmp edit_getch
                     
 ; fix00-                    
 layout_40           !hex 1b 1d 24 
@@ -2916,7 +2916,7 @@ cursor_off          lda ptr0_lo
                     jsr prstr
                     ; cursor off
                     !text 23, 1, 0
-L981c               jmp L982c
+                    jmp L982c
                     
 cursor_on           lda ptr0_lo
                     pha
@@ -3091,12 +3091,12 @@ do_rti              pla
 do_branch           lda $010c
                     sta acc1_hi
                     lda #$04
-L99bb               sta $010c
+                    sta $010c
                     jmp step_execute
                     
 ex_or_step          jsr prstr
                     !text "Execute", -1, "or", -1, "step", -1, "(E/S)", -1, "?", -1, 0
-L99dd               sty ptr0_lo
+                    sty ptr0_lo
                     sty ptr0_hi
 -                   jsr osrdch
                     jsr check_escape
@@ -3345,7 +3345,7 @@ c_form              jsr parse_tracks
                     bcc L9bbc
                     ldy #$2b
 L9be1               lda empty_disc, y
-L9be4               sta (acc0_lo), y
+                    sta (acc0_lo), y
                     dey
                     bpl L9be1
                     jsr disc_block                    
@@ -3373,7 +3373,7 @@ L9c0e               jsr wrap_sector
                     jsr hexbyte
                     jsr prstr
                     !text -2, 0
-L9c1e               ldy #$59
+                    ldy #$59
                     ldx #$0a
 L9c22               lda #$01
                     sta (acc0_lo), y
@@ -3546,7 +3546,7 @@ L9d5d               jsr get_put_parms
                     jsr prstr
                     !text "I/O", -1, "result", -1, "=", -1, 0
 
-L9d74               lda $010a
+                    lda $010a
                     sta acc0_lo
                     sty acc0_hi
                     ldx #0
