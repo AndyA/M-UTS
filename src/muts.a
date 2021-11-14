@@ -402,14 +402,14 @@ hexnybble           pha
                     sed
                     adc #'0'
                     cld
-L840a               jsr oswrch
+-                   jsr oswrch
                     pla
                     rts
                     
 hexbyte_space       jsr hexbyte
                     pha
                     lda #' '
-                    bne L840a
+                    bne -
                     
 radix_out           sta acc1_lo
                     lda #0
