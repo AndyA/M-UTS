@@ -78,6 +78,16 @@
 !addr x_assemble = $a001
 !addr x_eval = $a004
 
+key_left = $88
+key_right = $89
+key_down = $8a
+key_up = $8b
+
+key_sh_left = $a0
+key_sh_right = $a1
+key_sh_down = $a2
+key_sh_up = $a3
+
 !macro inc16 addr {
   inc addr
   bne +
@@ -2696,7 +2706,7 @@ edit_getch          jsr show_line
                     jmp newline
                     
                     ; left
-edit_dispatch       cmp #$88
+edit_dispatch       cmp #key_left
                     bne L96fb
                     lda acc0
                     cmp #5
@@ -2710,10 +2720,10 @@ L96ef               lda cmdjmp
 L96f3               lda cmdhelp
 L96f5               sta acc0
                     ; fake up
-                    lda #$8b
+                    lda #key_up
                     bne L9731
                     ; right
-L96fb               cmp #$89
+L96fb               cmp #key_right
                     bne L9717
                     lda acc0
                     cmp cmdjmp
@@ -2726,9 +2736,9 @@ L970d               lda #$05
                     bne L9713
 L9711               lda cmdjmp + 1
 L9713               sta acc0
-                    lda #$8a
+                    lda #key_down
                     ; down
-L9717               cmp #$8a
+L9717               cmp #key_down
                     bne L9731
                     jsr show_line
                     lda #10
@@ -2742,7 +2752,7 @@ L9717               cmp #$8a
                     jmp edit_getch
                     
                     ; up
-L9731               cmp #$8b
+L9731               cmp #key_up
                     bne L974e
                     jsr show_line
                     lda #$0b
@@ -2758,7 +2768,7 @@ L9731               cmp #$8b
 L974b               jmp edit_getch
                     
                     ; shift right = skip to ascii column
-L974e               cmp #$a1
+L974e               cmp #key_sh_right
                     bne L976b
                     lda cmdjmp
                     cmp acc0
@@ -2774,7 +2784,7 @@ L974e               cmp #$a1
                     jmp edit_getch
                     
                     ; shift left = skip to hex column
-L976b               cmp #$a0
+L976b               cmp #key_sh_left
                     bne L9785
                     lda acc0
                     cmp cmdjmp + 1
@@ -2798,7 +2808,7 @@ L9785               cmp #13
                     ldx cmdjmp + 1
 L9793               stx acc0
                     ; fake line down. Could just jump to the code after the key test
-                    lda #$8a
+                    lda #key_down
                     jmp L9717
                     
                     ; text input
@@ -2813,7 +2823,7 @@ edit_input          tax
                     cmp (acc2), y
                     bne edit_bell
                     ; fake right. Could just jump in after the test
-                    lda #$89
+                    lda #key_right
                     jmp L96fb
                     
 edit_hex            stx acc3
@@ -2858,7 +2868,7 @@ L97eb               stx stack + 1
                     cmp (acc2), y
                     bne edit_bell
                     ; fake right
-                    lda #$89
+                    lda #key_right
                     jmp L96fb
                     
                     jmp edit_getch
@@ -3170,12 +3180,12 @@ L9aa7               jsr osrdch
                     jsr osbyte
                     jmp throw_escape
                     
-L9ab6               cmp #$8a
+L9ab6               cmp #key_down
                     beq L9acf
-                    cmp #$8b
+                    cmp #key_up
                     bne L9aa7
                     +pop16 acc2
-                    lda #$0b
+                    lda #11
                     jsr oswrch
                     jsr oswrch
                     jmp L9ae4
@@ -3185,7 +3195,7 @@ L9acf               pla
                     jsr read_rom
                     jsr inst_len
                     sec
-                    sbc #$01
+                    sbc #1
                     clc
                     clc
                     adc acc2
@@ -3206,16 +3216,16 @@ L9b00               pla
                     jmp L9a85
                     
 parse_tracks        jsr skip_space
-                    ldx #$28
-                    cmp #$34
+                    ldx #40
+                    cmp #'4'
                     beq L9b28
-                    ldx #$50
-                    cmp #$38
+                    ldx #80
+                    cmp #'8'
                     beq L9b28
 L9b14               jsr throw
                     !text $b1, "40 or 80 tracks", 0
 L9b28               jsr getch
-                    cmp #$30
+                    cmp #'0'
                     bne L9b14
                     txa
                     pha
@@ -3227,10 +3237,10 @@ parse_drive         jsr skip_space
                     pha
                     jsr unget
                     pla
-                    cmp #$0d
+                    cmp #13
                     beq L9b4d
                     jsr eval_byte
-                    cmp #$04
+                    cmp #4
                     bcc L9b4c
                     jmp throw_baddrive
                     
@@ -3453,11 +3463,12 @@ L9d15               ldy disc_offsets, x
                     lda ptr0 + 1
                     sta (acc0), y
                     inx
-                    cpx #$04
+                    cpx #disc_offsets_end - disc_offsets
                     bcc L9d15
                     rts
 
 disc_offsets        !byte $03, $0c, $19, $24 
+disc_offsets_end
 
 wrap_sector         ldx acc1 + 1
                     dex
