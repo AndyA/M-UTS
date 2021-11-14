@@ -139,6 +139,13 @@ key_sh_up = $a3
   sbc rhs + 1
 }
 
+!macro mov16 dst, src {
+  lda src
+  sta dst
+  lda src + 1
+  sta dst + 1
+}
+
 ; Add A to 16 bit reg
 !macro adca16 dst {
   adc dst
@@ -573,10 +580,7 @@ L8488               jsr to_upper
 L849a               cmp acc1
                     bcs L84d9
                     pha
-                    lda acc0
-                    sta ptr0
-                    lda acc0 + 1
-                    sta ptr0 + 1
+                    +mov16 ptr0, acc0
                     lda #0
                     sta acc0
                     sta acc0 + 1
@@ -1134,10 +1138,7 @@ L891a               +inc16 ptr0
                     inx
                     rts
                     
-acc0_to_acc2        lda acc0
-                    sta acc2
-                    lda acc0 + 1
-                    sta acc2 + 1
+acc0_to_acc2        +mov16 acc2, acc0
                     rts
                     
 c_find              jsr parse_range
@@ -1169,10 +1170,7 @@ L895e               +cmp16 acc2, acc0
                     jmp newline
                     
 c_change            jsr eval
-                    lda acc0
-                    sta ptr0
-                    lda acc0 + 1
-                    sta ptr0 + 1
+                    +mov16 ptr0, acc0
                     jmp parse_bytes
                     
 print_or_page       jsr skip_space
@@ -1301,10 +1299,7 @@ c_monitor           jsr skip_space
                     cmp #13
                     beq +
                     jsr unget
-                    lda cmdline
-                    sta stack
-                    lda cmdline + 1
-                    sta stack + 1
+                    +mov16 stack, cmdline
                     lda #$83
                     jsr osbyte
                     stx stack + 2
@@ -1479,10 +1474,7 @@ L8bed               cmp #'?'
 L8bf7               cmp #'$'
                     bne L8c18
                     jsr eval
-                    lda acc0
-                    sta ptr0
-                    lda acc0 + 1
-                    sta ptr0 + 1
+                    +mov16 ptr0, acc0
                     jsr skip_space
                     cmp #$3d
                     bne throw_missingeq
@@ -1608,10 +1600,7 @@ L8cf2               jsr eval
                     bcs L8d35
                     rts
                     
-L8d35               lda acc0
-                    sta ptr0
-                    lda acc0 + 1
-                    sta ptr0 + 1
+L8d35               +mov16 ptr0, acc0
                     jsr eval
                     lda stack
                     bne L8d48
@@ -2063,10 +2052,7 @@ L914f               lda stack + 11, y
 c_base              jsr check_cmd_mode
                     jsr eval
                     jsr check_eol
-                    lda acc0
-                    sta base_addr
-                    lda acc0 + 1
-                    sta base_addr + 1
+                    +mov16 base_addr, acc0
                     rts
                     
 copyright_marker    !text 0, "(C)"
@@ -2309,10 +2295,7 @@ c_set               jsr check_cmd_mode
                     jsr eval
                     jsr check_eol
                     ldx #0
-                    lda acc0
-                    sta ptr0
-                    lda acc0 + 1
-                    sta ptr0 + 1
+                    +mov16 ptr0, acc0
 L937f               lda breakpoints, x
                     ora breakpoints + 1, x
                     beq L939b
@@ -2400,10 +2383,7 @@ L9432               jsr getch
 get_put_parms       sta stack
                     stx stack + 9
                     sty stack + 6
-                    lda acc0
-                    sta stack + 7
-                    lda acc0 + 1
-                    sta stack + 8
+                    +mov16 stack + 7, acc0
 
                     ; page
                     lda #$83
@@ -3002,10 +2982,7 @@ step_next           +inc16 reg_pc
                     sta stack + 12, x
                     dex
                     bpl -
-                    lda acc2
-                    sta acc0
-                    lda acc2 + 1
-                    sta acc0 + 1
+                    +mov16 acc0, acc2
                     inx
                     stx acc3
                     jsr decode_instr
@@ -3558,10 +3535,7 @@ c_vdu               ldx #0
 c_same              jsr eval
                     jsr acc0_to_acc2
                     jsr eval
-                    lda acc0
-                    sta acc3
-                    lda acc0 + 1
-                    sta acc3 + 1
+                    +mov16 acc3, acc0
                     jsr eval
                     jsr check_eol
 L9dd4               lda (acc3), y
