@@ -2834,11 +2834,10 @@ L97eb               stx $0101
                     jmp L96fb
                     
                     jmp edit_getch
-                    
-; fix00-                    
-layout_40           !hex 1b 1d 24 
-layout_80           !hex 33 35 44 
-; fix00+
+
+; Full screen editor columns
+layout_40           !byte 27, 29, 36
+layout_80           !byte 51, 53, 68
                     
 cursor_off          +push16 ptr0
                     jsr prstr
@@ -3234,11 +3233,13 @@ L9b4d               lda #$01
                     and #$03
                     rts
 
-; fix00-                    
-empty_disc          !hex 00 ff ff ff ff 01 69 00 00 00 ff ff ff ff 05 63 
-                    !hex 00 10 2a 00 10 00 00 00 19 ff ff 03 5f 00 00 2a 
-                    !hex 00 00 ff ff ff ff 04 4b 00 00 22 00 
-; fix00+
+empty_disc          !byte $00, $ff, $ff, $ff, $ff, $01, $69, $00
+                    !byte $00, $00, $ff, $ff, $ff, $ff, $05, $63
+                    !byte $00, $10, $2a, $00, $10, $00, $00, $00
+                    !byte $19, $ff, $ff, $03, $5f, $00, $00, $2a 
+                    !byte $00, $00, $ff, $ff, $ff, $ff, $04, $4b
+                    !byte $00, $00, $22, $00
+
 L9bbc               pla
                     rts
                     
@@ -3428,9 +3429,8 @@ L9d15               ldy disc_offsets, x
                     bcc L9d15
                     rts
 
-; fix00-                    
-disc_offsets        !hex 03 0c 19 24 
-; fix00+
+disc_offsets        !byte $03, $0c, $19, $24 
+
 wrap_sector         ldx acc1 + 1
                     dex
                     bpl +
