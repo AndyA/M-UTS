@@ -180,6 +180,11 @@ case_mask = $df
 +
 }
 
+!macro asl16 reg {
+  asl reg
+  rol reg + 1
+}
+
 !macro push16 addr {
   lda addr
   pha
@@ -531,8 +536,7 @@ radix_out           sta acc1
                     pha
 L841c               lda #0
                     ldy #16
-L8420               asl acc0
-                    rol acc0 + 1
+L8420               +asl16 acc0
                     rol
                     cmp acc1
                     bcc L842d
@@ -608,8 +612,7 @@ L84b1               ror
                     clc
                     +adc16 acc0, acc0, ptr0
                     pla
-L84c3               asl ptr0
-                    rol ptr0 + 1
+L84c3               +asl16 ptr0
                     dex
                     bne L84b1
                     clc
@@ -813,8 +816,7 @@ L864d               lsr acc0 + 1
                     bcc L8660
                     clc
                     +adc16 ptr0, acc2, ptr0
-L8660               asl acc2
-                    rol acc2 + 1
+L8660               +asl16 acc2
                     dey
                     bne L864d
                     jmp L867f
@@ -882,8 +884,7 @@ divmod              +push16 acc0
                     +pop16 acc2
                     ldy #16
                     +mov16z ptr0
--                   asl acc2
-                    rol acc2 + 1
+-                   +asl16 acc2
                     rol ptr0
                     rol ptr0 + 1
                     +cmp16 ptr0, acc0
@@ -2006,8 +2007,7 @@ L90e1               pla     ; found match
                     ldy #$03
 L90f0               ldx #$05
                     lda #0
-L90f4               asl stack
-                    rol stack + 1
+L90f4               +asl16 stack
                     rol
                     dex
                     bne L90f4
