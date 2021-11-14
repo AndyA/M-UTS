@@ -73,9 +73,10 @@ n_breakpoints = 16
 !addr rom_sel   = $0602
 !addr prompt    = $0603
 
+cmd_line_len = 160
 !addr cmd_line = $0700
 
-!addr brk_cmd = $07a0
+!addr brk_cmd = cmd_line + cmd_line_len
 
 !addr rom_private = $0df0
 
@@ -1361,6 +1362,7 @@ ram_warning         txa
                     jsr hexbyte_space
                     jsr prstr
                     !text "will be corrupted", 13, 0
+
 ask_continue        jsr prstr
                     !text "continue (Y/N) ? ", 0
                     jsr osrdch
@@ -1401,7 +1403,7 @@ c_monitor           jsr skip_space
                     ; address
 readline_parms      !word cmd_line
                     ; length
-                    !byte 160 - 2
+                    !byte cmd_line_len - 2
                     ; min char
                     !byte ' '
                     ; max char
