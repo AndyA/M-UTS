@@ -2982,7 +2982,7 @@ c_step              jsr check_cmd_mode
                     jsr prstr
                     !text "PC", -3, "A", -2, "X", -2, "Y", -2, "P", -8, "S", -2, "Opcode", 13, 0
 
-L98de               sty ptr0_lo
+                    sty ptr0_lo
                     sty ptr0_hi
 step_next           +inc16 reg_pc
                     lda acc2_hi
@@ -2998,7 +2998,7 @@ step_next           +inc16 reg_pc
                     lda reg_y
                     jsr hexbyte_space
                     lda reg_p
-L990d               jsr show_flags
+                    jsr show_flags
                     lda #' '
                     jsr oswrch
                     lda reg_s
