@@ -1598,12 +1598,6 @@ L8d48               ldy #0
                     bcc L8d8e
                     clc
                     +adc16 acc2_lo, acc2_lo, acc0_lo
-                    ; lda acc2_lo
-                    ; adc acc0_lo
-                    ; sta acc2_lo
-                    ; lda acc2_hi
-                    ; adc acc0_hi
-                    ; sta acc2_hi
                     clc
                     +adc16 ptr0_lo, ptr0_lo, acc0_lo
                     +inc16 acc0_lo
@@ -1660,18 +1654,19 @@ check_cmd_mode      jsr get_private
                     ; "Command mode only"
                     !text $aa, "Command mode only", 0
 
-addr_modes          !byte a_zp    - addr_modes
-                    !byte a_zpi   - addr_modes
-                    !byte a_abs   - addr_modes
-                    !byte a_absix - addr_modes
-                    !byte a_absy  - addr_modes
-                    !byte a_absi  - addr_modes
-                    !byte a_zpiy  - addr_modes
-                    !byte a_zpix  - addr_modes
-                    !byte a_a     - addr_modes
-                    !byte a_impl  - addr_modes
-                    !byte a_imm   - addr_modes
-                    !byte a_rel   - addr_modes 
+addr_modes          
+addr_zp             !byte a_zp    - addr_modes
+addr_zpi            !byte a_zpi   - addr_modes
+addr_abs            !byte a_abs   - addr_modes
+addr_absix          !byte a_absix - addr_modes
+addr_absy           !byte a_absy  - addr_modes
+addr_absi           !byte a_absi  - addr_modes
+addr_zpiy           !byte a_zpiy  - addr_modes
+addr_zpix           !byte a_zpix  - addr_modes
+addr_a              !byte a_a     - addr_modes
+addr_impl           !byte a_impl  - addr_modes
+addr_imm            !byte a_imm   - addr_modes
+addr_rel            !byte a_rel   - addr_modes
 
 a_zp                !text "H1", 0
 a_zpi               !text "H1,I", 0
@@ -1687,7 +1682,6 @@ a_imm               !text "#H1", 0
 a_rel               !text "H+", 0
                     !text 13, 12
 
-; fix00-
                     ; first two bytes are 5 bits-per-char encodings of mnemonic
                     ; second two bytes are mask and bit pattern
 
@@ -1753,18 +1747,35 @@ op_decode_end
 
                     !byte 0, 0
 
-addr_decode         !hex 20 ff 02 10 1f 0b 
-                    !hex 09 1f 0a 0a 9f 08 08 0d 09 00 9f 09 4c ff 02 80 
-                    !hex 9d 0a 84 9d 00 8c 9d 02 94 9d 01 9c 9d 03 6c ff 
-                    !hex 05 00 1c 07 04 1c 00 0c 1c 02 10 1c 06 14 1c 01 
-                    !hex 18 1c 04 1c 1c 03 
+                    ; Maps opcode, mask to offset index in
+                    ; addr_modes. Would be more efficient
+                    ; to map directly to offset
+addr_decode         !byte $20, $ff, addr_abs   - addr_modes
+                    !byte $10, $1f, addr_rel   - addr_modes 
+                    !byte $09, $1f, addr_imm   - addr_modes
+                    !byte $0a, $9f, addr_a     - addr_modes
+                    !byte $08, $0d, addr_impl  - addr_modes
+                    !byte $00, $9f, addr_impl  - addr_modes
+                    !byte $4c, $ff, addr_abs   - addr_modes
+                    !byte $80, $9d, addr_imm   - addr_modes
+                    !byte $84, $9d, addr_zp    - addr_modes
+                    !byte $8c, $9d, addr_abs   - addr_modes
+                    !byte $94, $9d, addr_zpi   - addr_modes
+                    !byte $9c, $9d, addr_absix - addr_modes
+                    !byte $6c, $ff, addr_absi  - addr_modes
+                    !byte $00, $1c, addr_zpix  - addr_modes
+                    !byte $04, $1c, addr_zp    - addr_modes
+                    !byte $0c, $1c, addr_abs   - addr_modes
+                    !byte $10, $1c, addr_zpiy  - addr_modes
+                    !byte $14, $1c, addr_zpi   - addr_modes
+                    !byte $18, $1c, addr_absy  - addr_modes
+                    !byte $1c, $1c, addr_absix - addr_modes
 addr_decode_end
 
 bad_op              !hex 04 0c 12 14 1a 1c 22 32 34 3a 3c 42 44 52 54 5a 
                     !hex 5c 62 64 72 74 7a 7c 80 82 89 92 9c 9e b2 c2 d2 
                     !hex d4 da dc e2 f2 f4 fa fc 
 bad_op_end
-; fix00+
 
 L8f6e               jsr S8894
                     lda #$0d
