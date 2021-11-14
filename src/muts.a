@@ -160,6 +160,11 @@ case_mask = $df
   sta dst + 1
 }
 
+!macro stxy dst {
+  stx dst
+  sty dst + 1
+}
+
 ; Add A to 16 bit reg
 !macro adca16 dst {
   adc dst
@@ -1311,12 +1316,10 @@ c_monitor           jsr skip_space
                     +mov16 stack, cmdline
                     lda #$83
                     jsr osbyte
-                    stx stack + 2
-                    sty stack + 3
+                    +stxy stack + 2
                     lda #$82
                     jsr osbyte
-                    stx stack + 4
-                    sty stack + 5
+                    +stxy stack + 4
                     ldx #0
                     stx stack + 6
                     ldy #$01
@@ -2389,14 +2392,12 @@ get_put_parms       sta stack
                     ; page
                     lda #$83
                     jsr osbyte
-                    stx stack + 1
-                    sty stack + 2
+                    +stxy stack + 1
 
                     ; machine address
                     lda #$82
                     jsr osbyte
-                    stx stack + 3
-                    sty stack + 4
+                    +stxy stack + 3
 
                     lda #$03
                     sta stack + 5
@@ -2410,8 +2411,7 @@ get_drive           lda #$01
                     ; machine high order address
                     lda #$82
                     jsr osbyte
-                    stx stack + 3
-                    sty stack + 4
+                    +stxy stack + 3
                     lda #< stack + 8
                     sta stack + 1
                     ldy #> stack + 8
@@ -3248,8 +3248,7 @@ L9b4d               lda #$01
                     sta stack
                     lda #$82
                     jsr osbyte
-                    stx stack + 3
-                    sty stack + 4
+                    +stxy stack + 3
                     lda #$10
                     sta stack + 1
                     ldy #$01
@@ -3451,8 +3450,7 @@ L9ce2               ldy #$07
                     
 disc_block          lda #$82
                     jsr osbyte
-                    stx ptr0
-                    sty ptr0 + 1
+                    +stxy ptr0
                     ldx #0
 L9d15               ldy disc_offsets, x
                     lda ptr0
