@@ -3549,7 +3549,7 @@ L9dee               +dec16 acc0
                     bne L9dd4
                     rts
                     
-pr_membyte          lda #$28
+pr_membyte          lda #'('
                     jsr oswrch
                     clc
                     tya
@@ -3562,9 +3562,9 @@ pr_membyte          lda #$28
                     jsr hexbyte
                     lda ptr0
                     jsr hexbyte
-                    lda #$29
+                    lda #')'
                     jsr oswrch
-                    lda #$3d
+                    lda #'='
                     jsr oswrch
                     ldy #0
                     lda (ptr0), y
