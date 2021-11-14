@@ -160,6 +160,12 @@ case_mask = $df
   sta dst + 1
 }
 
+!macro mov16z dst {
+  lda #0
+  sta dst
+  sta dst + 1
+}
+
 !macro stxy dst {
   stx dst
   sty dst + 1
@@ -578,9 +584,7 @@ to_upper            pha
                     
 radix_parse         sta acc1
                     +push16 ptr0
-                    lda #0
-                    sta acc0
-                    sta acc0 + 1
+                    +mov16z acc0
                     jsr skip_space
 L8488               jsr to_upper
                     sec
@@ -595,9 +599,7 @@ L849a               cmp acc1
                     bcs L84d9
                     pha
                     +mov16 ptr0, acc0
-                    lda #0
-                    sta acc0
-                    sta acc0 + 1
+                    +mov16z acc0
                     ldx #5
                     lda acc1
 L84b1               ror
@@ -804,9 +806,7 @@ eval_b              jsr eval_atom
                     +push16 acc0
                     jsr eval_b
                     +pop16 acc2
-                    lda #0
-                    sta ptr0
-                    sta ptr0 + 1
+                    +mov16z ptr0
                     ldy #$10
 L864d               lsr acc0 + 1
                     ror acc0
@@ -881,9 +881,7 @@ divmod              +push16 acc0
                     jsr eval_b
                     +pop16 acc2
                     ldy #16
-                    lda #0
-                    sta ptr0
-                    sta ptr0 + 1
+                    +mov16z ptr0
 -                   asl acc2
                     rol acc2 + 1
                     rol ptr0
@@ -2445,9 +2443,7 @@ throw_baddrive      jsr throw
 
 L94c5               jsr star_drive
                     sta ptr0
-                    lda #0
-                    sta acc0
-                    sta acc0 + 1
+                    +mov16z acc0
                     jsr disk_size
 L94d3               lda acc0
                     jsr hexbyte
@@ -3314,9 +3310,7 @@ L9be1               lda empty_disc, y
                     ldy acc0 + 1
                     lda #$7f
                     jsr osword
-                    lda #0
-                    sta acc1
-                    sta acc1 + 1
+                    +mov16z acc1
 L9c0c               ldy #$03
 L9c0e               jsr wrap_sector
                     dey
