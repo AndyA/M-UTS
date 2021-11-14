@@ -46,6 +46,8 @@
 
 !addr acc2 = $b4
 
+!addr hex_pfx = $b8
+
 !addr cmdline = $f2
 !addr cur_rom = $f4
 !addr err = $fd
@@ -1923,7 +1925,7 @@ L9081               cmp #'I'
 
 L9087               cmp #'H'
                     bne L908d
-                    lda $b8
+                    lda hex_pfx
 L908d               jsr oswrch
                     jmp L9038
                     
@@ -2122,7 +2124,7 @@ hex_prefix          jsr skip_space
                     bne L9221
 L921c               jsr unget
                     lda #'&'
-L9221               sta $b8
+L9221               sta hex_pfx
                     rts
                     
 service             php
@@ -3618,7 +3620,7 @@ L9e7c               ldy #$01
                     dey
                     ora (0), y
                     bne L9e4f
-                    lda $b8
+                    lda hex_pfx
                     jsr oswrch
                     lda $03
                     jsr hexbyte
