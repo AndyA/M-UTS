@@ -185,7 +185,7 @@ cmd_table           !text "ASSEMBL", 'E' + $80
                     !text "G", 'O' + $80
                     !word c_go, h_go 
                     !text "LOO", 'K' + $80
-                    !word cok, hok 
+                    !word c_look, h_look 
                     !text "ME", 'M' + $80
                     !word c_mem, h_mem 
                     !text "MOD", 'E' + $80
@@ -245,7 +245,7 @@ h_form              !text "<tracks> (<drv>", ')' + $80
 h_find              !text "<strt>(..<end>) <byte string", '>' + $80
 h_get               !text "<track> (<drv>", ')' + $80
 h_go                !text "<addr> (<A>) (<X>) (<Y>", ')' + $80
-hok              !text "<addr> (H<prefix>", ')' + $80
+h_look              !text "<addr> (H<prefix>", ')' + $80
 h_mem               !text "<strt>(..<end>) (P,L", ')' + $80
 h_mode              !text "<mode", '>' + $80
 h_monitor           !text ' ' + $80
@@ -3052,7 +3052,7 @@ stepped             jsr save_regs
                     plp
                     jmp step_next
                     
-cok              jsr eval
+c_look              jsr eval
                     jsr acc0_to_acc2
                     jsr hex_prefix
                     jsr check_eol
