@@ -92,6 +92,8 @@ key_sh_right = $a1
 key_sh_down = $a2
 key_sh_up = $a3
 
+case_mask = $df
+
 !macro inc16 addr {
   inc addr
   bne +
@@ -137,6 +139,11 @@ key_sh_up = $a3
   cmp rhs
   lda lhs + 1
   sbc rhs + 1
+}
+
+!macro cmz16 reg {
+  lda reg
+  ora reg + 1
 }
 
 !macro mov16 dst, src {
@@ -348,7 +355,7 @@ dispatch_cmd        +push16 cmdline
                     jsr lookup_command
                     bpl L82fc
                     jsr getch
-                    and #$df
+                    and #case_mask
                     cmp #'A'
                     bcc +
                     cmp #'Z' + 1
@@ -358,8 +365,7 @@ L82fc               +pop16 cmdline
                     rts
                     
 +                   jsr unget
-                    lda cmdjmp
-                    ora cmdjmp + 1
+                    +cmz16 cmdjmp
                     beq L82fc
                     pla
                     pla
@@ -525,8 +531,7 @@ L842d               dey
 L8436               adc #'0'
                     pha
                     dex
-                    lda acc0
-                    ora acc0 + 1
+                    +cmz16 acc0
                     bne L841c
                     lda #' '
 L8442               dex
@@ -550,13 +555,13 @@ skip_space          jsr getch
                     rts
                     
 to_upper            pha
-                    and #$df
+                    and #case_mask
                     cmp #'A'
                     bcc +
                     cmp #'Z' + 1
                     bcs +
                     pla
-                    and #$df
+                    and #case_mask
                     rts
 
 +                   pla
@@ -734,7 +739,7 @@ L85bb               cmp #"'"
 +                   cmp #':'
                     bne +
                     jsr getch
-                    and #$df
+                    and #case_mask
                     cmp #'A'
                     bcs L85ec
 
@@ -987,7 +992,7 @@ lc_next_cmd         ldy #$ff
                     stx cmd_offset
 lc_next_char        iny
                     lda (cmdline), y
-                    and #$df
+                    and #case_mask
                     sta ptr0
                     lda cmd_table, x
                     php
@@ -1177,7 +1182,7 @@ print_or_page       jsr skip_space
                     beq L89a0
                     cmp #','
                     beq print_or_page
-                    and #$df
+                    and #case_mask
                     cmp #'P'
                     bne L898f
                     lda #14
@@ -1284,7 +1289,7 @@ ask_continue        jsr prstr
                     bcc +
                     jmp throw_escape
                     
-+                   and #$df
++                   and #case_mask
                     cmp #'Y'
                     beq +
                     lda #'N'
@@ -1424,7 +1429,7 @@ L8b87               ldx #$07
                     cmp #':'
                     bne L8bd2
                     jsr skip_space
-                    and #$df
+                    and #case_mask
                     cmp #'A'
                     bcs +
 -                   jmp throw_badvar
@@ -1635,8 +1640,7 @@ L8d8e               lda (acc2), y
 L8dac               rts
                     
 countdown           +dec16 acc0
-                    lda acc0
-                    ora acc0 + 1
+                    +cmz16 acc0
                     rts
                     
 set_private         lda #$ff
@@ -2102,8 +2106,7 @@ L91d4               lda acc2
                     ldx acc2 + 1
                     jmp L91e9
                     
-L91db               lda base_addr
-                    ora base_addr + 1
+L91db               +cmz16 base_addr
                     beq L91d4
                     lda base_addr
                     ldx base_addr + 1
@@ -3072,7 +3075,7 @@ ex_or_step          jsr prstr
                     sty ptr0 + 1
 -                   jsr osrdch
                     jsr check_escape
-                    and #$df
+                    and #case_mask
                     cmp #'S'
                     beq +
                     cmp #'E'
@@ -3133,8 +3136,7 @@ c_look              jsr eval
                     lda #0
                     tax
                     beq L9a69
-L9a54               lda base_addr
-                    ora base_addr + 1
+L9a54               +cmz16 base_addr
                     tax
                     beq L9a69
                     sec
@@ -3551,8 +3553,7 @@ L9de7               iny
                     inc acc3 + 1
                     inc acc2 + 1
 L9dee               +dec16 acc0
-                    lda acc0
-                    ora acc0 + 1
+                    +cmz16 acc0
                     bne L9dd4
                     rts
                     
