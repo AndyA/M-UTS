@@ -1772,9 +1772,12 @@ addr_decode         !byte $20, $ff, addr_abs   - addr_modes
                     !byte $1c, $1c, addr_absix - addr_modes
 addr_decode_end
 
-bad_op              !hex 04 0c 12 14 1a 1c 22 32 34 3a 3c 42 44 52 54 5a 
-                    !hex 5c 62 64 72 74 7a 7c 80 82 89 92 9c 9e b2 c2 d2 
-                    !hex d4 da dc e2 f2 f4 fa fc 
+                    ; Illegal opcodes
+bad_op              !byte $04, $0c, $12, $14, $1a, $1c, $22, $32
+                    !byte $34, $3a, $3c, $42, $44, $52, $54, $5a
+                    !byte $5c, $62, $64, $72, $74, $7a, $7c, $80
+                    !byte $82, $89, $92, $9c, $9e, $b2, $c2, $d2
+                    !byte $d4, $da, $dc, $e2, $f2, $f4, $fa, $fc
 bad_op_end
 
 L8f6e               jsr S8894
