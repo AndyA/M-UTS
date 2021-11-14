@@ -51,9 +51,11 @@
 !addr err = $fd
 !addr esc_flag = $ff
 
-!addr vars = $300
+!addr stack = $0100
 
-!addr regs = $400
+!addr vars = $0300
+
+!addr regs = $0400
 !addr reg_a = regs + ('A' - 'A') * 2
 !addr reg_pc = regs + ('I' - 'A') * 2
 !addr reg_x = regs + ('X' - 'A') * 2
@@ -61,14 +63,13 @@
 !addr reg_p = regs + ('P' - 'A') * 2
 !addr reg_s = regs + ('S' - 'A') * 2
 
+!addr breakpoints = $0500
 
-!addr breakpoints = $500
+!addr cmd_line = $0700
 
-!addr cmd_line = $700
+!addr brk_cmd = $07a0
 
-!addr brk_cmd = $7a0
-
-!addr rom_private = $df0
+!addr rom_private = $0df0
 
 !addr x_present = $a000
 !addr x_assemble = $a001
@@ -417,12 +418,12 @@ throw               jsr reset_terminal
                     pla
                     sta ptr0 + 1
                     ldy #0
-                    sty $0100
+                    sty stack
 -                   iny
                     lda (ptr0), y
-                    sta $0100, y
+                    sta stack, y
                     bne -
-                    jmp $0100
+                    jmp stack
                     
 newline             jsr osnewl
 check_escape        bit esc_flag
@@ -555,7 +556,7 @@ L84c3               asl ptr0
                     sta acc0
                     bcc +
                     inc acc0 + 1
-+              lda (cmdline), y
++                   lda (cmdline), y
                     iny
                     bne L8488
 L84d9               +pop16 ptr0
@@ -568,9 +569,14 @@ L84d9               +pop16 ptr0
 +                   jsr unget
                     dey
                     rts
-                    
+
+; Expression evaluator. This has a longstanding bug (since 1984): it
+; right-recurses - so it evaluates A - B - C as A - (B - C) rather
+; than (A - B) - C. I knew about it at the time but, for some reason,
+; didn't fix it.
+
 eval_atom           tsx           ; check SP
-                    cpx #$80
+                    cpx #$80      ; could just be a BMI
                     bcs +
                     jsr throw
                     !text $a1, "Formula too complex", 0
@@ -688,6 +694,7 @@ L85bb               cmp #"'"
 
 throw_badvar        jsr throw
                     !text $a4, "Bad variable", 0
+
 L85ec               cmp #'Z' + 1
                     bcs throw_badvar
                     asl
@@ -697,8 +704,11 @@ L85ec               cmp #'Z' + 1
                     lda vars + '?' * 2 + 1, x
                     sta acc0 + 1
                     rts
-                    
-                    ; extended rom?
+
+; The top 8k of the ROM can optionally contain an assembler which
+; handles the ASSEMBLE command and can also extend the expression
+; evaluator by parsing additional atoms here.
+
 +                   ldx x_present
                     cpx #$ff
                     bne +
@@ -994,9 +1004,9 @@ check_eol           jsr skip_space
                     rts
                     
 syntax_error        ldx #0
-                    stx $0100
+                    stx stack
                     lda acc1 + 1
-                    sta $0101
+                    sta stack + 1
                     ldy cmd_offset
                     cpy #$ff
                     bne L8867
@@ -1004,33 +1014,33 @@ syntax_error        ldx #0
                     ; "Bad expression"
                     !text $a6, "Bad expression", 0
 L8867               lda syntax_prefix, x
-                    sta $0102, x
+                    sta stack + 2, x
                     inx
                     cpx #8
                     bcc L8867
 L8872               lda cmd_table, y
                     php
                     and #$7f
-                    sta $0102, x
+                    sta stack + 2, x
                     iny
                     inx
                     plp
                     bpl L8872
                     lda #' '
-                    sta $0102, x
+                    sta stack + 2, x
                     ldy #0
 L8887               lda (cmdhelp), y
                     php
                     and #$7f
-                    sta $0103, x
+                    sta stack + 3, x
                     iny
                     inx
                     plp
                     bpl L8887
 
 S8894               lda #0
-                    sta $0103, x
-                    jmp $0100
+                    sta stack + 3, x
+                    jmp stack
                     
 parse_bytes         ldx #0
 parse_bytes_tail    jsr skip_comma
@@ -1105,7 +1115,7 @@ c_find              jsr parse_range
                     stx cmdline
 L893a               ldy #0
                     ldx #0
-L893e               lda $0100, x
+L893e               lda stack, x
                     cmp (acc2), y
                     bne L8958
                     iny
@@ -1261,19 +1271,19 @@ c_monitor           jsr skip_space
                     beq +
                     jsr unget
                     lda cmdline
-                    sta $0100
+                    sta stack
                     lda cmdline + 1
-                    sta $0101
+                    sta stack + 1
                     lda #$83
                     jsr osbyte
-                    stx $0102
-                    sty $0103
+                    stx stack + 2
+                    sty stack + 3
                     lda #$82
                     jsr osbyte
-                    stx $0104
-                    sty $0105
+                    stx stack + 4
+                    sty stack + 5
                     ldx #0
-                    stx $0106
+                    stx stack + 6
                     ldy #$01
                     lda #$ff
                     jsr osfile
@@ -1533,11 +1543,11 @@ c_calc              jsr do_calc
                     jmp newline
                     
 c_move              lda #0
-                    sta $0100
+                    sta stack
                     jsr skip_space
                     cmp #'>'
                     bne L8cef
-                    sta $0100
+                    sta stack
                     beq L8cf2
 L8cef               jsr unget
 L8cf2               jsr eval
@@ -1550,7 +1560,7 @@ L8cf2               jsr eval
                     tya
                     sbc acc0 + 1
                     bcc L8d35
-                    lda $0100
+                    lda stack
                     bne L8d35
                     txa
                     pha
@@ -1572,7 +1582,7 @@ L8d35               lda acc0
                     lda acc0 + 1
                     sta ptr0 + 1
                     jsr eval
-                    lda $0100
+                    lda stack
                     bne L8d48
                     jsr check_eol
 L8d48               ldy #0
@@ -1599,7 +1609,7 @@ L8d8e               lda (acc2), y
                     +inc16 acc2
                     jsr countdown
                     bne L8d8e
-                    lda $0100
+                    lda stack
                     beq L8dac
                     jsr eval
                     jsr check_eol
@@ -1782,7 +1792,7 @@ L8f8e               tay
                     and #$07
                     tax
                     pla
-                    sta $010a, x
+                    sta stack + 10, x
                     tax
                     pla
                     tay
@@ -1968,16 +1978,16 @@ L90e1               pla     ; found match
 
                     ; stash packed mnemonic
                     lda op_decode, x
-                    sta $0100
+                    sta stack
                     lda op_decode + 1, x
-                    sta $0101
+                    sta stack + 1
 
                     ; decode 2 bytes -> 3 chars
                     ldy #$03
 L90f0               ldx #$05
                     lda #0
-L90f4               asl $0100
-                    rol $0101
+L90f4               asl stack
+                    rol stack + 1
                     rol
                     dex
                     bne L90f4
@@ -2005,7 +2015,7 @@ L9129               jsr oswrch
                     cpx #19
                     bcc L9129
                     ldy #0
-L9133               lda $010b, y
+L9133               lda stack + 11, y
                     jsr hexbyte_space
                     iny
                     cpy $b6
@@ -2018,7 +2028,7 @@ L9145               jsr oswrch
                     cpx #$1d
                     bcc L9145
                     ldy #0
-L914f               lda $010b, y
+L914f               lda stack + 11, y
                     jsr safe_ascii
                     iny
                     cpy $b6
@@ -2129,7 +2139,7 @@ service             php
                     bcc L923a
                     inc cmdline + 1
 L923a               tsx
-                    lda $0105, x
+                    lda stack + 5, x
                     ; star command not recognised
                     cmp #4
                     beq star_command
@@ -2164,7 +2174,7 @@ star_command        jsr clr_private
                     bcs L9285
 L9278               tsx
                     lda #0
-                    sta $0105, x
+                    sta stack + 5, x
                     pla
                     pla
                     pla
@@ -2220,9 +2230,9 @@ L92e5               jsr skip_space
                     jsr unget
                     lda regnames, x
                     asl
-                    sta $0100
+                    sta stack
                     jsr eval_byte
-                    ldy $0100
+                    ldy stack
                     sta vars + '?' * 2, y
                     inx
                     cpx #$04
@@ -2367,45 +2377,45 @@ L9432               jsr getch
                     bne L9432
                     rts
                     
-get_put_parms       sta $0100
-                    stx $0109
-                    sty $0106
+get_put_parms       sta stack
+                    stx stack + 9
+                    sty stack + 6
                     lda acc0
-                    sta $0107
+                    sta stack + 7
                     lda acc0 + 1
-                    sta $0108
+                    sta stack + 8
                     ; page
                     lda #$83
                     jsr osbyte
-                    stx $0101
-                    sty $0102
+                    stx stack + 1
+                    sty stack + 2
                     ; machine address
                     lda #$82
                     jsr osbyte
-                    stx $0103
-                    sty $0104
+                    stx stack + 3
+                    sty stack + 4
                     lda #$03
-                    sta $0105
+                    sta stack + 5
                     lda #$7f
                     ldx #0
                     ldy #$01
                     rts
                     
 get_drive           lda #$01
-                    sta $0100
+                    sta stack
                     ; machine high order address
                     lda #$82
                     jsr osbyte
-                    stx $0103
-                    sty $0104
+                    stx stack + 3
+                    sty stack + 4
                     lda #$08
-                    sta $0101
+                    sta stack + 1
                     ldy #$01
-                    sty $0102
+                    sty stack + 2
                     lda #$06
                     ldx #0
                     jsr osgbpb
-                    lda $0109
+                    lda stack + 9
                     and #$03
                     rts
                     
@@ -2443,7 +2453,7 @@ L94d3               lda acc0
                     jsr get_put_parms
                     jsr osword
                     lda #' '
-                    ldx $010a
+                    ldx stack + 10
                     beq L94ed
                     lda #'?'
 L94ed               jsr oswrch
@@ -2481,15 +2491,15 @@ drive_cmd_end
 star_drive          pha
                     ldx #0
 L9529               lda drive_cmd, x
-                    sta $010a, x
+                    sta stack + 10, x
                     inx
                     cpx #drive_cmd_end - drive_cmd
                     bcc L9529
                     pla
                     ora #'0'
-                    sta $0110
+                    sta stack + 16
                     lda #13
-                    sta $0111
+                    sta stack + 17
                     ldx #$0a
                     ldy #$01
                     jmp oscli
@@ -2572,24 +2582,24 @@ esc_char            ldx #'|'
                     lda #'?'
 +                   jmp oswrch
                     
-times3              sta $0100
+times3              sta stack
                     asl
                     clc
-                    adc $0100
+                    adc stack
                     rts
                     
-div3                sta $0100
+div3                sta stack
                     ldx #8
                     lda #0
--                   asl $0100
+-                   asl stack
                     rol
                     cmp #3
                     bcc +
                     sbc #3
-                    inc $0100
+                    inc stack
 +                   dex
                     bne -
-                    sta $0101
+                    sta stack + 1
                     rts
                     
 show_line           +push16 acc2
@@ -2754,7 +2764,7 @@ L974e               cmp #$a1
                     sec
                     sbc #$05
                     jsr div3
-                    lda $0100
+                    lda stack
                     clc
                     adc cmdjmp + 1
                     sta acc0
@@ -2828,19 +2838,19 @@ L97ca               lda $b6
 L97da               cmp #$10
                     bcs edit_bell
                     ldx #$f0
-                    ldy $0101
+                    ldy stack + 1
                     bne L97eb
                     ldx #$0f
                     asl
                     asl
                     asl
                     asl
-L97eb               stx $0101
-                    ldy $0100
-                    sta $0100
+L97eb               stx stack + 1
+                    ldy stack
+                    sta stack
                     lda (acc2), y
-                    and $0101
-                    ora $0100
+                    and stack + 1
+                    ora stack
                     sta (acc2), y
                     cmp (acc2), y
                     bne edit_bell
@@ -2953,7 +2963,7 @@ step_next           +inc16 reg_pc
                     jsr hexbyte_space
                     ldx #$07
 L991d               lda step_bootstrap, x
-                    sta $010c, x
+                    sta stack + 12, x
                     dex
                     bpl L991d
                     lda acc2
@@ -2970,7 +2980,7 @@ L991d               lda step_bootstrap, x
                     jsr newline
 
                     ; JMP, Bxx, RTS etc are emulated
-                    lda $010b
+                    lda stack + 11
                     beq do_brk
                     ; JSR
                     cmp #$20
@@ -2997,7 +3007,7 @@ step_execute        php
                     lda #0
                     sta $b6
                     jsr load_regs
-                    jmp $010b
+                    jmp stack + 11
                     
 do_brk              jsr throw
                     !text $b0, "Halted", 0
@@ -3036,10 +3046,10 @@ do_rti              pla
                     clc
                     bcc do_rts
                     
-do_branch           lda $010c
+do_branch           lda stack + 12
                     sta acc1 + 1
                     lda #$04
-                    sta $010c
+                    sta stack + 12
                     jmp step_execute
                     
 ex_or_step          jsr prstr
@@ -3224,27 +3234,27 @@ parse_drive         jsr skip_space
 L9b4c               rts
                     
 L9b4d               lda #$01
-                    sta $0100
+                    sta stack
                     lda #$82
                     jsr osbyte
-                    stx $0103
-                    sty $0104
+                    stx stack + 3
+                    sty stack + 4
                     lda #$10
-                    sta $0101
+                    sta stack + 1
                     ldy #$01
-                    sty $0102
+                    sty stack + 2
                     lda #$06
                     ldx #0
                     lda #$06
                     ldx #0
-                    stx $0105
-                    stx $0106
-                    stx $0107
-                    stx $0108
+                    stx stack + 5
+                    stx stack + 6
+                    stx stack + 7
+                    stx stack + 8
                     +push16 acc2
                     jsr osgbpb
                     +pop16 acc2
-                    lda $0111
+                    lda stack + 17
                     and #$03
                     rts
 
@@ -3477,7 +3487,7 @@ L9d5d               jsr get_put_parms
                     jsr prstr
                     !text "I/O", -1, "result", -1, "=", -1, 0
 
-                    lda $010a
+                    lda stack + 10
                     sta acc0
                     sty acc0 + 1
                     ldx #0
@@ -3504,7 +3514,7 @@ c_vdu               ldx #0
                     jsr parse_bytes
 -                   dex
                     bmi +
-                    lda $0100, y
+                    lda stack, y
                     jsr oswrch
                     iny
                     bne -
@@ -3668,7 +3678,7 @@ symtab              !word oswrch
                     !text "rdch", 'v' + $80
                     !word rdchv + 1
                     !text "rdchv+", '1' + $80
-                    !word $0100 
+                    !word stack 
                     !text "stac", 'k' + $80
                     !word L8000 
                     !text "lan", 'g' + $80
