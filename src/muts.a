@@ -1213,9 +1213,10 @@ try_poke            ldy #0
                     sta (ptr0), y
                     cmp (ptr0), y
                     beq +
+
                     jsr throw
-                    ; "Read only memory"
                     !text $a7, "Read only memory", 0
+
 +                   +inc16 ptr0
                     inx
                     rts
@@ -1281,7 +1282,7 @@ enable_printer      lda #$0f
                     ldx #0
                     ldy #0
                     jsr osbyte
-                    lda #$02
+                    lda #2
                     jsr oswrch
                     jsr skip_space
                     cmp #'*'
