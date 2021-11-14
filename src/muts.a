@@ -867,12 +867,7 @@ divmod              +push16 acc0
                     lda ptr0 + 1
                     sbc acc0 + 1
                     bcc +
-                    lda ptr0
-                    sbc acc0
-                    sta ptr0
-                    lda ptr0 + 1
-                    sbc acc0 + 1
-                    sta ptr0 + 1
+                    +sbc16 ptr0, ptr0, acc0
                     inc acc2
 +                   dey
                     bne -
@@ -2133,7 +2128,7 @@ L91db               lda $0600
 L91e9               sta ptr0
                     stx ptr0 + 1
                     sec
-                    +sbc16 ptr0, ptr0, acc2
+                    +sbc16 ptr0, ptr0, acc2 ; HERE
                     jsr hex_prefix
                     jsr print_or_page
 L9200               jsr dis_op
