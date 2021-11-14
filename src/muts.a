@@ -90,6 +90,21 @@
 +
 }
 
+; FIXME reproduces bug in original code
+!macro dec16bug addr {
+  lda addr + 1
+  bne +
+  dec addr + 1
++ dec addr
+}
+
+!macro dec16 addr {
+  lda addr
+  bne +
+  dec addr + 1
++ dec addr
+}
+
 !macro adc16 dst, lhs, rhs {
   lda lhs
   adc rhs
@@ -857,10 +872,7 @@ eval_d              jsr eval_c
                     sta acc0_lo
                     rts
                     
-unget               lda cmdline_hi
-                    bne L8759
-                    dec cmdline_hi
-L8759               dec cmdline_lo
+unget               +dec16bug cmdline_lo
                     rts
                     
 eval                php
@@ -1604,14 +1616,8 @@ L8d48               ldy #0
                     +inc16 acc0_lo
 L8d74               lda (acc2_lo), y
                     sta (ptr0_lo), y
-                    lda acc2_lo
-                    bne L8d7e
-                    dec acc2_hi
-L8d7e               dec acc2_lo
-                    lda ptr0_lo
-                    bne L8d86
-                    dec ptr0_hi
-L8d86               dec ptr0_lo
+                    +dec16 acc2_lo
+                    +dec16 ptr0_lo
                     jsr countdown
                     bne L8d74
                     rts
@@ -1629,10 +1635,7 @@ L8d8e               lda (acc2_lo), y
                     
 L8dac               rts
                     
-countdown           lda acc0_lo
-                    bne L8db3
-                    dec acc0_hi
-L8db3               dec acc0_lo
+countdown           +dec16 acc0_lo
                     lda acc0_lo
                     ora acc0_hi
                     rts
@@ -3601,10 +3604,7 @@ L9de7               iny
                     bne L9dee
                     inc $b7
                     inc acc2_hi
-L9dee               lda acc0_lo
-                    bne L9df4
-                    dec acc0_hi
-L9df4               dec acc0_lo
+L9dee               +dec16 acc0_lo
                     lda acc0_lo
                     ora acc0_hi
                     bne L9dd4
