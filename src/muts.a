@@ -131,6 +131,13 @@ key_sh_up = $a3
   sta dst + 1
 }
 
+!macro cmp16 lhs, rhs {
+  lda lhs
+  cmp rhs
+  lda lhs + 1
+  sbc rhs + 1
+}
+
 ; Add A to 16 bit reg
 !macro adca16 dst {
   adc dst
@@ -862,10 +869,7 @@ divmod              +push16 acc0
                     rol acc2 + 1
                     rol ptr0
                     rol ptr0 + 1
-                    lda ptr0
-                    cmp acc0
-                    lda ptr0 + 1
-                    sbc acc0 + 1
+                    +cmp16 ptr0, acc0
                     bcc +
                     +sbc16 ptr0, ptr0, acc0
                     inc acc2
@@ -1159,10 +1163,7 @@ L893e               lda stack, x
 L8958               inc acc2
                     bne L895e
                     inc acc2 + 1
-L895e               lda acc2
-                    cmp acc0
-                    lda acc2 + 1
-                    sbc acc0 + 1
+L895e               +cmp16 acc2, acc0
                     bcc L893a
                     jmp newline
                     
@@ -1615,10 +1616,7 @@ L8d35               lda acc0
                     bne L8d48
                     jsr check_eol
 L8d48               ldy #0
-                    lda ptr0
-                    cmp acc2
-                    lda ptr0 + 1
-                    sbc acc2 + 1
+                    +cmp16 ptr0, acc2
                     bcc L8d8e
                     clc
                     +adc16 acc2, acc2, acc0
@@ -1877,10 +1875,7 @@ L8ff2               pla
                     tax
                     jsr dump_line
                     jsr newline
-                    lda acc2
-                    cmp acc0
-                    lda acc2 + 1
-                    sbc acc0 + 1
+                    +cmp16 acc2, acc0
                     bcc L8ff2
                     pla
                     jmp reset_terminal
@@ -2132,10 +2127,7 @@ L91e9               sta ptr0
                     jsr hex_prefix
                     jsr print_or_page
 L9200               jsr dis_op
-                    lda acc2
-                    cmp acc0
-                    lda acc2 + 1
-                    sbc acc0 + 1
+                    +cmp16 acc2, acc0
                     bcc L9200
                     jmp reset_terminal
                     
@@ -3199,10 +3191,7 @@ L9a85               +push16 acc2
                     sta acc2
                     bcc L9a9d
                     inc acc2 + 1
-L9a9d               lda acc2
-                    cmp acc0
-                    lda acc2 + 1
-                    sbc acc0 + 1
+L9a9d               +cmp16 acc2, acc0
                     bcc L9b00
 L9aa7               jsr osrdch
                     bcc L9ab6
