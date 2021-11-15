@@ -4,7 +4,8 @@
   "description": "HCCS M-UTS ROM",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest",
+    "tdd": "jest --watch"
   },
   "repository": {
     "type": "git",
@@ -41,6 +42,10 @@
     "endOfLine": "lf"
   },
   "dependencies": {
+    "app-module-path": "^2.2.0",
     "lodash": "^4.17.21"
+  },
+  "devDependencies": {
+    "jest": "^27.3.1"
   }
 }
