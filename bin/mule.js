@@ -24,13 +24,14 @@ const exs = [
   "3 + -",
   "A + 1",
   "Math.floor(.x / 3)",
-  "Math.min(:rom, 0x800)",
+  "Math.min(:rom, 0x8000)",
   `"\\""`,
   "`:x ${x}`",
   "A + 2 | A - 3",
   "!(A <= 3 && b !== $80)",
   "A < 10 ? B / 2 : C & 0xFFDD",
-  "terminate('Hello')"
+  "terminate('Hello')",
+  "terminate('Hello', ...args)"
   // "terminate('Hello')(1)"
   // "foo({.name, ...rest})"
 ];
@@ -39,5 +40,5 @@ for (const ex of exs) {
   const comp = compileExpression(ex);
   console.log(`== ${ex} ==`);
   // console.log(JSON.stringify(comp, null, 2));
-  console.log(`${ex} => ${comp.join("")}`);
+  console.log(`${ex} => ${comp.join(" ")}`);
 }
