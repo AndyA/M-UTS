@@ -43,6 +43,8 @@
   },
   "dependencies": {
     "app-module-path": "^2.2.0",
+    "esprima": "^4.0.1",
+    "generate-function": "^2.3.1",
     "lodash": "^4.17.21"
   },
   "devDependencies": {
