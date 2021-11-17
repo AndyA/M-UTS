@@ -1,20 +1,22 @@
-const toks = [
-  [{ tag: "string", value: "Hello" }],
-  [
-    { tag: "string", value: "Hello, " },
-    { tag: "string", value: "World" }
-  ],
-  [
-    { tag: "string", value: "Hello" },
-    { tag: "string", value: ", " },
-    { tag: "string", value: "World" }
-  ]
+require("../use");
+const { makeAdModeParser } = require("lib/6502/assembler/adMode");
+
+const modes = [
+  "impl",
+  "(zpg,X)",
+  "zpg",
+  "#",
+  "A",
+  "abs",
+  "rel",
+  "(zpg),Y",
+  "zpg,X",
+  "abs,Y",
+  "abs,X",
+  "zpg,Y",
+  "(ind)"
 ];
 
-const foldAppend = toks =>
-  toks.reduce((a, b) => ({ tag: "+", tx: "+", children: [a, b] }));
-
-for (const seq of toks) {
-  const ast = foldAppend(seq);
-  console.log(JSON.stringify(ast, null, 2));
-}
+const p = makeAdModeParser(modes);
+console.log(JSON.stringify(p, null, 2));
+console.log(p);

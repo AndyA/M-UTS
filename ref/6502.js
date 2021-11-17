@@ -109,7 +109,7 @@ module.exports = [
   "ADC #",
   "ROR A",
   null,
-  "JMP ind",
+  "JMP (ind)",
   "ADC abs",
   "ROR abs",
   null,

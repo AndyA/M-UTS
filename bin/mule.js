@@ -22,16 +22,16 @@ const exs = [
   "9 * $ff / 2 + .bee",
   ":A / 2 + foo",
   "3 + -",
-  "A + 1",
+  "AA + 1",
   "Math.floor(.x / 3)",
   "Math.min(:rom, 0x8000)",
   `"\\""`,
   "`:x ${x}`",
   "`:x ${x} OK?`",
   "':x ${x}'",
-  "A + 2 | A - 3",
+  ":A + 2 | :A - 3",
   "!(A <= 3 && b !== $80)",
-  "A < 10 ? B / 2 : C & 0xFFDD",
+  ":A < 10 ? B / 2 : C & 0xFFDD",
   "terminate('Hello')",
   "terminate('Hello', ...args)",
   "Math.floor(:x / 2) <> 0",
@@ -41,7 +41,7 @@ const exs = [
 
 for (const ex of exs) {
   console.log(`\n== COMPILE "${ex}" ==`);
-  const comp = asm.compile(ex);
+  const comp = asm.compileMule(ex);
   console.log(JSON.stringify(comp, null, 2));
   // console.log(`${ex} => ${comp.join(" ")}`);
 }
