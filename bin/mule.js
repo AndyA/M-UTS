@@ -34,14 +34,14 @@ const exs = [
   "A < 10 ? B / 2 : C & 0xFFDD",
   "terminate('Hello')",
   "terminate('Hello', ...args)",
-  "Math.floor(:x / 2) <> 0"
-  // "terminate('Hello')(1)"
+  "Math.floor(:x / 2) <> 0",
+  "terminate('Hello')(1)"
   // "foo({.name, ...rest})"
 ];
 
 for (const ex of exs) {
-  const comp = compileExpression(ex);
-  console.log(`\n== ${ex} ==`);
-  // console.log(JSON.stringify(comp, null, 2));
-  console.log(`${ex} => ${comp.join(" ")}`);
+  console.log(`\n== COMPILE "${ex}" ==`);
+  const comp = asm.compile(ex);
+  console.log(JSON.stringify(comp, null, 2));
+  // console.log(`${ex} => ${comp.join(" ")}`);
 }
