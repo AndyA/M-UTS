@@ -12,6 +12,8 @@ const {
 // const cpu = new MOS6502(syntax);
 // console.log(MOS6502.statusC);
 
+// const cleanSource = str => JSON.stringify(str).replace(/^"(.*)"$/, "$1");
+
 const asm = new MOS6502Assembler(syntax);
 
 if (0) {
@@ -21,23 +23,34 @@ if (0) {
 
 if (1) {
   const source = [
-    "showChars  LDX #'!'   ; print ! to ~",
+    "!addr oswrch   = $ffee",
+    "*              = $8000",
+    "showChars      LDX #'!'   ; print ! to ~",
     "",
-    "-          TXA",
-    "           JSR 0xffee ; OSWRCH",
-    "           INX",
-    "           CPX #127",
-    "           BCC -",
+    "-              TXA",
+    "               JSR oswrch ; OSWRCH",
+    "               INX",
+    "               CPX #'~' + 1",
+    "               BCC -",
     "",
-    "           RTS        ; all done",
+    "               RTS        ; all done",
     "",
-    "-          JSR 0xffee ; OSWRCH",
-    "           INY",
-    "prStr      LDA ($70), y",
-    "           BNE -",
-    ""
+    "-              JSR oswrch ; OSWRCH",
+    "               INY",
+    "prStr          LDA ($70), y",
+    "               BNE -",
+    "               RTS",
+    "",
+    ':msg           +msg "Hello, World", 10, 0',
+    "               !byte 1, 2, 3, 4",
+    ":govec         JMP ($020e)"
   ];
 
   const ast = asm.compileSource(source, "mule3.a");
-  console.log(`module.exports = ${JSON.stringify(ast)};`);
+
+  const comment = ["AST for this code:", "", ...source]
+    .map(ln => `// ${ln}`)
+    .join("\n");
+
+  console.log(`${comment}\n\nmodule.exports = ${JSON.stringify(ast)};`);
 }

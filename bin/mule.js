@@ -21,7 +21,9 @@ const exs = [
   "#>:romBase",
   "(base * (2 + n), x)",
   "-",
-  "-3"
+  "-3",
+  // "name.length" // props are a problem
+  "oswrch"
   // "-0b111",
   // "< 0xffee",
   // "> $ffee",
