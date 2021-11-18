@@ -54,7 +54,7 @@ module.exports = {
         {
           tag: "assign",
           chilren: [
-            { tag: "sym", scope: "pc" },
+            { tag: "sym", scope: "internal", value: "pc" },
             { tag: "number", value: 32768 }
           ]
         }
