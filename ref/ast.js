@@ -38,7 +38,7 @@ module.exports = {
             {
               tag: "assign",
               chilren: [
-                { tag: "sym.global", value: "oswrch" },
+                { tag: "sym", scope: "global", value: "oswrch" },
                 { tag: "number", value: 65518 }
               ]
             }
@@ -53,7 +53,10 @@ module.exports = {
       children: [
         {
           tag: "assign",
-          chilren: [{ tag: "sym.pc" }, { tag: "number", value: 32768 }]
+          chilren: [
+            { tag: "sym", scope: "pc" },
+            { tag: "number", value: 32768 }
+          ]
         }
       ]
     },
@@ -62,7 +65,7 @@ module.exports = {
       file: "mule3.a",
       ln: 3,
       children: [
-        { tag: "sym.global", value: "showChars" },
+        { tag: "sym", scope: "global", value: "showChars" },
         {
           tag: "opcode",
           value: "LDX",
@@ -74,7 +77,7 @@ module.exports = {
             }
           ]
         },
-        { tag: "comment", value: "; print ! to ~" }
+        { tag: "comment", value: " print ! to ~" }
       ]
     },
     {
@@ -82,7 +85,7 @@ module.exports = {
       file: "mule3.a",
       ln: 5,
       children: [
-        { tag: "sym.relative", value: "-" },
+        { tag: "sym", scope: "relative", value: "-" },
         {
           tag: "opcode",
           value: "TXA",
@@ -102,11 +105,11 @@ module.exports = {
             {
               tag: "op.arg",
               value: ["abs"],
-              children: [{ tag: "sym.global", value: "oswrch" }]
+              children: [{ tag: "sym", scope: "global", value: "oswrch" }]
             }
           ]
         },
-        { tag: "comment", value: "; OSWRCH" }
+        { tag: "comment", value: " OSWRCH" }
       ]
     },
     {
@@ -159,7 +162,7 @@ module.exports = {
             {
               tag: "op.arg",
               value: ["rel"],
-              children: [{ tag: "sym.relative", value: "-" }]
+              children: [{ tag: "sym", scope: "relative", value: "-" }]
             }
           ]
         }
@@ -175,7 +178,7 @@ module.exports = {
           value: "RTS",
           children: [{ tag: "op.arg", value: ["impl"] }]
         },
-        { tag: "comment", value: "; all done" }
+        { tag: "comment", value: " all done" }
       ]
     },
     {
@@ -183,7 +186,7 @@ module.exports = {
       file: "mule3.a",
       ln: 13,
       children: [
-        { tag: "sym.relative", value: "-" },
+        { tag: "sym", scope: "relative", value: "-" },
         {
           tag: "opcode",
           value: "JSR",
@@ -191,11 +194,11 @@ module.exports = {
             {
               tag: "op.arg",
               value: ["abs"],
-              children: [{ tag: "sym.global", value: "oswrch" }]
+              children: [{ tag: "sym", scope: "global", value: "oswrch" }]
             }
           ]
         },
-        { tag: "comment", value: "; OSWRCH" }
+        { tag: "comment", value: " OSWRCH" }
       ]
     },
     {
@@ -215,7 +218,7 @@ module.exports = {
       file: "mule3.a",
       ln: 15,
       children: [
-        { tag: "sym.global", value: "prStr" },
+        { tag: "sym", scope: "global", value: "prStr" },
         {
           tag: "opcode",
           value: "LDA",
@@ -241,7 +244,7 @@ module.exports = {
             {
               tag: "op.arg",
               value: ["rel"],
-              children: [{ tag: "sym.relative", value: "-" }]
+              children: [{ tag: "sym", scope: "relative", value: "-" }]
             }
           ]
         }
@@ -264,9 +267,9 @@ module.exports = {
       file: "mule3.a",
       ln: 19,
       children: [
-        { tag: "sym.global", value: "msg" },
+        { tag: "sym", scope: "global", value: "msg" },
         {
-          tag: "macroCall",
+          tag: "macro.call",
           value: "MSG",
           children: [
             { tag: "string", value: "Hello, World" },
@@ -298,7 +301,7 @@ module.exports = {
       file: "mule3.a",
       ln: 21,
       children: [
-        { tag: "sym.global", value: "govec" },
+        { tag: "sym", scope: "global", value: "govec" },
         {
           tag: "opcode",
           value: "JMP",
