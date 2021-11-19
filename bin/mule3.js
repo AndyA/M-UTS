@@ -1,5 +1,5 @@
 require("../use");
-// const _ = require("lodash");
+const _ = require("lodash");
 const syntax = require("ref/6502");
 
 const { MOS6502 } = require("lib/6502/cpu");
@@ -22,10 +22,9 @@ if (0) {
 }
 
 if (1) {
-  const source = [
+  const sourceLines = [
     "               !macro print .str { ; print a string",
     "               }",
-    "",
     "!addr oswrch   = $ffee",
     "*              = $8000",
     "!addr HWM      = Math.min(* + $2000, $c000)",
@@ -33,33 +32,43 @@ if (1) {
     'symName        = "aSymbol"',
     'list           = [oswrch, "Hello", [1, 2, 3]]',
     "?(symName)     = ?(symName) + 1 + .a[msg_len - 1]",
-    "",
+    'term           = debug ? " (debug)" : " (production)"',
     "showChars      LDX #'!'   ; print ! to ~",
-    "",
     "-              TXA",
     "               JSR oswrch ; OSWRCH",
     "               INX",
     "               CPX #'~' + 1",
     "               BCC -",
-    "",
     "               RTS        ; all done",
-    "",
     "-              JSR oswrch ; OSWRCH",
     "               INY",
     "prStr          LDA ($70), y",
     "               BNE -",
     "               RTS",
-    "",
     ':msg           +msg "Hello, World", 10, 0',
+    "hello          LDA #<:msg",
+    "               STA $70",
+    "               LDA #>:msg",
+    "               STA $71",
+    "               BNE prStr",
     "               !byte 1, 2, 3, 4",
     ":govec         JMP ($020e)"
-  ];
+  ].map(s => s.replace(/\s+/g, " "));
 
-  const ast = asm.compileSource(source, "mule3.a");
+  const ast = asm.compileSource(sourceLines, "mule3.a");
 
-  const comment = ["AST for this code:", "", ...source]
-    .map(ln => `// ${ln}`)
-    .join("\n");
+  const astLines = ast.children.map(ln => ln.children);
+  const tests = _.zip(sourceLines.map(_.trim), astLines).map(
+    ([source, ast]) => ({
+      source,
+      ast
+    })
+  );
+  console.log(JSON.stringify(tests, null, 2));
 
-  console.log(`${comment}\n\nmodule.exports = ${JSON.stringify(ast)};`);
+  // const comment = ["AST for this code:", "", ...source]
+  //   .map(ln => `// ${ln}`)
+  //   .join("\n");
+
+  // console.log(`${comment}\n\nmodule.exports = ${JSON.stringify(ast)};`);
 }
