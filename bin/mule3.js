@@ -23,6 +23,9 @@ if (0) {
 
 if (1) {
   const source = [
+    "               !macro print .str { ; print a string",
+    "               }",
+    "",
     "!addr oswrch   = $ffee",
     "*              = $8000",
     "showChars      LDX #'!'   ; print ! to ~",
