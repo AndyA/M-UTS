@@ -408,8 +408,7 @@ h_base              !text "<addr", '>' + $80
 h_calc              !text "<expr", '>' + $80
 h_change            !text "<addr> <byte string", '>' + $80
 h_clr               !text "(<addr>", ')' + $80
-h_dis               !text "<strt>(..<end>) (H<prefix>"
-                    !text ") (P,L", ')' + $80
+h_dis               !text "<strt>(..<end>) (H<prefix>) (P,L", ')' + $80
 h_edit              !text "<addr", '>' + $80
 h_flist             !text "(<number>", ')' + $80
 h_form              !text "<tracks> (<drv>", ')' + $80
