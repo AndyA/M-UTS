@@ -15,15 +15,15 @@ const {
 const asm = new MOS6502Assembler(syntax);
 
 const exs = [
-  "($70), y",
-  "(0x020e)",
-  "#<:romBase",
-  "#>:romBase",
-  "(base * (2 + n), x)",
-  "-",
-  "-3",
+  // "($70), y",
+  // "(0x020e)",
+  // "#<:romBase",
+  // "#>:romBase",
+  // "(base * (2 + n), x)",
+  // "-",
+  // "-3",
   // "name.length" // props are a problem
-  "oswrch"
+  // "oswrch"
   // "-0b111",
   // "< 0xffee",
   // "> $ffee",
@@ -31,7 +31,10 @@ const exs = [
   // ":A / 2 + foo",
   // "3 + -",
   // "AA + 1",
-  // "Math.floor(.x / 3)",
+  // "Math",
+  "Math(1)",
+  "Math.floor",
+  "Math.floor(.x / 3)"
   // "Math.min(:rom, 0x8000)",
   // `"\\""`,
   // "`:x ${x}`",
