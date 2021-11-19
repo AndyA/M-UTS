@@ -8,6 +8,7 @@
 // !addr HWM      = Math.min(* + $2000, $c000)
 // msg_len        = ("Hello").length
 // symName        = "aSymbol"
+// list           = [oswrch, "Hello", [1, 2, 3]]
 // ?(symName)     = ?(symName) + 1 + .a[msg_len - 1]
 //
 // showChars      LDX #'!'   ; print ! to ~
@@ -168,6 +169,34 @@ module.exports = {
         {
           tag: "assign",
           chilren: [
+            { tag: "sym", value: "list" },
+            {
+              tag: "list",
+              chilren: [
+                { tag: "sym", value: "oswrch" },
+                { tag: "string", value: "Hello" },
+                {
+                  tag: "list",
+                  chilren: [
+                    { tag: "number", value: 1 },
+                    { tag: "number", value: 2 },
+                    { tag: "number", value: 3 }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      tag: "source.line",
+      file: "mule3.a",
+      ln: 10,
+      children: [
+        {
+          tag: "assign",
+          chilren: [
             { tag: "sym", children: [{ tag: "sym", value: "symName" }] },
             {
               tag: "+",
@@ -204,7 +233,7 @@ module.exports = {
     {
       tag: "source.line",
       file: "mule3.a",
-      ln: 11,
+      ln: 12,
       children: [
         { tag: "sym", value: "showChars" },
         {
@@ -224,7 +253,7 @@ module.exports = {
     {
       tag: "source.line",
       file: "mule3.a",
-      ln: 13,
+      ln: 14,
       children: [
         { tag: "sym", value: "-" },
         {
@@ -237,7 +266,7 @@ module.exports = {
     {
       tag: "source.line",
       file: "mule3.a",
-      ln: 14,
+      ln: 15,
       children: [
         {
           tag: "opcode",
@@ -256,7 +285,7 @@ module.exports = {
     {
       tag: "source.line",
       file: "mule3.a",
-      ln: 15,
+      ln: 16,
       children: [
         {
           tag: "opcode",
@@ -268,7 +297,7 @@ module.exports = {
     {
       tag: "source.line",
       file: "mule3.a",
-      ln: 16,
+      ln: 17,
       children: [
         {
           tag: "opcode",
@@ -294,7 +323,7 @@ module.exports = {
     {
       tag: "source.line",
       file: "mule3.a",
-      ln: 17,
+      ln: 18,
       children: [
         {
           tag: "opcode",
@@ -312,7 +341,7 @@ module.exports = {
     {
       tag: "source.line",
       file: "mule3.a",
-      ln: 19,
+      ln: 20,
       children: [
         {
           tag: "opcode",
@@ -325,7 +354,7 @@ module.exports = {
     {
       tag: "source.line",
       file: "mule3.a",
-      ln: 21,
+      ln: 22,
       children: [
         { tag: "sym", value: "-" },
         {
@@ -345,7 +374,7 @@ module.exports = {
     {
       tag: "source.line",
       file: "mule3.a",
-      ln: 22,
+      ln: 23,
       children: [
         {
           tag: "opcode",
@@ -357,7 +386,7 @@ module.exports = {
     {
       tag: "source.line",
       file: "mule3.a",
-      ln: 23,
+      ln: 24,
       children: [
         { tag: "sym", value: "prStr" },
         {
@@ -376,7 +405,7 @@ module.exports = {
     {
       tag: "source.line",
       file: "mule3.a",
-      ln: 24,
+      ln: 25,
       children: [
         {
           tag: "opcode",
@@ -394,7 +423,7 @@ module.exports = {
     {
       tag: "source.line",
       file: "mule3.a",
-      ln: 25,
+      ln: 26,
       children: [
         {
           tag: "opcode",
@@ -406,7 +435,7 @@ module.exports = {
     {
       tag: "source.line",
       file: "mule3.a",
-      ln: 27,
+      ln: 28,
       children: [
         { tag: "sym", value: "msg" },
         {
@@ -423,7 +452,7 @@ module.exports = {
     {
       tag: "source.line",
       file: "mule3.a",
-      ln: 28,
+      ln: 29,
       children: [
         {
           tag: "directive",
@@ -440,7 +469,7 @@ module.exports = {
     {
       tag: "source.line",
       file: "mule3.a",
-      ln: 29,
+      ln: 30,
       children: [
         { tag: "sym", value: "govec" },
         {
