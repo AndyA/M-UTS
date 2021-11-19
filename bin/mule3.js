@@ -31,7 +31,7 @@ if (1) {
     "!addr HWM      = Math.min(* + $2000, $c000)",
     'msg_len        = ("Hello").length',
     'symName        = "aSymbol"',
-    "?(symName)     = ?(symName) + 1",
+    "?(symName)     = ?(symName) + 1 + .a[msg_len - 1]",
     "",
     "showChars      LDX #'!'   ; print ! to ~",
     "",

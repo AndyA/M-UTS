@@ -8,7 +8,7 @@
 // !addr HWM      = Math.min(* + $2000, $c000)
 // msg_len        = ("Hello").length
 // symName        = "aSymbol"
-// ?(symName)     = ?(symName) + 1
+// ?(symName)     = ?(symName) + 1 + .a[msg_len - 1]
 //
 // showChars      LDX #'!'   ; print ! to ~
 //
@@ -172,8 +172,29 @@ module.exports = {
             {
               tag: "+",
               children: [
-                { tag: "sym", children: [{ tag: "sym", value: "symName" }] },
-                { tag: "number", value: 1 }
+                {
+                  tag: "+",
+                  children: [
+                    {
+                      tag: "sym",
+                      children: [{ tag: "sym", value: "symName" }]
+                    },
+                    { tag: "number", value: 1 }
+                  ]
+                },
+                {
+                  tag: "index",
+                  children: [
+                    { tag: "sym", value: ".a" },
+                    {
+                      tag: "-",
+                      children: [
+                        { tag: "sym", value: "msg_len" },
+                        { tag: "number", value: 1 }
+                      ]
+                    }
+                  ]
+                }
               ]
             }
           ]
