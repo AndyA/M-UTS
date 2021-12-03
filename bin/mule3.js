@@ -1,25 +1,21 @@
 require("../use");
 
-class Symbol {
-  constructor(name, value, hooks = {}) {
-    this.name = name;
-    this.hooks = hooks;
-    this.set(value);
-  }
+const {
+  SymbolsGlobal,
+  SymbolsLocal,
+  SymbolsRelative
+} = require("lib/6502/assembler/symbols");
 
-  set(value) {
-    const { onChange } = this.hooks;
-    if (onChange) onChange(value, this.value);
-    this.value = value;
-  }
+const globals = new SymbolsRelative(new SymbolsGlobal());
+const syms = new SymbolsLocal(globals);
 
-  valueOf() {
-    const { onRead } = this.hooks;
-    if (onRead) onRead(this.values);
-    return this.value;
-  }
-}
+syms.set("oswrch", 0xffee);
+syms.set("-", 0x7fee);
+syms.set("*", 0x8000);
+syms.set("+", 0x8003);
+syms.set("+", 0x8010);
 
-// const sym = new Symbol(123);
-const sym = new Symbol("message", "Hello", { onChange: console.log });
-console.log(sym + 999);
+console.log(JSON.stringify(syms, null, 2));
+
+const sym = syms.resolve("+");
+console.log(JSON.stringify(sym + 0, null, 2));
