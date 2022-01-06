@@ -54,51 +54,44 @@ OPT pass
         ADC #0
 .ab0    RTS
 
+\ A => AY = A * A
 .square STA tmp + 0
         STA tmp + 1
-        LDA #0
-        STA tmp + 2
-        STA tmp + 3
-        LDY #8
-.sq1    LSR tmp + 0
-        BCC sq2
+        LDY #0
+        STY tmp + 2
+        JSR squ1
+.squ1   JSR squ2
+.squ2   JSR squ3
+.squ3   LSR tmp + 0
+        BCC squ4
         CLC
         ADC tmp + 1
         PHA
-        LDA tmp + 3
+        TYA
         ADC tmp + 2
-        STA tmp + 3
+        TAY
         PLA
-.sq2    ASL tmp + 1
+.squ4   ASL tmp + 1
         ROL tmp + 2
-        DEY
-        BNE sq1
-        LDY tmp + 3
         RTS
 
-.getpt  JSR rand
-        AND #31
-        CMP #25
-        BCS getpt
-        TAY
-.gp1    JSR rand
+.mkpt   JSR rand
         AND #63
         CMP #40
-        BCS gp1
-        RTS
-
-.mkpt   JSR getpt
+        BCS mkpt
         STA r0 + rx, X
-        STY r0 + ry, X
-
-        \ Calc cartesian distance from centre
-        SEC
+        SEC              \ Calc DX * DX
         SBC cx
         JSR abs
         JSR square       \ C clear
         STA tmp + 5
         STY tmp + 6
-        LDA r0 + ry, X
+
+.mp1    JSR rand
+        AND #31
+        CMP #25
+        BCS mp1
+        STA r0 + ry, X
         SEC
         SBC cy           \ =12, C clear from above
         JSR abs
