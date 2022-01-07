@@ -30,23 +30,20 @@ OPT pass
 
 .chars  EQUS ch$
 
-.init   DEC seed + 3
+.init   DEC seed + 3         \ make seed non-zero
 
-.rand   LDA seed + 0
-        JSR rbit8
-        STA seed + 0
-        RTS
-
-.rbit8  JSR rbit4
-.rbit4  JSR rbit2
-.rbit2  JSR rbit
-.rbit   ASL A
+.rand   JSR ra1
+.ra1    JSR ra2
+.ra2    JSR ra3
+.ra3    LDA seed + 0
+        ASL A
         ROL seed + 1
         ROL seed + 2
         ROL seed + 3
-        BCC rb1
+        BCC ra4
         EOR #&F5
-.rb1    RTS
+.ra4    STA seed + 0
+        RTS
 
 .abs    CMP #0
         BPL ab0
