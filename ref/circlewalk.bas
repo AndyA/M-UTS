@@ -96,7 +96,7 @@ OPT pass
         SBC cy           \ =12, C clear from above
         JSR abs
         STA tmp + 0      \ DY *= 1.5 to flatten circle
-        ASL tmp + 0
+        ASL A
         ADC tmp + 0
         LSR A
         JSR square       \ C clear

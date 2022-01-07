@@ -1,21 +1,21 @@
 require("../use");
 
-const {
-  SymbolsGlobal,
-  SymbolsLocal,
-  SymbolsRelative
-} = require("lib/6502/assembler/symbols");
+const { RT } = require("lib/6502/assembler/runTime");
 
-const globals = new SymbolsRelative(new SymbolsGlobal());
-const syms = new SymbolsLocal(globals);
+const rt = new RT();
 
-syms.set("oswrch", 0xffee);
-syms.set("-", 0x7fee);
-syms.set("*", 0x8000);
-syms.set("+", 0x8003);
-syms.set("+", 0x8010);
+rt.setSymbol("oswrch", 0xffee);
+rt.setSymbol("-", 0x7fee);
+// rt.setSymbol("*", 0x8000);
+rt.setSymbol("+", 0x8010);
+rt.setSymbol("-", 0x8000);
+rt.setSymbol("+", 0x8000);
 
-console.log(JSON.stringify(syms, null, 2));
+// console.log(JSON.stringify(rt.symtab, null, 2));
 
-const sym = syms.resolve("+");
-console.log(JSON.stringify(sym + 0, null, 2));
+const syms = ["-", "+", "oswrch", "*"];
+
+for (const name of syms) {
+  const sym = rt.symtab.resolve(name);
+  console.log(`${name} = 0x${Number(sym).toString(16)}`);
+}
