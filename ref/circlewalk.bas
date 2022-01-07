@@ -84,8 +84,8 @@ OPT pass
         SBC cx
         JSR abs
         JSR square       \ C clear
-        STA tmp + 5
-        STY tmp + 6
+        STA tmp + 3
+        STY tmp + 4
 
 .mp1    JSR rand
         AND #31
@@ -100,34 +100,31 @@ OPT pass
         ADC tmp + 0
         LSR A
         JSR square       \ C clear
-        ADC tmp + 5
+        ADC tmp + 3
         STA r0 + rd, X
         TYA
-        ADC tmp + 6
+        ADC tmp + 4
         STA r0 + rd + 1, X
 
         \ Calculate character cell address &7C00 + X + Y * 40
-.cell   LDA r0 + rx, X
-        STA r0 + ra, X     \ init lo byte is X
-        LDA #scr DIV 256
-        STA r0 + ra + 1, X \ hi byte of &7C00
-        LDA #0             \ multiply Y by 40 and add to address
-        STA tmp + 5
-        LDA r0 + ry, X
-        ASL A             \ max 24 * 8 = 192, no overflow, C clear
+.cell   LDA r0 + ry, X
+        ASL A
         ASL A
         ASL A
         PHA
-        JSR ce1
+        ADC r0 + rx, X
+        STA tmp + 0
+        LDA #0
+        STA tmp + 1
         PLA
         ASL A
-        ROL tmp + 5
+        ROL tmp + 1
         ASL A
-        ROL tmp + 5        \ C clear
-.ce1    ADC r0 + ra, X
+        ROL tmp + 1
+        ADC tmp + 0
         STA r0 + ra, X
-        LDA tmp + 5
-        ADC r0 + ra + 1, X
+        LDA tmp + 1
+        ADC #scr DIV 256
         STA r0 + ra + 1, X
         RTS
 
