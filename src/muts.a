@@ -1,4 +1,5 @@
 !to "m-uts.rom", plain
+!sl "m-uts.sym"
 
 * = $8000
 

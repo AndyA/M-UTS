@@ -1,0 +1,9 @@
+[project]
+name = "m-uts"
+version = "0.1.0"
+description = "HCCS M-UTS for the BBC Micro (1984)"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "py65emu>=0.1.0",
+]
