@@ -3,7 +3,7 @@ import json
 import re
 from dataclasses import dataclass, field
 from functools import cached_property
-from typing import Callable
+from typing import Callable, Optional
 
 from py65emu.cpu import CPU
 from py65emu.mmu import MMU, ReadOnlyError
@@ -13,6 +13,7 @@ from py65emu.mmu import MMU, ReadOnlyError
 class MMUDelta:
     pre: dict[int, int]
     post: dict[int, int]
+    stack: set[int]
 
     def _changed(self, addr: int) -> bool:
         return addr in self.pre and self.pre[addr] != self.post[addr]
@@ -22,42 +23,47 @@ class MMUDelta:
         return {addr for addr in self.post if self._changed(addr)}
 
     @cached_property
-    def stack_changes(self) -> set[int]:
-        return {addr for addr in self.changes if 0x100 <= addr < 0x200}
-
-    @cached_property
     def stack_used(self) -> int:
-        sw = self.stack_changes
+        sw = self.stack
         return max(sw) - min(sw) + 1 if sw else 0
-
-    @cached_property
-    def mem_changes(self) -> set[int]:
-        return self.changes - self.stack_changes
 
 
 class MutsMMU(MMU):
     pre: dict[int, int]
     post: dict[int, int]
+    stack: set[int]
+    machine: "MutsMachine"
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, machine: "MutsMachine", *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.machine = machine
         self.clear()
 
     def clear(self):
         self.pre = dict()
         self.post = dict()
+        self.stack = set()
 
     @property
     def delta(self) -> MMUDelta:
-        delta = MMUDelta(pre=self.pre, post=self.post)
-        self.clear()
-        return delta
+        return MMUDelta(
+            pre=self.pre.copy(),
+            post=self.post.copy(),
+            stack=self.stack.copy(),
+        )
+
+    def inStack(self, addr: int) -> bool:
+        return 0x100 <= addr < 0x200 and (addr & 0xFF) > self.machine.c.r.s
 
     def write(self, addr: int, value: int) -> None:
-        if addr not in self.pre:
-            self.pre[addr] = self.read(addr)
-        self.post[addr] = value
-        # print(f"write {addr:04x}: {value:02x}")
+        if self.inStack(addr):
+            print(f"write {addr:04x}: {value:02x} (stack)")
+            self.stack.add(addr)
+        else:
+            if addr not in self.pre:
+                self.pre[addr] = self.read(addr)
+            self.post[addr] = value
+            # print(f"write {addr:04x}: {value:02x}")
         try:
             super().write(addr, value)
         except ReadOnlyError:
@@ -132,10 +138,11 @@ class MutsMachine:
     def m(self) -> MutsMMU:
         with open(f"{self.base_name}.rom", "rb") as f:
             return MutsMMU(
+                self,
                 [
                     (0x0000, 0x8000),
                     (0x8000, 0x4000, True, f),
-                ]
+                ],
             )
 
     @cached_property
@@ -193,9 +200,35 @@ class MutsTube(MutsMachine):
         return "".join(chr(c) for c in self.out_chars)
 
 
+@dataclass(kw_only=True, frozen=True)
+class Symbol:
+    name: str
+
+    def __repr__(self):
+        return self.name
+
+
+Unknown = Symbol(name="Unknown")
+Preserved = Symbol(name="Preserved")
+
+
+@dataclass(kw_only=True, frozen=True)
 class StateAssertion:
-    def __init__(self, **kwargs):
-        print(kwargs)
+    A: int | Symbol = Preserved
+    X: int | Symbol = Preserved
+    Y: int | Symbol = Preserved
+    S: int | Symbol = Preserved
+    P: Optional[int | Symbol] = None
+
+    C: bool | Symbol = Preserved
+    Z: bool | Symbol = Preserved
+    I: bool | Symbol = Preserved
+    D: bool | Symbol = Preserved
+    B: bool | Symbol = Preserved
+    N: bool | Symbol = Preserved
+    V: bool | Symbol = Preserved
+
+    changed: tuple[int, ...] = field(default_factory=tuple)
 
 
 def test_acc0_to_acc2():
@@ -209,12 +242,13 @@ def test_acc0_to_acc2():
     delta = x.m.delta
     for w in delta.changes:
         print(f"{w:04x}: {x.s.resolve(w)}")
-    assert delta.mem_changes == {x.s.acc2, x.s.acc2 + 1}
+    assert delta.changes == {x.s.acc2, x.s.acc2 + 1}
     assert delta.stack_used == 0
 
     sa = StateAssertion(
-        A=None,
-        Z=None,
+        A=Unknown,
+        Z=Unknown,
+        V=Unknown,
         changed=(x.s.acc2, x.s.acc2 + 1),
     )
     print(sa)
@@ -228,7 +262,7 @@ def test_oswrch_counted():
     print(json.dumps(x.out))
 
     sa = StateAssertion(
-        P=None,
+        P=Unknown,
         changed=(x.s.ptr0, x.s.ptr0 + 1),
     )
     print(sa)
@@ -243,10 +277,10 @@ def test_pr_muts():
     # print(x.m.writes)
 
     sa = StateAssertion(
-        A=None,
-        X=None,
-        Y=None,
-        P=None,
+        A=Unknown,
+        X=Unknown,
+        Y=Unknown,
+        P=Unknown,
         changed=(x.s.ptr0, x.s.ptr0 + 1),
     )
     print(sa)
@@ -262,10 +296,10 @@ def test_radix_out():
         print(f"{w:04x}: {x.s.resolve(w)}")
 
     sa = StateAssertion(
-        A=None,
-        X=None,
-        Y=None,
-        P=None,
+        A=Unknown,
+        X=Unknown,
+        Y=Unknown,
+        P=Unknown,
         changed=(x.s.acc0, x.s.acc0 + 1),
     )
     print(sa)
