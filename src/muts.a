@@ -3,6 +3,10 @@
 
 * = $8000
 
+!addr osrdrm = $ffb9
+!addr oseven = $ffbf
+!addr gsinit = $ffc2
+!addr gsread = $ffc5
 !addr osfind = $ffce
 !addr osgbpb = $ffd1
 !addr osbput = $ffd4
@@ -16,6 +20,7 @@
 !addr osword = $fff1
 !addr osbyte = $fff4
 !addr oscli = $fff7
+
 !addr irq2v = $206
 !addr irq1v = $204
 !addr brkv = $202
@@ -74,10 +79,10 @@ n_breakpoints = 16
 !addr rom_sel   = $0602
 !addr prompt    = $0603
 
-cmd_line_len = 160
-!addr cmd_line = $0700
+cmd_buf_len = 160
+!addr cmd_buf = $0700
 
-!addr brk_cmd = cmd_line + cmd_line_len
+!addr brk_cmd = cmd_buf + cmd_buf_len
 
 !addr rom_private = $0df0
 
@@ -205,6 +210,20 @@ case_mask = $df
   sta .addr + 1
   pla
   sta .addr
+}
+
+!macro push16x .addr {
+  lda .addr + 1
+  pha
+  lda .addr
+  pha
+}
+
+!macro pop16x .addr {
+  pla
+  sta .addr
+  pla
+  sta .addr + 1
 }
 
 ; For assembler tables
@@ -536,10 +555,7 @@ show_help           jsr newline
                     bne --
                     jmp newline
                     
-prstr               pla
-                    sta ptr0
-                    pla
-                    sta ptr0 + 1
+prstr               +pop16x ptr0
                     ldy #0
 -                   +inc16 ptr0
                     lda (ptr0), y
@@ -553,17 +569,11 @@ prstr               pla
                     beq -
 +                   jsr osasci
                     bne -
-++                  lda ptr0 + 1
-                    pha
-                    lda ptr0
-                    pha
+++                  +push16x ptr0
                     rts
                     
 throw               jsr reset_terminal
-                    pla
-                    sta ptr0
-                    pla
-                    sta ptr0 + 1
+                    +pop16x ptr0
                     ldy #0
                     sty stack
 -                   iny
@@ -689,21 +699,15 @@ radix_parse         sta acc1
                     bne --
                     clc
                     pla
-                    adc acc0
-                    sta acc0
-                    bcc +
-                    inc acc0 + 1
-+                   lda (cmdline), y
+                    +adca16 acc0
+                    lda (cmdline), y
                     iny
                     bne -
 ++                  +pop16 ptr0
                     tya
                     clc
-                    adc cmdline
-                    sta cmdline
-                    bcc +
-                    inc cmdline + 1
-+                   jsr unget
+                    +adca16 cmdline
+                    jsr unget
                     dey
                     rts
 
@@ -1401,9 +1405,9 @@ c_monitor           jsr skip_space
                     jmp osbyte
                     
                     ; address
-readline_parms      !word cmd_line
+readline_parms      !word cmd_buf
                     ; length
-                    !byte cmd_line_len - 2
+                    !byte cmd_buf_len - 2
                     ; min char
                     !byte ' '
                     ; max char
@@ -1496,7 +1500,7 @@ repl                jsr set_private
                     bcc repl_next
                     jmp throw_escape
                     
-repl_next           ldx #$07
+repl_next           ldx #> cmd_buf
                     stx cmdline + 1
                     jsr skip_space
                     beq repl
@@ -1571,8 +1575,8 @@ throw_missingeq     jsr throw
                     jmp repl
                     
                     ; fallback to oscli
-+                   ldx #< cmd_line
-                    ldy #> cmd_line
++                   ldx #< cmd_buf
+                    ldy #> cmd_buf
                     jsr oscli
                     jmp repl
                     
@@ -1881,7 +1885,7 @@ read_rom            php
                     bpl ++
 +                   lda rom_sel
 ++                  tay
-                    jsr $ffb9
+                    jsr osrdrm
                     +inc16 acc2
                     pha
                     inc acc3
@@ -3703,7 +3707,8 @@ pr_sym_copy         iny
                     pla
                     tay
                     rts
-                    
+
+
 symtab              !word oswrch 
                     !text "OSWRC", 'H' + $80
                     !word osrdch 
@@ -3712,13 +3717,13 @@ symtab              !word oswrch
                     !text "OSNEW", 'L' + $80
                     !word osasci 
                     !text "OSASC", 'I' + $80
-                    !word $ffc2 
+                    !word gsinit
                     !text "GSINI", 'T' + $80
-                    !word $ffc5 
+                    !word gsread
                     !text "GSREA", 'D' + $80
-                    !word $ffb9 
+                    !word osrdrm
                     !text "OSRDR", 'M' + $80
-                    !word $ffbf 
+                    !word oseven
                     !text "OSEVE", 'N' + $80
                     !word oscli 
                     !text "OSCL", 'I' + $80

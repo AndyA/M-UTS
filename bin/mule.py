@@ -57,7 +57,7 @@ class MutsMMU(MMU):
 
     def write(self, addr: int, value: int) -> None:
         if self.inStack(addr):
-            print(f"write {addr:04x}: {value:02x} (stack)")
+            # print(f"write {addr:04x}: {value:02x} (stack)")
             self.stack.add(addr)
         else:
             if addr not in self.pre:
@@ -167,12 +167,11 @@ class MutsMachine:
         else:
             self.c.step()
 
-    def call(self, addr: int) -> None:
+    def call(self, addr: int, brk: set[int] = {1}) -> None:
         self.c.stackPushWord(0)
         self.jmp(addr)
         self.m.clear()
-        while self.c.r.pc != 1:
-            # print(self.c.r)
+        while self.c.r.pc not in brk:
             self.step()
 
 
@@ -189,11 +188,13 @@ class MutsTube(MutsMachine):
 
     def oswrch(self) -> None:
         self._wrch(self.c.r.a)
+        # TODO emulate flags
 
     def osasci(self) -> None:
         if self.c.r.a == 0x0D:  # CR
             self._wrch(0x0A)
         self._wrch(self.c.r.a)
+        # TODO emulate flags
 
     @property
     def out(self) -> str:
