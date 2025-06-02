@@ -1,4 +1,10 @@
 {
   "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "python.analysis.extraPaths": ["bin"]
+  "python.analysis.extraPaths": ["bin"],
+  "python.languageServer": "Pylance",
+  "python.analysis.diagnosticSeverityOverrides": {
+    "reportMissingModuleSource": "none",
+    "reportShadowedImports": "none"
+  },
+  "circuitpython.board.version": null
 }
